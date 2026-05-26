@@ -7,6 +7,13 @@
 @endsection
 
 @section('content')
+@php
+    $adminUser = Auth::user();
+    $canManageCommunications = $adminUser && $adminUser->hasAnyRole(['superadmin', 'admin']);
+    $canManageCms = $adminUser && $adminUser->hasAnyRole(['superadmin', 'admin', 'editor']);
+    $canManageSystem = $adminUser && $adminUser->hasRole('superadmin');
+@endphp
+
 <div class="mb-4">
     <h2 class="display-font mb-1 text-navy">Welcome to Destination Fareways Admin</h2>
     <p class="text-muted mb-0">Monitor flight enquiries, manage sales leads, adjust configurations, and optimize SEO rankings from a single hub.</p>
@@ -15,6 +22,7 @@
 <!-- 6 Stat Cards Grid -->
 <div class="row g-3 mb-4">
     <!-- Stat 1: Leads -->
+    @if($canManageCommunications)
     <div class="col-12 col-sm-6 col-xxl-2">
         <div class="card premium-card p-3 border-0 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #1D4ED8 0%, #1e40af 100%); color: white;">
             <div class="d-flex justify-content-between align-items-center">
@@ -33,8 +41,10 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Stat 2: Enquiries -->
+    @if($canManageCommunications)
     <div class="col-12 col-sm-6 col-xxl-2">
         <div class="card premium-card p-3 border-0 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white;">
             <div class="d-flex justify-content-between align-items-center">
@@ -53,8 +63,10 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Stat 3: Contact Messages -->
+    @if($canManageCommunications)
     <div class="col-12 col-sm-6 col-xxl-2">
         <div class="card premium-card p-3 border-0 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: white;">
             <div class="d-flex justify-content-between align-items-center">
@@ -73,8 +85,10 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Stat 4: Subscribers -->
+    @if($canManageCommunications)
     <div class="col-12 col-sm-6 col-xxl-2">
         <div class="card premium-card p-3 border-0 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%); color: white;">
             <div class="d-flex justify-content-between align-items-center">
@@ -93,8 +107,10 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Stat 5: Blogs -->
+    @if($canManageCms)
     <div class="col-12 col-sm-6 col-xxl-2">
         <div class="card premium-card p-3 border-0 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #38BDF8 0%, #0284c7 100%); color: white;">
             <div class="d-flex justify-content-between align-items-center">
@@ -113,8 +129,10 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Stat 6: Offers -->
+    @if($canManageCms)
     <div class="col-12 col-sm-6 col-xxl-2">
         <div class="card premium-card p-3 border-0 shadow-sm position-relative overflow-hidden" style="background: linear-gradient(135deg, #F59E0B 0%, #d97706 100%); color: white;">
             <div class="d-flex justify-content-between align-items-center">
@@ -133,24 +151,30 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 
 <!-- Quick Action Shortcuts -->
 <div class="card premium-card border-0 p-4 mb-4">
     <h5 class="display-font mb-3 text-navy"><i class="fa-solid fa-rocket text-warning me-2"></i>Quick Operations Console</h5>
     <div class="d-flex flex-wrap gap-2">
-        <a href="{{ route('admin.offers.create') }}" class="btn btn-action"><i class="fa-solid fa-tag me-1"></i> New Promo Offer</a>
-        <a href="{{ route('admin.blogs.create') }}" class="btn btn-action" style="background-color: #38BDF8; border-color: #38BDF8; color: #07111F;"><i class="fa-solid fa-pen-fancy me-1"></i> New Blog Article</a>
-        <a href="{{ route('admin.destinations.create') }}" class="btn btn-action" style="background-color: #10B981; border-color: #10B981;"><i class="fa-solid fa-map-pin me-1"></i> Add Destination</a>
-        <a href="{{ route('admin.users.create') }}" class="btn btn-action" style="background-color: #64748B; border-color: #64748B;"><i class="fa-solid fa-user-plus me-1"></i> Add Team User</a>
-        <a href="{{ route('admin.settings.index') }}" class="btn btn-cta"><i class="fa-solid fa-sliders me-1"></i> Global Settings</a>
-        <a href="{{ route('admin.call-settings.index') }}" class="btn btn-cta" style="background-color: #ef4444; border-color: #ef4444; color: white;"><i class="fa-solid fa-phone me-1"></i> Call Now Buttons</a>
+        @if($canManageCms)
+            <a href="{{ route('admin.offers.create') }}" class="btn btn-action"><i class="fa-solid fa-tag me-1"></i> New Promo Offer</a>
+            <a href="{{ route('admin.blogs.create') }}" class="btn btn-action" style="background-color: #38BDF8; border-color: #38BDF8; color: #07111F;"><i class="fa-solid fa-pen-fancy me-1"></i> New Blog Article</a>
+            <a href="{{ route('admin.destinations.create') }}" class="btn btn-action" style="background-color: #10B981; border-color: #10B981;"><i class="fa-solid fa-map-pin me-1"></i> Add Destination</a>
+        @endif
+        @if($canManageSystem)
+            <a href="{{ route('admin.users.create') }}" class="btn btn-action" style="background-color: #64748B; border-color: #64748B;"><i class="fa-solid fa-user-plus me-1"></i> Add Team User</a>
+            <a href="{{ route('admin.settings.index') }}" class="btn btn-cta"><i class="fa-solid fa-sliders me-1"></i> Global Settings</a>
+            <a href="{{ route('admin.call-settings.index') }}" class="btn btn-cta" style="background-color: #ef4444; border-color: #ef4444; color: white;"><i class="fa-solid fa-phone me-1"></i> Call Now Buttons</a>
+        @endif
     </div>
 </div>
 
 <!-- Recent Logs Block -->
 <div class="row g-4">
     <!-- Recent Leads -->
+    @if($canManageCommunications)
     <div class="col-12 col-xl-6">
         <div class="card premium-card border-0 p-4 shadow-sm h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -204,8 +228,10 @@
             </div>
         </div>
     </div>
+    @endif
 
     <!-- Recent Enquiries -->
+    @if($canManageCommunications)
     <div class="col-12 col-xl-6">
         <div class="card premium-card border-0 p-4 shadow-sm h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
@@ -260,5 +286,6 @@
             </div>
         </div>
     </div>
+    @endif
 </div>
 @endsection

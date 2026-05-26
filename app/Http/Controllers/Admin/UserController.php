@@ -16,6 +16,8 @@ class UserController extends Controller
      */
     public function index()
     {
+        $this->authorizeSuperadmin();
+
         $users = User::orderBy('name', 'asc')->get();
         return view('admin.users.index', compact('users'));
     }
@@ -25,6 +27,8 @@ class UserController extends Controller
      */
     public function create()
     {
+        $this->authorizeSuperadmin();
+
         return view('admin.users.create');
     }
 
@@ -33,6 +37,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorizeSuperadmin();
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
@@ -64,6 +70,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
+        $this->authorizeUserAccess($user);
+
         return redirect()->route('admin.users.edit', $user->id);
     }
 
@@ -72,6 +80,8 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        $this->authorizeUserAccess($user);
+
         return view('admin.users.edit', compact('user'));
     }
 
@@ -80,14 +90,24 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
+        $this->authorizeUserAccess($user);
+
+        $roleRule = Auth::user()->hasRole('superadmin')
+            ? ['required', 'string', 'in:superadmin,admin,editor']
+            : ['required', 'string', 'in:' . $user->role];
+
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
-            'role' => ['required', 'string', 'in:superadmin,admin,editor'],
+            'role' => $roleRule,
             'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'is_active' => ['required', 'boolean'],
         ]);
+
+        if (!Auth::user()->hasRole('superadmin') && (int) $request->is_active !== (int) $user->is_active) {
+            return back()->with('error', 'Only superadministrators can change account access status.')->withInput();
+        }
 
         // Self demotion / deactivation prevention check
         if (Auth::id() === $user->id) {
@@ -133,6 +153,8 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $this->authorizeSuperadmin();
+
         // Safety guard: prevent self-deletion
         if (Auth::id() === $user->id) {
             return redirect()->route('admin.users.index')->with('error', 'Self-deletion is prohibited for safety reasons.');
@@ -154,5 +176,21 @@ class UserController extends Controller
         $user->delete();
 
         return redirect()->route('admin.users.index')->with('success', "User '{$user->name}' deleted successfully.");
+    }
+
+    private function authorizeSuperadmin(): void
+    {
+        abort_unless(Auth::user() && Auth::user()->hasRole('superadmin'), 403, 'Only superadministrators can manage users and roles.');
+    }
+
+    private function authorizeUserAccess(User $user): void
+    {
+        $currentUser = Auth::user();
+
+        abort_unless(
+            $currentUser && ($currentUser->hasRole('superadmin') || $currentUser->id === $user->id),
+            403,
+            'You can only access your own account settings.'
+        );
     }
 }

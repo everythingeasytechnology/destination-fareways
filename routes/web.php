@@ -74,50 +74,56 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
     // Dashboard
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Global Settings
-    Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
-    Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
+    Route::middleware('role:superadmin,admin')->group(function () {
+        // Leads & Enquiries
+        Route::get('leads/export/csv', [LeadController::class, 'exportCsv'])->name('leads.export');
+        Route::resource('leads', LeadController::class)->only(['index', 'show', 'update', 'destroy']);
 
-    // Call Settings
-    Route::get('call-settings', [CallSettingController::class, 'index'])->name('call-settings.index');
-    Route::post('call-settings', [CallSettingController::class, 'update'])->name('call-settings.update');
+        Route::get('enquiries/export/csv', [FlightEnquiryController::class, 'exportCsv'])->name('enquiries.export');
+        Route::resource('enquiries', FlightEnquiryController::class)->only(['index', 'show', 'update', 'destroy']);
 
-    // API Settings
-    Route::get('api-settings', [ApiSettingController::class, 'index'])->name('api-settings.index');
-    Route::post('api-settings', [ApiSettingController::class, 'update'])->name('api-settings.update');
-    Route::post('api-settings/test-connection', [ApiSettingController::class, 'testConnection'])->name('api-settings.test');
+        // Communications
+        Route::post('contacts/{contact}/reply', [ContactMessageController::class, 'reply'])->name('contacts.reply');
+        Route::resource('contacts', ContactMessageController::class)->only(['index', 'show', 'update', 'destroy']);
 
-    // Leads & Enquiries
-    Route::get('leads/export/csv', [LeadController::class, 'exportCsv'])->name('leads.export');
-    Route::resource('leads', LeadController::class)->only(['index', 'show', 'update', 'destroy']);
+        Route::get('newsletter/export/csv', [NewsletterController::class, 'exportCsv'])->name('newsletter.export');
+        Route::post('newsletter/{subscriber}/unsubscribe', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+        Route::resource('newsletter', NewsletterController::class)->only(['index', 'destroy']);
+    });
 
-    Route::get('enquiries/export/csv', [FlightEnquiryController::class, 'exportCsv'])->name('enquiries.export');
-    Route::resource('enquiries', FlightEnquiryController::class)->only(['index', 'show', 'update', 'destroy']);
+    Route::middleware('role:superadmin,admin,editor')->group(function () {
+        // CMS Content
+        Route::resource('offers', OfferController::class);
+        Route::resource('blogs', BlogController::class);
+        Route::resource('destinations', DestinationController::class);
+        Route::resource('pages', PageController::class);
+        Route::resource('faqs', FaqController::class);
+        Route::resource('testimonials', TestimonialController::class);
+    });
 
-    // Communications
-    Route::post('contacts/{contact}/reply', [ContactMessageController::class, 'reply'])->name('contacts.reply');
-    Route::resource('contacts', ContactMessageController::class)->only(['index', 'show', 'update', 'destroy']);
-    
-    Route::get('newsletter/export/csv', [NewsletterController::class, 'exportCsv'])->name('newsletter.export');
-    Route::post('newsletter/{subscriber}/unsubscribe', [NewsletterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
-    Route::resource('newsletter', NewsletterController::class)->only(['index', 'destroy']);
+    Route::middleware('role:superadmin')->group(function () {
+        // Global Settings
+        Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+        Route::post('settings', [SettingController::class, 'update'])->name('settings.update');
 
-    // CMS Content
-    Route::resource('offers', OfferController::class);
-    Route::resource('blogs', BlogController::class);
-    Route::resource('destinations', DestinationController::class);
-    Route::resource('pages', PageController::class);
-    Route::resource('faqs', FaqController::class);
-    Route::resource('testimonials', TestimonialController::class);
+        // Call Settings
+        Route::get('call-settings', [CallSettingController::class, 'index'])->name('call-settings.index');
+        Route::post('call-settings', [CallSettingController::class, 'update'])->name('call-settings.update');
 
-    // SEO Settings
-    Route::get('seo', [SeoController::class, 'index'])->name('seo.index');
-    Route::get('seo/{seo}/edit', [SeoController::class, 'edit'])->name('seo.edit');
-    Route::put('seo/{seo}', [SeoController::class, 'update'])->name('seo.update');
+        // API Settings
+        Route::get('api-settings', [ApiSettingController::class, 'index'])->name('api-settings.index');
+        Route::post('api-settings', [ApiSettingController::class, 'update'])->name('api-settings.update');
+        Route::post('api-settings/test-connection', [ApiSettingController::class, 'testConnection'])->name('api-settings.test');
 
-    // Schema Settings
-    Route::resource('schema', SchemaController::class);
+        // SEO Settings
+        Route::get('seo', [SeoController::class, 'index'])->name('seo.index');
+        Route::get('seo/{seo}/edit', [SeoController::class, 'edit'])->name('seo.edit');
+        Route::put('seo/{seo}', [SeoController::class, 'update'])->name('seo.update');
 
-    // Users Management
+        // Schema Settings
+        Route::resource('schema', SchemaController::class);
+    });
+
+    // Account settings are available to the signed-in user; team management is guarded inside the controller.
     Route::resource('users', UserController::class);
 });

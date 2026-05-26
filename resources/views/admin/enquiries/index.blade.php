@@ -118,7 +118,7 @@
                     <td class="text-end">
                         <div class="d-flex align-items-center justify-content-end gap-1">
                             <!-- View Button -->
-                            <button type="button" class="btn btn-sm btn-light border text-navy view-enquiry-btn" data-id="{{ $enquiry->id }}" title="Inspect Enquiry Details">
+                            <button type="button" class="btn btn-sm btn-light border text-navy view-enquiry-btn" data-url="{{ route('admin.enquiries.show', $enquiry->id) }}" title="Inspect Enquiry Details">
                                 <i class="fa-regular fa-eye"></i>
                             </button>
 
@@ -175,8 +175,8 @@
         });
 
         // Trigger AJAX Modal Load
-        $('.view-enquiry-btn').on('click', function() {
-            var enquiryId = $(this).data('id');
+        $('#enquiries-table').on('click', '.view-enquiry-btn', function() {
+            var enquiryUrl = $(this).data('url');
             var modalBody = $('#enquiry-modal-body');
             
             // Show loading placeholder
@@ -185,7 +185,7 @@
 
             // AJAX request to GET enquiry show content
             $.ajax({
-                url: "/admin/enquiries/" + enquiryId,
+                url: enquiryUrl,
                 method: "GET",
                 success: function(htmlContent) {
                     modalBody.html(htmlContent);
