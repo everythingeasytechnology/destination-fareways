@@ -30,6 +30,12 @@
     @yield('styles')
 </head>
 <body>
+    @php
+        $adminUser = Auth::user();
+        $canManageCommunications = $adminUser && $adminUser->hasAnyRole(['superadmin', 'admin']);
+        $canManageCms = $adminUser && $adminUser->hasAnyRole(['superadmin', 'admin', 'editor']);
+        $canManageSystem = $adminUser && $adminUser->hasRole('superadmin');
+    @endphp
 
     <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
@@ -53,80 +59,88 @@
             </a>
 
             <!-- Communications Group -->
-            <div class="nav-group-title">Inquiries & Leads</div>
-            <a href="{{ route('admin.leads.index') }}" class="nav-link {{ request()->routeIs('admin.leads.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-users-line"></i>
-                <span>Leads Management</span>
-            </a>
-            <a href="{{ route('admin.enquiries.index') }}" class="nav-link {{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-ticket"></i>
-                <span>Flight Enquiries</span>
-            </a>
-            <a href="{{ route('admin.contacts.index') }}" class="nav-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-envelope-open-text"></i>
-                <span>Contact Messages</span>
-            </a>
-            <a href="{{ route('admin.newsletter.index') }}" class="nav-link {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-paper-plane"></i>
-                <span>Subscribers</span>
-            </a>
+            @if($canManageCommunications)
+                <div class="nav-group-title">Inquiries & Leads</div>
+                <a href="{{ route('admin.leads.index') }}" class="nav-link {{ request()->routeIs('admin.leads.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-users-line"></i>
+                    <span>Leads Management</span>
+                </a>
+                <a href="{{ route('admin.enquiries.index') }}" class="nav-link {{ request()->routeIs('admin.enquiries.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Flight Enquiries</span>
+                </a>
+                <a href="{{ route('admin.contacts.index') }}" class="nav-link {{ request()->routeIs('admin.contacts.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                    <span>Contact Messages</span>
+                </a>
+                <a href="{{ route('admin.newsletter.index') }}" class="nav-link {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Subscribers</span>
+                </a>
+            @endif
 
             <!-- CMS Content Group -->
-            <div class="nav-group-title">CMS Management</div>
-            <a href="{{ route('admin.offers.index') }}" class="nav-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-tags"></i>
-                <span>Flight Offers</span>
-            </a>
-            <a href="{{ route('admin.blogs.index') }}" class="nav-link {{ request()->routeIs('admin.blogs.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-newspaper"></i>
-                <span>Travel Blogs</span>
-            </a>
-            <a href="{{ route('admin.destinations.index') }}" class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-earth-americas"></i>
-                <span>Destinations</span>
-            </a>
-            <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-file-invoice"></i>
-                <span>Pages Manager</span>
-            </a>
-            <a href="{{ route('admin.faqs.index') }}" class="nav-link {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-circle-question"></i>
-                <span>FAQs</span>
-            </a>
-            <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-star-half-stroke"></i>
-                <span>Testimonials</span>
-            </a>
+            @if($canManageCms)
+                <div class="nav-group-title">CMS Management</div>
+                <a href="{{ route('admin.offers.index') }}" class="nav-link {{ request()->routeIs('admin.offers.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Flight Offers</span>
+                </a>
+                <a href="{{ route('admin.blogs.index') }}" class="nav-link {{ request()->routeIs('admin.blogs.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-newspaper"></i>
+                    <span>Travel Blogs</span>
+                </a>
+                <a href="{{ route('admin.destinations.index') }}" class="nav-link {{ request()->routeIs('admin.destinations.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    <span>Destinations</span>
+                </a>
+                <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-file-invoice"></i>
+                    <span>Pages Manager</span>
+                </a>
+                <a href="{{ route('admin.faqs.index') }}" class="nav-link {{ request()->routeIs('admin.faqs.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-circle-question"></i>
+                    <span>FAQs</span>
+                </a>
+                <a href="{{ route('admin.testimonials.index') }}" class="nav-link {{ request()->routeIs('admin.testimonials.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-star-half-stroke"></i>
+                    <span>Testimonials</span>
+                </a>
+            @endif
 
             <!-- SEO & Schema Group -->
-            <div class="nav-group-title">SEO & Metadata</div>
-            <a href="{{ route('admin.seo.index') }}" class="nav-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-magnifying-glass-chart"></i>
-                <span>SEO Settings</span>
-            </a>
-            <a href="{{ route('admin.schema.index') }}" class="nav-link {{ request()->routeIs('admin.schema.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-code"></i>
-                <span>Schema Markups</span>
-            </a>
+            @if($canManageSystem)
+                <div class="nav-group-title">SEO & Metadata</div>
+                <a href="{{ route('admin.seo.index') }}" class="nav-link {{ request()->routeIs('admin.seo.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i>
+                    <span>SEO Settings</span>
+                </a>
+                <a href="{{ route('admin.schema.index') }}" class="nav-link {{ request()->routeIs('admin.schema.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-code"></i>
+                    <span>Schema Markups</span>
+                </a>
+            @endif
 
             <!-- Configuration Group -->
-            <div class="nav-group-title">Settings & System</div>
-            <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-sliders"></i>
-                <span>Site Settings</span>
-            </a>
-            <a href="{{ route('admin.call-settings.index') }}" class="nav-link {{ request()->routeIs('admin.call-settings.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-phone-volume"></i>
-                <span>Call Buttons</span>
-            </a>
-            <a href="{{ route('admin.api-settings.index') }}" class="nav-link {{ request()->routeIs('admin.api-settings.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-network-wired"></i>
-                <span>API Configuration</span>
-            </a>
-            <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                <i class="fa-solid fa-user-gear"></i>
-                <span>Users & Roles</span>
-            </a>
+            @if($canManageSystem)
+                <div class="nav-group-title">Settings & System</div>
+                <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>Site Settings</span>
+                </a>
+                <a href="{{ route('admin.call-settings.index') }}" class="nav-link {{ request()->routeIs('admin.call-settings.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span>Call Buttons</span>
+                </a>
+                <a href="{{ route('admin.api-settings.index') }}" class="nav-link {{ request()->routeIs('admin.api-settings.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-network-wired"></i>
+                    <span>API Configuration</span>
+                </a>
+                <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-user-gear"></i>
+                    <span>Users & Roles</span>
+                </a>
+            @endif
             
             <div class="px-3 py-4 mt-2">
                 <form action="{{ route('admin.logout') }}" method="POST">
@@ -166,8 +180,12 @@
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end shadow border-0 py-2 mt-2" style="width: 280px;">
                         <li class="px-3 py-2 border-bottom"><h6 class="mb-0 fw-bold">Recent Notifications</h6></li>
-                        <li><a class="dropdown-item py-2 px-3 border-bottom" href="{{ route('admin.leads.index') }}"><i class="fa-solid fa-users-line text-primary me-2"></i> New lead received!</a></li>
-                        <li><a class="dropdown-item py-2 px-3 border-bottom" href="{{ route('admin.enquiries.index') }}"><i class="fa-solid fa-ticket text-warning me-2"></i> Flight enquiry submitted</a></li>
+                        @if($canManageCommunications)
+                            <li><a class="dropdown-item py-2 px-3 border-bottom" href="{{ route('admin.leads.index') }}"><i class="fa-solid fa-users-line text-primary me-2"></i> New lead received!</a></li>
+                            <li><a class="dropdown-item py-2 px-3 border-bottom" href="{{ route('admin.enquiries.index') }}"><i class="fa-solid fa-ticket text-warning me-2"></i> Flight enquiry submitted</a></li>
+                        @else
+                            <li class="px-3 py-2 text-muted small">No restricted notifications available for this role.</li>
+                        @endif
                         <li><a class="dropdown-item py-2 px-3 text-center text-muted" href="{{ route('admin.dashboard') }}"><small>View all activities</small></a></li>
                     </ul>
                 </div>

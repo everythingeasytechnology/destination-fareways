@@ -5,7 +5,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "guzzlehttp/guzzle": "^7.2",
         "intervention/image": "^2.7",
         "laravel/framework": "^10.10",
@@ -63,7 +63,10 @@
             "php-http/discovery": true
         },
         "platform": {
-            "php": "8.1.0"
+            "php": "8.2.0"
+        },
+        "audit": {
+            "block-insecure": false
         }
     },
     "minimum-stability": "stable",

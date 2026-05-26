@@ -48,4 +48,14 @@ class User extends Authenticatable
         'is_active' => 'boolean',
         'last_login_at' => 'datetime',
     ];
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
+
+    public function hasAnyRole(array $roles): bool
+    {
+        return in_array($this->role, $roles, true);
+    }
 }

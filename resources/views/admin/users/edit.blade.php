@@ -4,14 +4,16 @@
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}" class="text-decoration-none text-muted">Admin</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}" class="text-decoration-none text-muted">Users Management</a></li>
+    @if(Auth::user()->hasRole('superadmin'))
+        <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}" class="text-decoration-none text-muted">Users Management</a></li>
+    @endif
     <li class="breadcrumb-item active" aria-current="page">Edit</li>
 @endsection
 
 @section('content')
 <div class="mb-4">
     <div class="d-flex align-items-center gap-2 mb-2">
-        <a href="{{ route('admin.users.index') }}" class="btn btn-sm btn-light border"><i class="fa-solid fa-arrow-left"></i> Back</a>
+        <a href="{{ Auth::user()->hasRole('superadmin') ? route('admin.users.index') : route('admin.dashboard') }}" class="btn btn-sm btn-light border"><i class="fa-solid fa-arrow-left"></i> Back</a>
     </div>
     <h2 class="display-font mb-1 text-navy">Edit Administrator</h2>
     <p class="text-muted mb-0">Modify security authorization levels, upload high-resolution avatars, and configure administrative access status.</p>
@@ -57,14 +59,14 @@
                     <!-- Role -->
                     <div class="col-md-6">
                         <label for="role" class="form-label fw-bold text-navy small">Access Permission Level <span class="text-danger">*</span></label>
-                        <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required {{ Auth::id() === $user->id && $user->role === 'superadmin' ? 'disabled' : '' }}>
+                        <select class="form-select @error('role') is-invalid @enderror" id="role" name="role" required {{ !Auth::user()->hasRole('superadmin') || (Auth::id() === $user->id && $user->role === 'superadmin') ? 'disabled' : '' }}>
                             <option value="superadmin" {{ old('role', $user->role) == 'superadmin' ? 'selected' : '' }}>Superadmin (Full Access & Settings Control)</option>
                             <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin (CMS, Leads, & Inquiries Control)</option>
                             <option value="editor" {{ old('role', $user->role) == 'editor' ? 'selected' : '' }}>Editor (CMS Content Only)</option>
                         </select>
-                        @if(Auth::id() === $user->id && $user->role === 'superadmin')
-                            <input type="hidden" name="role" value="superadmin">
-                            <div class="form-text text-muted small" style="font-size:0.75rem;"><i class="fa-solid fa-lock text-muted me-1"></i> You cannot demote yourself from the active session.</div>
+                        @if(!Auth::user()->hasRole('superadmin') || (Auth::id() === $user->id && $user->role === 'superadmin'))
+                            <input type="hidden" name="role" value="{{ $user->role }}">
+                            <div class="form-text text-muted small" style="font-size:0.75rem;"><i class="fa-solid fa-lock text-muted me-1"></i> Role changes are restricted for this session.</div>
                         @endif
                         @error('role')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -74,13 +76,13 @@
                     <!-- Status -->
                     <div class="col-md-6">
                         <label for="is_active" class="form-label fw-bold text-navy small">System Access Toggle <span class="text-danger">*</span></label>
-                        <select class="form-select" id="is_active" name="is_active" required {{ Auth::id() === $user->id ? 'disabled' : '' }}>
+                        <select class="form-select" id="is_active" name="is_active" required {{ !Auth::user()->hasRole('superadmin') || Auth::id() === $user->id ? 'disabled' : '' }}>
                             <option value="1" {{ old('is_active', $user->is_active) == '1' ? 'selected' : '' }}>Active (Granted Access)</option>
                             <option value="0" {{ old('is_active', $user->is_active) == '0' ? 'selected' : '' }}>Suspended (Revoked Access)</option>
                         </select>
-                        @if(Auth::id() === $user->id)
-                            <input type="hidden" name="is_active" value="1">
-                            <div class="form-text text-muted small" style="font-size:0.75rem;"><i class="fa-solid fa-lock text-muted me-1"></i> You cannot deactivate your own active session.</div>
+                        @if(!Auth::user()->hasRole('superadmin') || Auth::id() === $user->id)
+                            <input type="hidden" name="is_active" value="{{ (int) $user->is_active }}">
+                            <div class="form-text text-muted small" style="font-size:0.75rem;"><i class="fa-solid fa-lock text-muted me-1"></i> Access status changes are restricted for this session.</div>
                         @endif
                     </div>
 
@@ -112,7 +114,7 @@
                 <button type="submit" class="btn btn-action rounded-pill px-5 py-2 fw-bold shadow-sm">
                     <i class="fa-solid fa-floppy-disk me-2"></i>Save User Changes
                 </button>
-                <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2">Cancel</a>
+                <a href="{{ Auth::user()->hasRole('superadmin') ? route('admin.users.index') : route('admin.dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4 py-2">Cancel</a>
             </div>
         </div>
 
