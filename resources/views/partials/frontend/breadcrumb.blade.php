@@ -23,3 +23,29 @@
     </ol>
 </nav>
 @endif
+
+<style>
+/* Light Breadcrumb colors inside dark background parent containers */
+.bg-navy .custom-breadcrumb .breadcrumb-item a,
+.bg-dark .custom-breadcrumb .breadcrumb-item a,
+.text-white .custom-breadcrumb .breadcrumb-item a {
+    color: rgba(255, 255, 255, 0.8) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.bg-navy .custom-breadcrumb .breadcrumb-item a:hover,
+.bg-dark .custom-breadcrumb .breadcrumb-item a:hover,
+.text-white .custom-breadcrumb .breadcrumb-item a:hover {
+    color: #ffffff !important;
+}
+.bg-navy .custom-breadcrumb .breadcrumb-item.active,
+.bg-dark .custom-breadcrumb .breadcrumb-item.active,
+.text-white .custom-breadcrumb .breadcrumb-item.active {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+.bg-navy .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before,
+.bg-dark .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before,
+.text-white .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.5) !important;
+}
+</style>

@@ -18,7 +18,7 @@
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="fw-bold text-navy mb-0" style="font-family: 'DM Sans', sans-serif;">Filter Flights</h5>
-            <a href="{{ route('flights.results') }}?from={{ request('from') }}&fromId={{ request('fromId') }}&to={{ request('to') }}&toId={{ request('toId') }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ request('cabin_class') }}" class="small text-decoration-underline text-secondary">Reset</a>
+            <a href="{{ route('flights.results') }}?from={{ request('from') }}&fromId={{ request('fromId') }}&to={{ request('to') }}&toId={{ request('toId') }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ request('cabin_class') }}" class="small text-decoration-none text-muted fw-bold transition-all" style="transition: all 0.2s ease; cursor: pointer; color: #64748b !important;" onmouseover="this.style.color='#F59E0B'" onmouseout="this.style.color='#64748b'">Reset</a>
         </div>
 
         <!-- 1. Stops -->

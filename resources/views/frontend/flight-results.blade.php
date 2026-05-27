@@ -1,5 +1,36 @@
 @extends('layouts.frontend')
 
+@php
+if (!function_exists('parseAirport')) {
+    function parseAirport($airportStr) {
+        $airportStr = trim($airportStr);
+        $parts = explode(' - ', $airportStr);
+        if (count($parts) >= 2) {
+            foreach ($parts as $part) {
+                if (preg_match('/^[A-Z]{3}$/', trim($part))) {
+                    $iata = trim($part);
+                    $name = trim($parts[0]);
+                    if ($name === $iata && isset($parts[1])) {
+                        $name = trim($parts[1]);
+                    }
+                    return ['iata' => $iata, 'name' => $name];
+                }
+            }
+        }
+        
+        if (preg_match('/\(([A-Z]{3})\)/i', $airportStr, $matches)) {
+            return ['iata' => strtoupper($matches[1]), 'name' => trim(str_replace($matches[0], '', $airportStr))];
+        }
+
+        if (preg_match('/^[A-Z]{3}$/i', $airportStr)) {
+            return ['iata' => strtoupper($airportStr), 'name' => ''];
+        }
+
+        return ['iata' => strtoupper(substr($airportStr, 0, 3)), 'name' => $airportStr];
+    }
+}
+@endphp
+
 @section('content')
 
 <!-- Header Banner -->
@@ -96,28 +127,45 @@
 
                 <!-- Flight Result Cards -->
                 @forelse($mockFlights as $flight)
-                    <div class="card-flight mb-3 bg-white border rounded shadow-sm p-3.5">
+                    @php
+                        $fromAirport = parseAirport($flight['from']);
+                        $toAirport = parseAirport($flight['to']);
+                    @endphp
+                    <div class="card-flight mb-4 bg-white border border-light-subtle rounded-4 shadow-sm p-4 hover-shadow-lg transition-transform" style="transition: all 0.3s ease;">
                         <div class="row align-items-center g-3">
                             <!-- Logo and Carrier -->
-                            <div class="col-md-3 d-flex align-items-center gap-3">
-                                <img src="{{ $flight['airline_logo'] }}" class="rounded-circle" style="width: 42px; height: 42px; object-fit: cover;" alt="Airline logo">
-                                <div>
-                                    <div class="fw-bold text-navy" style="font-size: 0.95rem;">{{ $flight['airline_name'] }}</div>
-                                    <div class="text-muted small">{{ $flight['airline_code'] }}</div>
+                            <div class="col-lg-3 col-md-4 col-12 d-flex align-items-center gap-3">
+                                <div class="airline-logo-wrapper d-flex align-items-center justify-content-center p-2 rounded-circle" style="background-color: #f8fafc; border: 1.5px solid rgba(7, 17, 31, 0.05); width: 54px; height: 54px; flex-shrink: 0;">
+                                    <img src="{{ $flight['airline_logo'] }}" class="rounded-circle" style="width: 36px; height: 36px; object-fit: cover;" alt="{{ $flight['airline_name'] }}">
+                                </div>
+                                <div class="text-start">
+                                    <div class="fw-bold text-navy mb-0.5" style="font-size: 0.95rem; font-family: 'DM Sans', sans-serif;">{{ $flight['airline_name'] }}</div>
+                                    <span class="badge bg-light text-navy border font-monospace text-uppercase" style="font-size: 0.68rem; letter-spacing: 0.5px; padding: 2px 6px; color: #07111F !important;">{{ $flight['airline_code'] }}</span>
                                 </div>
                             </div>
                             
                             <!-- Times & Route -->
-                            <div class="col-md-4">
+                            <div class="col-lg-5 col-md-8 col-12">
                                 <div class="d-flex justify-content-between align-items-center text-center">
-                                    <div class="text-start">
-                                        <div class="fw-bold text-navy fs-5">{{ $flight['departure_time'] }}</div>
-                                        <span class="text-muted font-monospace" style="font-size: 0.8rem;">{{ $flight['from'] }}</span>
+                                    <!-- Departure Airport -->
+                                    <div class="text-start" style="width: 33%;">
+                                        <div class="fw-extrabold text-navy fs-4 mb-0.5" style="letter-spacing: -0.5px;">{{ $flight['departure_time'] }}</div>
+                                        <div class="fw-bold text-gold font-monospace text-uppercase" style="font-size: 0.9rem; color: #F59E0B !important;">{{ $fromAirport['iata'] }}</div>
+                                        @if(!empty($fromAirport['name']))
+                                            <div class="text-muted text-truncate small" style="font-size: 0.7rem; max-width: 120px;" title="{{ $fromAirport['name'] }}">{{ $fromAirport['name'] }}</div>
+                                        @endif
                                     </div>
-                                    <div class="flex-grow-1 px-3 position-relative d-flex flex-column align-items-center">
-                                        <span class="small text-muted" style="font-size: 0.75rem;">{{ $flight['duration'] }}</span>
-                                        <hr class="w-100 my-1 bg-secondary">
-                                        <span class="badge border border-secondary text-secondary bg-light font-sans" style="font-size: 0.7rem; padding: 2px 8px;">
+                                    
+                                    <!-- Timeline graphics -->
+                                    <div class="flex-grow-1 px-2 position-relative d-flex flex-column align-items-center">
+                                        <span class="small text-muted fw-semibold font-monospace mb-1.5" style="font-size: 0.72rem; letter-spacing: 0.3px;">{{ $flight['duration'] }}</span>
+                                        <div class="w-100 d-flex align-items-center position-relative mb-2" style="height: 2px;">
+                                            <div class="w-100 bg-secondary-subtle" style="height: 1.5px; border-radius: 10px;"></div>
+                                            <div class="position-absolute" style="left: 50%; top: 50%; transform: translate(-50%, -50%);">
+                                                <i class="fa-solid fa-plane text-gold" style="font-size: 0.75rem; transform: rotate(90deg); color: #F59E0B !important;"></i>
+                                            </div>
+                                        </div>
+                                        <span class="badge bg-navy text-white rounded-pill px-3 py-1 fw-bold tracking-wide text-uppercase" style="font-size: 0.64rem; letter-spacing: 0.5px; background-color: #07111F !important;">
                                             @if($flight['stops'] == 0)
                                                 Nonstop
                                             @else
@@ -125,41 +173,53 @@
                                             @endif
                                         </span>
                                     </div>
-                                    <div class="text-end">
-                                        <div class="fw-bold text-navy fs-5">{{ $flight['arrival_time'] }}</div>
-                                        <span class="text-muted font-monospace" style="font-size: 0.8rem;">{{ $flight['to'] }}</span>
+                                    
+                                    <!-- Arrival Airport -->
+                                    <div class="text-end" style="width: 33%;">
+                                        <div class="fw-extrabold text-navy fs-4 mb-0.5" style="letter-spacing: -0.5px;">{{ $flight['arrival_time'] }}</div>
+                                        <div class="fw-bold text-gold font-monospace text-uppercase" style="font-size: 0.9rem; color: #F59E0B !important;">{{ $toAirport['iata'] }}</div>
+                                        @if(!empty($toAirport['name']))
+                                            <div class="text-muted text-truncate small ms-auto" style="font-size: 0.7rem; max-width: 120px;" title="{{ $toAirport['name'] }}">{{ $toAirport['name'] }}</div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Baggage & Support tags -->
-                            <div class="col-md-2 text-center text-md-start ps-md-4 border-start">
-                                <div class="small text-secondary mb-1">
-                                    <i class="fa-solid fa-suitcase text-gold me-1" style="font-size: 0.8rem;"></i> {{ $flight['baggage_allowance'] }}
+                            <div class="col-lg-2 col-md-6 col-12 text-center text-lg-start ps-lg-4 border-start-lg">
+                                <div class="d-flex flex-column gap-2.5">
+                                    <div class="small text-navy d-flex align-items-center gap-2 justify-content-center justify-content-lg-start" style="font-family: 'DM Sans', sans-serif; font-weight: 500;">
+                                        <i class="fa-solid fa-suitcase-rolling text-gold" style="font-size: 0.9rem; color: #F59E0B !important;"></i>
+                                        <span>{{ $flight['baggage_allowance'] }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-center justify-content-lg-start">
+                                        <span class="badge px-2.5 py-1.5 rounded text-success fw-bold border border-success-subtle bg-success-subtle" style="font-size: 0.72rem; letter-spacing: 0.2px; background-color: rgba(25, 135, 84, 0.1) !important; color: #198754 !important;">
+                                            <i class="fa-solid fa-circle-check me-1"></i> {{ $flight['refund_policy'] }}
+                                        </span>
+                                    </div>
                                 </div>
-                                <span class="badge bg-light text-success border border-success" style="font-size: 0.75rem;">
-                                    {{ $flight['refund_policy'] }}
-                                </span>
                             </div>
 
                             <!-- Pricing and CTA -->
-                            <div class="col-md-3 text-center text-md-end border-start">
-                                <div class="mb-2">
-                                    <span class="text-muted small d-block">Total fare</span>
-                                    <span class="price fs-3 fw-bold font-monospace">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['price']) }}</span>
+                            <div class="col-lg-2 col-md-6 col-12 text-center text-lg-end border-start-lg">
+                                <div class="d-flex flex-column gap-2">
+                                    <div class="text-lg-end text-center">
+                                        <span class="text-muted small d-block mb-0.5" style="font-size: 0.75rem; letter-spacing: 0.3px; text-transform: uppercase;">Total Fare</span>
+                                        <span class="price text-gold fw-extrabold font-monospace" style="font-size: 1.45rem; color: #F59E0B !important;">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['price']) }}</span>
+                                    </div>
+                                    <a href="{{ route('flights.details', $flight['id']) }}?from={{ $flight['from'] }}&to={{ $flight['to'] }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ $flight['cabin_class'] }}@if(!empty($flight['token']))&token={{ urlencode($flight['token']) }}@endif" class="btn btn-navy w-100 py-2.5 d-flex align-items-center justify-content-center gap-2 rounded-3 shadow transition-lift fw-bold" style="background-color: #07111F !important; color: #ffffff !important; border: none; font-size: 0.85rem;">
+                                        Select Flight <i class="fa-solid fa-chevron-right" style="font-size: 0.7rem;"></i>
+                                    </a>
                                 </div>
-                                <a href="{{ route('flights.details', $flight['id']) }}?from={{ $flight['from'] }}&to={{ $flight['to'] }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ $flight['cabin_class'] }}@if(!empty($flight['token']))&token={{ urlencode($flight['token']) }}@endif" class="btn btn-gold btn-sm px-4">
-                                    Select <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.8rem;"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="p-5 text-center bg-white border border-light rounded">
+                    <div class="p-5 text-center bg-white border border-light rounded-4 shadow-sm">
                         <i class="fa-solid fa-plane-slash text-muted fs-1 mb-3"></i>
                         <h4 class="text-navy fw-bold">No Flights Found</h4>
-                        <p class="text-secondary max-width-500 mx-auto">No mock routes matched your filter. Try adjusting stop values or selecting a higher price filter ceiling.</p>
-                        <a href="{{ route('flights.search') }}" class="btn btn-gold btn-sm mt-3">Reset Search</a>
+                        <p class="text-secondary max-width-500 mx-auto mb-4">No flights matched your filter parameters. Try expanding your price limit or clearing stop choices.</p>
+                        <a href="{{ route('flights.search') }}" class="btn btn-gold btn-sm px-4">Reset Search</a>
                     </div>
                 @endforelse
             </div>

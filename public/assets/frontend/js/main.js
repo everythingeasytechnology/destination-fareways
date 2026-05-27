@@ -1,5 +1,12 @@
 /* Destination Fareways - Phase 2 Frontend Main JS */
 
+(function () {
+    if (!window.jQuery) {
+        return;
+    }
+
+    var $ = window.jQuery;
+
 $(document).ready(function () {
     // 1. Navbar Scroll Transition
     function handleNavbarScroll() {
@@ -38,11 +45,12 @@ $(document).ready(function () {
     handleMobileFloatingButtons();
 
     // 3. Flight Search Form - Tab Toggle Logic
-    $('.search-tab-btn').on('click', function () {
+    $(document).on('click', '.search-tab-btn', function (e) {
+        e.preventDefault();
         $('.search-tab-btn').removeClass('active');
         $(this).addClass('active');
         
-        var tripType = $(this).data('type'); // 'one-way', 'round-trip', 'multi-city'
+        var tripType = $(this).data('type'); // 'round-trip', 'one-way', 'multi-city'
         $('#trip_type_input').val(tripType);
         
         if (tripType === 'one-way') {
@@ -55,6 +63,28 @@ $(document).ready(function () {
             $('#return_date_input').prop('disabled', false);
             $('.multi-city-fields').slideUp(180);
             $('#from_city_input, #to_city_input, #depart_date_input').prop('disabled', false);
+            
+            // Restore default value if empty
+            if ($('#return_date_input').val() === '') {
+                var departVal = $('#depart_date_input').val();
+                if (departVal) {
+                    var depDate = new Date(departVal);
+                    if (!isNaN(depDate.getTime())) {
+                        depDate.setDate(depDate.getDate() + 7);
+                        var yyyy = depDate.getFullYear();
+                        var mm = String(depDate.getMonth() + 1).padStart(2, '0');
+                        var dd = String(depDate.getDate()).padStart(2, '0');
+                        var formattedReturn = yyyy + '-' + mm + '-' + dd;
+                        
+                        var returnInput = document.getElementById('return_date_input');
+                        if (returnInput && returnInput._flatpickr) {
+                            returnInput._flatpickr.setDate(formattedReturn);
+                        } else {
+                            $('#return_date_input').val(formattedReturn);
+                        }
+                    }
+                }
+            }
         } else if (tripType === 'multi-city') {
             $('#return_date_wrapper').css('opacity', '0.5');
             $('#return_date_input').prop('disabled', true);
@@ -101,23 +131,23 @@ $(document).ready(function () {
         }
     });
 
-    $('.flight-location-input').on('input', function () {
+    $(document).on('input', '.flight-location-input', function () {
         var input = $(this);
         var query = input.val().trim();
         var targetId = input.data('target');
         var dropdown = input.closest('.search-input-group').find('.flight-location-suggestions');
 
         $('#' + targetId).val('');
-        clearTimeout(locationTimers[input.attr('id')]);
+        clearTimeout(locationTimers[input.attr('id') || targetId]);
 
         if (query.length < 2) {
             dropdown.hide().empty();
             return;
         }
 
-        dropdown.html('<div class="px-3 py-2 small text-muted">Searching...</div>').show();
+        dropdown.html('<div class="px-3 py-2 small text-muted"><i class="fa-solid fa-spinner fa-spin me-1 text-gold"></i> Searching...</div>').show();
 
-        locationTimers[input.attr('id')] = setTimeout(function () {
+        locationTimers[input.attr('id') || targetId] = setTimeout(function () {
             $.ajax({
                 url: '/flights/locations',
                 method: 'GET',
@@ -131,12 +161,12 @@ $(document).ready(function () {
                     }
 
                     var html = locations.map(function (location) {
-                        var code = location.code ? '<span class="badge bg-light text-navy border ms-2">' + location.code + '</span>' : '';
-                        var country = location.country ? '<div class="small text-muted">' + location.country + ' · ' + location.type + '</div>' : '<div class="small text-muted">' + location.type + '</div>';
+                        var code = location.code ? '<span class="badge bg-gold text-navy border-0 ms-2" style="font-size: 0.72rem; padding: 2px 6px;">' + location.code + '</span>' : '';
+                        var countryInfo = location.country ? location.country + ' · ' + location.type : location.type;
 
                         return '<button type="button" class="flight-location-option" data-id="' + location.id + '" data-label="' + location.label + '">' +
-                            '<div class="fw-semibold">' + location.name + code + '</div>' +
-                            country +
+                            '<div class="fw-semibold text-navy"><i class="fa-solid fa-location-dot me-1 text-gold" style="font-size: 0.8rem;"></i> ' + location.name + code + '</div>' +
+                            '<div class="small text-muted">' + countryInfo + '</div>' +
                         '</button>';
                     }).join('');
 
@@ -184,8 +214,8 @@ $(document).ready(function () {
         });
     }
 
-    // Passenger counters +/- logic
-    $('.counter-btn').on('click', function (e) {
+    // Passenger counters +/- logic with event delegation
+    $(document).on('click', '.counter-btn', function (e) {
         e.preventDefault();
         e.stopPropagation();
         
@@ -194,7 +224,9 @@ $(document).ready(function () {
         var valSpan = $('#count_' + type);
         var inputField = $('#input_' + type);
         
-        var currentVal = parseInt(valSpan.text());
+        if (!valSpan.length) return;
+        
+        var currentVal = parseInt(valSpan.text()) || 0;
         var minVal = (type === 'adults') ? 1 : 0; // At least 1 adult
         var maxVal = 9;
 
@@ -205,13 +237,15 @@ $(document).ready(function () {
         }
 
         valSpan.text(currentVal);
-        inputField.val(currentVal);
+        if (inputField.length) {
+            inputField.val(currentVal);
+        }
         
         updatePassengerSummary();
     });
 
-    // Cabin class select change triggers summary update
-    $('#cabin_class_select').on('change', function () {
+    // Cabin class select change triggers summary update with event delegation
+    $(document).on('change', '#cabin_class_select', function () {
         updatePassengerSummary();
     });
 
@@ -334,3 +368,114 @@ $(document).ready(function () {
         });
     }
 });
+})();
+
+// Passenger selector fallback for browsers where the jQuery CDN is unavailable.
+(function () {
+    if (window.jQuery) {
+        return;
+    }
+
+    function ready(callback) {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', callback);
+            return;
+        }
+
+        callback();
+    }
+
+    ready(function () {
+        var container = document.getElementById('passenger_dropdown_container');
+        var trigger = document.getElementById('passengers_input_wrapper');
+        var dropdown = document.getElementById('passenger_dropdown_menu');
+        var cabinSelect = document.getElementById('cabin_class_select');
+
+        if (!container || !trigger || !dropdown) {
+            return;
+        }
+
+        function getCount(type, fallback) {
+            var count = document.getElementById('count_' + type);
+            var value = count ? parseInt(count.textContent, 10) : fallback;
+
+            return Number.isNaN(value) ? fallback : value;
+        }
+
+        function updatePassengerSummary() {
+            var adults = getCount('adults', 1);
+            var children = getCount('children', 0);
+            var infants = getCount('infants', 0);
+            var total = adults + children + infants;
+            var cabin = cabinSelect && cabinSelect.value ? cabinSelect.value : 'Economy';
+            var summary = document.getElementById('passengers_summary_text');
+            var totalInput = document.getElementById('total_passengers_input');
+
+            if (summary) {
+                summary.textContent = total + ' Passenger' + (total > 1 ? 's' : '') + ', ' + cabin;
+            }
+
+            if (totalInput) {
+                totalInput.value = total;
+            }
+        }
+
+        trigger.addEventListener('click', function (event) {
+            event.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+
+        dropdown.addEventListener('click', function (event) {
+            var button = event.target.closest('.counter-btn');
+
+            if (!button) {
+                event.stopPropagation();
+                return;
+            }
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            var type = button.dataset.type;
+            var action = button.dataset.action;
+            var count = document.getElementById('count_' + type);
+            var input = document.getElementById('input_' + type);
+
+            if (!type || !action || !count) {
+                return;
+            }
+
+            var value = parseInt(count.textContent, 10) || 0;
+            var min = type === 'adults' ? 1 : 0;
+            var max = 9;
+
+            if (action === 'plus' && value < max) {
+                value += 1;
+            }
+
+            if (action === 'minus' && value > min) {
+                value -= 1;
+            }
+
+            count.textContent = value;
+
+            if (input) {
+                input.value = value;
+            }
+
+            updatePassengerSummary();
+        });
+
+        if (cabinSelect) {
+            cabinSelect.addEventListener('change', updatePassengerSummary);
+        }
+
+        document.addEventListener('click', function (event) {
+            if (!container.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        });
+
+        updatePassengerSummary();
+    });
+})();

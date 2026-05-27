@@ -63,7 +63,7 @@
             <div class="row g-4 mb-5">
                 @foreach($offers as $offer)
                     <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 100 }}">
-                        <div class="card card-flight h-100 dest-card shadow-sm border-light">
+                        <div class="card card-flight h-100 shadow-sm border-light">
                             <!-- Image container with Zoom hover and discount tag -->
                             <div class="position-relative overflow-hidden" style="height: 200px;">
                                 <img src="{{ $offer->image ?? 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80&auto=format' }}" 

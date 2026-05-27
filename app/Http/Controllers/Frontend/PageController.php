@@ -11,6 +11,38 @@ use Illuminate\Http\Request;
 class PageController extends Controller
 {
     /**
+     * Display a custom CMS page by slug.
+     */
+    public function show(string $slug)
+    {
+        $settings = Setting::first();
+        $page = Page::where('slug', $slug)->where('status', 'active')->firstOrFail();
+
+        $seoData = (object) [
+            'meta_title' => $page->seo_title ?? $page->title,
+            'meta_description' => $page->seo_description ?? $page->subtitle ?? '',
+            'meta_keywords' => $page->seo_keywords ?? '',
+            'og_title' => $page->og_title ?? $page->seo_title ?? $page->title,
+            'og_description' => $page->og_description ?? $page->seo_description ?? $page->subtitle ?? '',
+            'og_image' => $page->og_image ?? $page->banner_image ?? null,
+            'twitter_title' => $page->twitter_title ?? $page->og_title ?? $page->seo_title ?? $page->title,
+            'twitter_description' => $page->twitter_description ?? $page->og_description ?? $page->seo_description ?? $page->subtitle ?? '',
+            'twitter_image' => $page->twitter_image ?? $page->og_image ?? $page->banner_image ?? null,
+            'canonical_url' => route('pages.show', $page->slug),
+            'robots_tag' => 'index, follow',
+            'schema_markup' => $page->schema_markup,
+            'faq_schema' => $page->faq_schema,
+            'breadcrumb_schema' => $page->breadcrumb_schema,
+        ];
+
+        $breadcrumbs = [
+            ['title' => $page->title]
+        ];
+
+        return view('frontend.page', compact('settings', 'page', 'seoData', 'breadcrumbs'));
+    }
+
+    /**
      * Display the About Us page
      */
     public function about()
