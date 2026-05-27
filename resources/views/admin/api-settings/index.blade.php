@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'GDS / Flight API Settings')
+@section('title', 'Booking.com15 API Settings')
 
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}" class="text-decoration-none text-muted">Admin</a></li>
@@ -9,8 +9,35 @@
 
 @section('content')
 <div class="mb-4">
-    <h2 class="display-font mb-1 text-navy">GDS & Flight API Configuration</h2>
-    <p class="text-muted mb-0">Manage global flight inventory providers, API credentials, endpoints, fare markups, and synchronize booking databases.</p>
+    <h2 class="display-font mb-1 text-navy">Booking.com15 Flight API Dashboard</h2>
+    <p class="text-muted mb-0">Configure DataCrawler Booking.com15 on RapidAPI for location search, live flight results, multi-stop search, and flight details.</p>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card premium-card border-0 shadow-sm p-3 h-100">
+            <span class="small text-muted">Provider</span>
+            <span class="fw-bold text-navy">{{ $apiSetting->provider }}</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card premium-card border-0 shadow-sm p-3 h-100">
+            <span class="small text-muted">RapidAPI Host</span>
+            <span class="fw-bold text-navy font-monospace small">{{ $apiSetting->rapidapi_host ?: 'Not set' }}</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card premium-card border-0 shadow-sm p-3 h-100">
+            <span class="small text-muted">API Status</span>
+            <span class="badge {{ $apiSetting->api_status === 'active' ? 'bg-success' : ($apiSetting->api_status === 'error' ? 'bg-danger' : 'bg-secondary') }} mt-1 align-self-start">{{ ucfirst($apiSetting->api_status) }}</span>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card premium-card border-0 shadow-sm p-3 h-100">
+            <span class="small text-muted">Live Features</span>
+            <span class="fw-bold text-navy">Locations, Flights, Multi-stop, Details</span>
+        </div>
+    </div>
 </div>
 
 <div class="row g-4">
@@ -18,7 +45,7 @@
     <div class="col-12 col-xl-8">
         <div class="card premium-card border-0 shadow-sm p-4">
             <h5 class="fw-bold text-navy mb-4 border-bottom pb-2">
-                <i class="fa-solid fa-network-wired text-warning me-2"></i>Provider Configuration
+                <i class="fa-solid fa-network-wired text-warning me-2"></i>Booking.com15 Provider Configuration
             </h5>
 
             <form action="{{ route('admin.api-settings.update') }}" method="POST">
@@ -38,24 +65,30 @@
                             <input type="url" class="form-control px-3" id="base_url" name="base_url" value="{{ old('base_url', $apiSetting->base_url) }}" required>
                         </div>
                     </div>
+                    <div class="col-12 col-md-6">
+                        <div class="mb-3">
+                            <label for="rapidapi_host" class="form-label fw-bold">RapidAPI Host Header</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="rapidapi_host" name="rapidapi_host" value="{{ old('rapidapi_host', $apiSetting->rapidapi_host ?: 'booking-com15.p.rapidapi.com') }}" required>
+                        </div>
+                    </div>
 
                     <!-- Credentials with Masking -->
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label for="api_key" class="form-label fw-bold">API Key (Encrypted)</label>
+                            <label for="api_key" class="form-label fw-bold">RapidAPI Key (Encrypted)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-navy"><i class="fa-solid fa-key"></i></span>
-                                <input type="password" class="form-control px-3" id="api_key" name="api_key" value="{{ old('api_key', $apiSetting->api_key ? '••••••••••••••••' : '') }}" placeholder="Enter GDS Client ID / API Key">
+                                <input type="password" class="form-control px-3" id="api_key" name="api_key" value="{{ old('api_key', $apiSetting->api_key ? '••••••••••••••••' : '') }}" placeholder="Enter x-rapidapi-key">
                                 <button class="btn btn-outline-secondary toggle-password" type="button"><i class="fa-regular fa-eye"></i></button>
                             </div>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label for="api_secret" class="form-label fw-bold">API Secret (Encrypted)</label>
+                            <label for="api_secret" class="form-label fw-bold">Optional API Secret / Notes</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light text-navy"><i class="fa-solid fa-shield-halved"></i></span>
-                                <input type="password" class="form-control px-3" id="api_secret" name="api_secret" value="{{ old('api_secret', $apiSetting->api_secret ? '••••••••••••••••' : '') }}" placeholder="Enter GDS API Secret">
+                                <input type="password" class="form-control px-3" id="api_secret" name="api_secret" value="{{ old('api_secret', $apiSetting->api_secret ? '••••••••••••••••' : '') }}" placeholder="Optional">
                                 <button class="btn btn-outline-secondary toggle-password" type="button"><i class="fa-regular fa-eye"></i></button>
                             </div>
                         </div>
@@ -66,6 +99,12 @@
                         <div class="mb-3">
                             <label for="currency" class="form-label fw-bold">Default Currency Code</label>
                             <input type="text" class="form-control px-3" id="currency" name="currency" value="{{ old('currency', $apiSetting->currency) }}" placeholder="e.g. USD" required>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="mb-3">
+                            <label for="language_code" class="form-label fw-bold">Language Code</label>
+                            <input type="text" class="form-control px-3" id="language_code" name="language_code" value="{{ old('language_code', $apiSetting->language_code ?: 'en-us') }}" placeholder="e.g. en-us" required>
                         </div>
                     </div>
                     <div class="col-12 col-md-4">
@@ -88,7 +127,7 @@
                     </div>
 
                     <!-- Sandbox Mode and API status -->
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-4">
                         <div class="mb-3">
                             <label for="mode" class="form-label fw-bold">Operational Mode</label>
                             <select class="form-select px-3" id="mode" name="mode" required>
@@ -97,7 +136,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-12 col-md-6">
+                    <div class="col-12 col-md-4">
                         <div class="mb-3">
                             <label for="api_status" class="form-label fw-bold">System Status</label>
                             <select class="form-select px-3" id="api_status" name="api_status" required>
@@ -110,36 +149,51 @@
 
                     <!-- Endpoints Segment -->
                     <div class="col-12">
-                        <h6 class="fw-bold text-navy mt-4 border-bottom pb-1"><i class="fa-solid fa-code-fork me-2"></i>API Route Endpoints</h6>
+                        <h6 class="fw-bold text-navy mt-4 border-bottom pb-1"><i class="fa-solid fa-code-fork me-2"></i>Booking.com15 Flight Endpoints</h6>
                     </div>
 
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label for="endpoint_search" class="form-label fw-bold">Flight Search Route</label>
+                            <label for="endpoint_location" class="form-label fw-bold">Search Flight Location</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_location" name="endpoint_location" value="{{ old('endpoint_location', $apiSetting->endpoint_location ?: '/api/v1/flights/searchDestination') }}" required style="font-size:0.85rem;">
+                        </div>
+                        <div class="mb-3">
+                            <label for="endpoint_search" class="form-label fw-bold">Search Flights</label>
                             <input type="text" class="form-control px-3 font-monospace" id="endpoint_search" name="endpoint_search" value="{{ old('endpoint_search', $apiSetting->endpoint_search) }}" required style="font-size:0.85rem;">
                         </div>
                         <div class="mb-3">
-                            <label for="endpoint_booking" class="form-label fw-bold">Seat Booking Route</label>
-                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_booking" name="endpoint_booking" value="{{ old('endpoint_booking', $apiSetting->endpoint_booking) }}" required style="font-size:0.85rem;">
+                            <label for="endpoint_multi_stop" class="form-label fw-bold">Search Flights Multi Stops</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_multi_stop" name="endpoint_multi_stop" value="{{ old('endpoint_multi_stop', $apiSetting->endpoint_multi_stop ?: '/api/v1/flights/searchFlightsMultiStops') }}" required style="font-size:0.85rem;">
                         </div>
                         <div class="mb-3">
-                            <label for="endpoint_fare_rules" class="form-label fw-bold">Fare Pricing & Rules Route</label>
-                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_fare_rules" name="endpoint_fare_rules" value="{{ old('endpoint_fare_rules', $apiSetting->endpoint_fare_rules) }}" required style="font-size:0.85rem;">
+                            <label for="endpoint_details" class="form-label fw-bold">Flight Details</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_details" name="endpoint_details" value="{{ old('endpoint_details', $apiSetting->endpoint_details ?: '/api/v1/flights/getFlightDetails') }}" required style="font-size:0.85rem;">
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="mb-3">
-                            <label for="endpoint_cancellation" class="form-label fw-bold">Booking Cancellation Route</label>
-                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_cancellation" name="endpoint_cancellation" value="{{ old('endpoint_cancellation', $apiSetting->endpoint_cancellation) }}" required style="font-size:0.85rem;">
+                            <label for="endpoint_min_price" class="form-label fw-bold">Min Price</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_min_price" name="endpoint_min_price" value="{{ old('endpoint_min_price', $apiSetting->endpoint_min_price ?: '/api/v1/flights/getMinPrice') }}" required style="font-size:0.85rem;">
                         </div>
                         <div class="mb-3">
-                            <label for="endpoint_refund" class="form-label fw-bold">Ticket Refund Route</label>
-                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_refund" name="endpoint_refund" value="{{ old('endpoint_refund', $apiSetting->endpoint_refund) }}" required style="font-size:0.85rem;">
+                            <label for="endpoint_booking" class="form-label fw-bold">Seat Map / Booking Support</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_booking" name="endpoint_booking" value="{{ old('endpoint_booking', $apiSetting->endpoint_booking ?: '/api/v1/flights/getSeatMap') }}" style="font-size:0.85rem;">
                         </div>
                         <div class="mb-3">
-                            <label for="endpoint_webhook" class="form-label fw-bold">Push Notifications Webhook Route</label>
-                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_webhook" name="endpoint_webhook" value="{{ old('endpoint_webhook', $apiSetting->endpoint_webhook) }}" required style="font-size:0.85rem;">
+                            <label for="endpoint_fare_rules" class="form-label fw-bold">Fare Rules / Pricing</label>
+                            <input type="text" class="form-control px-3 font-monospace" id="endpoint_fare_rules" name="endpoint_fare_rules" value="{{ old('endpoint_fare_rules', $apiSetting->endpoint_fare_rules ?: '/api/v1/flights/getMinPrice') }}" style="font-size:0.85rem;">
                         </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="endpoint_cancellation" class="form-label fw-bold">Cancellation</label>
+                                <input type="text" class="form-control px-3 font-monospace" id="endpoint_cancellation" name="endpoint_cancellation" value="{{ old('endpoint_cancellation', $apiSetting->endpoint_cancellation) }}" style="font-size:0.8rem;">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="endpoint_refund" class="form-label fw-bold">Refund</label>
+                                <input type="text" class="form-control px-3 font-monospace" id="endpoint_refund" name="endpoint_refund" value="{{ old('endpoint_refund', $apiSetting->endpoint_refund) }}" style="font-size:0.8rem;">
+                            </div>
+                        </div>
+                        <input type="hidden" name="endpoint_webhook" value="{{ old('endpoint_webhook', $apiSetting->endpoint_webhook ?: '/api/webhooks/booking-com15') }}">
                     </div>
                 </div>
 
@@ -154,13 +208,13 @@
     <div class="col-12 col-xl-4">
         <div class="card premium-card border-0 shadow-sm p-4 h-100 d-flex flex-column bg-navy text-white overflow-hidden">
             <h5 class="fw-bold text-warning mb-3 border-bottom border-secondary pb-2">
-                <i class="fa-solid fa-terminal me-2"></i>Diagnostic Terminal
+                <i class="fa-solid fa-terminal me-2"></i>Booking.com15 Diagnostic
             </h5>
             
-            <p class="text-light small mb-3">Execute a live ping checklist on your primary API provider to verify credentials, DNS, and latency status.</p>
+            <p class="text-light small mb-3">Runs a real location search against Booking.com15 using your RapidAPI key and host header.</p>
 
             <button type="button" class="btn btn-warning w-100 fw-bold mb-4 py-2" id="test-connection-btn">
-                <i class="fa-solid fa-bolt me-2"></i>Test GDS API Connection
+                <i class="fa-solid fa-bolt me-2"></i>Test Booking.com15 API
             </button>
 
             <div class="flex-grow-1 d-flex flex-column">
@@ -224,7 +278,7 @@
                 success: function(data) {
                     termContent.text(data.log).removeClass('d-none');
                     termSpinner.addClass('d-none');
-                    btn.prop('disabled', false).html('<i class="fa-solid fa-bolt me-2"></i>Test GDS API Connection');
+                    btn.prop('disabled', false).html('<i class="fa-solid fa-bolt me-2"></i>Test Booking.com15 API');
                     
                     // Show success toast dynamically if it exists
                     var toastHtml = '<div class="toast show align-items-center text-white bg-success border-0 shadow-lg" role="alert"><div class="d-flex"><div class="toast-body d-flex align-items-center"><i class="fa-solid fa-circle-check fs-5 me-2"></i>' + data.message + '</div></div></div>';
@@ -243,7 +297,7 @@
                     }
                     termContent.text(errorMsg).removeClass('d-none');
                     termSpinner.addClass('d-none');
-                    btn.prop('disabled', false).html('<i class="fa-solid fa-bolt me-2"></i>Test GDS API Connection');
+                    btn.prop('disabled', false).html('<i class="fa-solid fa-bolt me-2"></i>Test Booking.com15 API');
 
                     var toastHtml = '<div class="toast show align-items-center text-white bg-danger border-0 shadow-lg" role="alert"><div class="d-flex"><div class="toast-body d-flex align-items-center"><i class="fa-solid fa-circle-exclamation fs-5 me-2"></i>API connection failed!</div></div></div>';
                     $('.toast-container').append(toastHtml);

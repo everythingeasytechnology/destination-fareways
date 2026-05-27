@@ -67,6 +67,11 @@
                 <div class="sort-bar mb-3">
                     <div class="small text-muted fw-bold d-none d-sm-block">
                         Found {{ count($mockFlights) }} Flight{{ count($mockFlights) > 1 ? 's' : '' }}
+                        @if(($apiResult['source'] ?? '') === 'booking_com15')
+                            <span class="badge bg-success ms-2">Live Booking.com15</span>
+                        @else
+                            <span class="badge bg-warning text-navy ms-2">Fallback Results</span>
+                        @endif
                     </div>
                     
                     <div class="sort-options">
@@ -81,6 +86,13 @@
                         <i class="fa-solid fa-filter me-1"></i> Filters
                     </button>
                 </div>
+
+                @if(!empty($apiResult['error']))
+                    <div class="alert alert-warning small border-0 shadow-sm">
+                        <i class="fa-solid fa-triangle-exclamation me-1"></i>
+                        Live API fallback active: {{ $apiResult['error'] }}
+                    </div>
+                @endif
 
                 <!-- Flight Result Cards -->
                 @forelse($mockFlights as $flight)
@@ -134,9 +146,9 @@
                             <div class="col-md-3 text-center text-md-end border-start">
                                 <div class="mb-2">
                                     <span class="text-muted small d-block">Total fare</span>
-                                    <span class="price fs-3 fw-bold font-monospace">${{ number_format($flight['price']) }}</span>
+                                    <span class="price fs-3 fw-bold font-monospace">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['price']) }}</span>
                                 </div>
-                                <a href="{{ route('flights.details', $flight['id']) }}?from={{ $flight['from'] }}&to={{ $flight['to'] }}&cabin_class={{ $flight['cabin_class'] }}" class="btn btn-gold btn-sm px-4">
+                                <a href="{{ route('flights.details', $flight['id']) }}?from={{ $flight['from'] }}&to={{ $flight['to'] }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ $flight['cabin_class'] }}@if(!empty($flight['token']))&token={{ urlencode($flight['token']) }}@endif" class="btn btn-gold btn-sm px-4">
                                     Select <i class="fa-solid fa-chevron-right ms-1" style="font-size: 0.8rem;"></i>
                                 </a>
                             </div>

@@ -8,6 +8,7 @@ use App\Models\CallSetting;
 use App\Models\SeoSetting;
 use App\Models\FlightEnquiry;
 use App\Http\Requests\FlightEnquiryRequest;
+use App\Services\BookingFlightService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -28,10 +29,33 @@ class FlightController extends Controller
         return view('frontend.flight-search', compact('settings', 'seoData', 'breadcrumbs'));
     }
 
+    public function locations(Request $request, BookingFlightService $bookingFlightService)
+    {
+        $request->validate([
+            'query' => ['required', 'string', 'min:2', 'max:100'],
+        ]);
+
+        try {
+            $payload = $bookingFlightService->searchLocations($request->input('query'));
+            $locations = $bookingFlightService->normalizeLocations($payload);
+
+            return response()->json([
+                'success' => true,
+                'locations' => $locations,
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'locations' => [],
+                'message' => 'Unable to load locations right now.',
+            ], 422);
+        }
+    }
+
     /**
      * Display Mock Flight Search Results
      */
-    public function results(Request $request)
+    public function results(Request $request, BookingFlightService $bookingFlightService)
     {
         $settings = Setting::first();
         $seoData = SeoSetting::where('page_identifier', 'flights')->first();
@@ -48,76 +72,8 @@ class FlightController extends Controller
         // Normalize trip type dashes
         $tripType = str_replace('-', '_', $tripType);
 
-        // Mock flight data generation
-        $airlines = [
-            ['name' => 'Delta Air Lines', 'code' => 'DL', 'logo' => 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=60&h=60&fit=crop'],
-            ['name' => 'American Airlines', 'code' => 'AA', 'logo' => 'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=60&h=60&fit=crop'],
-            ['name' => 'United Airlines', 'code' => 'UA', 'logo' => 'https://images.unsplash.com/photo-1483450388369-9ed95738483c?w=60&h=60&fit=crop'],
-            ['name' => 'Alaska Airlines', 'code' => 'AS', 'logo' => 'https://images.unsplash.com/photo-1517999144091-3d9dca6d1e43?w=60&h=60&fit=crop'],
-        ];
-
-        $basePrices = [
-            'economy' => 129,
-            'premium_economy' => 299,
-            'business' => 599,
-            'first' => 999
-        ];
-
-        $basePrice = $basePrices[$cabinClass] ?? 129;
-        
-        // Dynamic scaling based on distance or popular routes
-        if (($from == 'JFK' && $to == 'LAX') || ($from == 'LAX' && $to == 'JFK')) {
-            $basePrice = $basePrices[$cabinClass] ?? 129;
-        } elseif (($from == 'ORD' && $to == 'MIA') || ($from == 'MIA' && $to == 'ORD')) {
-            $basePrice = ($basePrices[$cabinClass] ?? 129) * 0.7;
-        } elseif (($from == 'DFW' && $to == 'LAS') || ($from == 'LAS' && $to == 'DFW')) {
-            $basePrice = ($basePrices[$cabinClass] ?? 129) * 0.6;
-        } else {
-            $basePrice = ($basePrices[$cabinClass] ?? 129) * 1.2;
-        }
-
-        $mockFlights = [];
-        $stopsOptions = [0, 1, 2];
-        $times = [
-            ['dep' => '06:15', 'arr' => '09:30', 'period' => 'morning'],
-            ['dep' => '10:30', 'arr' => '13:45', 'period' => 'morning'],
-            ['dep' => '14:45', 'arr' => '18:00', 'period' => 'afternoon'],
-            ['dep' => '19:00', 'arr' => '22:15', 'period' => 'evening'],
-            ['dep' => '23:30', 'arr' => '02:45', 'period' => 'night'],
-        ];
-
-        // Seed 6 realistic flights
-        for ($i = 0; $i < 6; $i++) {
-            $airline = $airlines[$i % count($airlines)];
-            $time = $times[$i % count($times)];
-            $stops = $stopsOptions[$i % 3];
-            
-            // Economy vs Business markup
-            $price = round($basePrice * (1 + ($i * 0.08)));
-            $durationHours = 3 + ($stops * 2) + ($i * 0.5);
-            $durationMinutes = ($i * 10) % 60;
-            $duration = "{$durationHours}h {$durationMinutes}m";
-
-            $mockFlights[] = [
-                'id' => $i + 101,
-                'airline_name' => $airline['name'],
-                'airline_code' => $airline['code'],
-                'airline_logo' => $airline['logo'],
-                'from' => $from,
-                'to' => $to,
-                'departure_time' => $time['dep'],
-                'arrival_time' => $time['arr'],
-                'time_period' => $time['period'],
-                'duration' => $duration,
-                'duration_hours' => $durationHours,
-                'stops' => $stops,
-                'price' => $price,
-                'cabin_class' => ucwords(str_replace('_', ' ', $cabinClass)),
-                'baggage_allowance' => $cabinClass == 'business' || $cabinClass == 'first' ? '2 Checked Bags (32kg each) Included' : '1 Carry-on Included, Checked Bag Fee Applies',
-                'refund_policy' => $cabinClass == 'business' || $cabinClass == 'first' ? 'Fully Refundable (Free Cancellation)' : 'Non-Refundable (Change Fees Apply)',
-                'is_featured' => $i == 0
-            ];
-        }
+        $apiResult = $bookingFlightService->searchFlights($request);
+        $mockFlights = $apiResult['flights'];
 
         // Apply filters (if present)
         $stopsFilter = $request->input('stops'); // 'any', 'nonstop', '1', '2'
@@ -182,16 +138,38 @@ class FlightController extends Controller
             'passengers' => $passengers
         ];
 
-        return view('frontend.flight-results', compact('settings', 'filters', 'mockFlights', 'seoData', 'breadcrumbs'));
+        return view('frontend.flight-results', compact('settings', 'filters', 'mockFlights', 'seoData', 'breadcrumbs', 'apiResult'));
     }
 
     /**
      * Display Mock Flight Details
      */
-    public function details($id)
+    public function details($id, Request $request, BookingFlightService $bookingFlightService)
     {
         $settings = Setting::first();
         $seoData = SeoSetting::where('page_identifier', 'flights')->first();
+
+        if ($request->filled('token')) {
+            $apiFlight = $bookingFlightService->flightDetails($request->input('token'), $request);
+
+            if ($apiFlight) {
+                $price = (float) ($apiFlight['price'] ?: 0);
+                $flight = array_merge($apiFlight, [
+                    'cancellation_policy' => $apiFlight['refund_policy'] ?? 'Fare rules are provided by the operating airline and Booking.com15.',
+                    'base_fare' => round($price * 0.85, 2),
+                    'taxes' => round($price * 0.10, 2),
+                    'fees' => round($price * 0.05, 2),
+                    'total' => $price,
+                ]);
+
+                $breadcrumbs = [
+                    ['title' => 'Search Flights', 'url' => route('flights.search')],
+                    ['title' => "Flight Details"]
+                ];
+
+                return view('frontend.flight-details', compact('settings', 'flight', 'seoData', 'breadcrumbs'));
+            }
+        }
 
         // Reconstruct the selected mock flight
         $airlines = [

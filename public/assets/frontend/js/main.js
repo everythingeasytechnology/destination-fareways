@@ -48,25 +48,121 @@ $(document).ready(function () {
         if (tripType === 'one-way') {
             $('#return_date_wrapper').css('opacity', '0.5');
             $('#return_date_input').prop('disabled', true).val('');
+            $('.multi-city-fields').slideUp(180);
+            $('#from_city_input, #to_city_input, #depart_date_input').prop('disabled', false);
         } else if (tripType === 'round-trip') {
             $('#return_date_wrapper').css('opacity', '1');
             $('#return_date_input').prop('disabled', false);
+            $('.multi-city-fields').slideUp(180);
+            $('#from_city_input, #to_city_input, #depart_date_input').prop('disabled', false);
         } else if (tripType === 'multi-city') {
-            // Multi-city could redirect or open special booking enquiry
-            $('#return_date_wrapper').css('opacity', '1');
-            $('#return_date_input').prop('disabled', false);
+            $('#return_date_wrapper').css('opacity', '0.5');
+            $('#return_date_input').prop('disabled', true);
+            $('.multi-city-fields').slideDown(180);
+            $('#from_city_input, #to_city_input, #depart_date_input').prop('disabled', true);
         }
     });
+
+    var initialTripType = ($('#trip_type_input').val() || '').replace('_', '-');
+    if (initialTripType === 'multi-city') {
+        $('.search-tab-btn[data-type="multi-city"]').trigger('click');
+    } else if (initialTripType === 'one-way') {
+        $('.search-tab-btn[data-type="one-way"]').trigger('click');
+    }
 
     // 4. Swap From & To Location Value Toggle
     $('.swap-btn').on('click', function () {
         var fromInput = $('#from_city_input');
         var toInput = $('#to_city_input');
+        var fromIdInput = $('#from_location_id');
+        var toIdInput = $('#to_location_id');
         
         if (fromInput.length && toInput.length) {
             var temp = fromInput.val();
             fromInput.val(toInput.val());
             toInput.val(temp);
+
+            var tempId = fromIdInput.val();
+            fromIdInput.val(toIdInput.val());
+            toIdInput.val(tempId);
+        }
+    });
+
+    // 4b. Booking.com15 location autocomplete
+    var locationTimers = {};
+
+    $('.flight-location-input').each(function () {
+        var input = $(this);
+        var group = input.closest('.search-input-group');
+        group.css('position', 'relative');
+
+        if (!group.find('.flight-location-suggestions').length) {
+            group.append('<div class="flight-location-suggestions"></div>');
+        }
+    });
+
+    $('.flight-location-input').on('input', function () {
+        var input = $(this);
+        var query = input.val().trim();
+        var targetId = input.data('target');
+        var dropdown = input.closest('.search-input-group').find('.flight-location-suggestions');
+
+        $('#' + targetId).val('');
+        clearTimeout(locationTimers[input.attr('id')]);
+
+        if (query.length < 2) {
+            dropdown.hide().empty();
+            return;
+        }
+
+        dropdown.html('<div class="px-3 py-2 small text-muted">Searching...</div>').show();
+
+        locationTimers[input.attr('id')] = setTimeout(function () {
+            $.ajax({
+                url: '/flights/locations',
+                method: 'GET',
+                data: { query: query },
+                success: function (response) {
+                    var locations = response.locations || [];
+
+                    if (!locations.length) {
+                        dropdown.html('<div class="px-3 py-2 small text-muted">No locations found</div>').show();
+                        return;
+                    }
+
+                    var html = locations.map(function (location) {
+                        var code = location.code ? '<span class="badge bg-light text-navy border ms-2">' + location.code + '</span>' : '';
+                        var country = location.country ? '<div class="small text-muted">' + location.country + ' · ' + location.type + '</div>' : '<div class="small text-muted">' + location.type + '</div>';
+
+                        return '<button type="button" class="flight-location-option" data-id="' + location.id + '" data-label="' + location.label + '">' +
+                            '<div class="fw-semibold">' + location.name + code + '</div>' +
+                            country +
+                        '</button>';
+                    }).join('');
+
+                    dropdown.html(html).show();
+                },
+                error: function () {
+                    dropdown.html('<div class="px-3 py-2 small text-muted">Suggestions unavailable</div>').show();
+                }
+            });
+        }, 350);
+    });
+
+    $(document).on('click', '.flight-location-option', function () {
+        var option = $(this);
+        var group = option.closest('.search-input-group');
+        var input = group.find('.flight-location-input');
+        var targetId = input.data('target');
+
+        input.val(option.data('label'));
+        $('#' + targetId).val(option.data('id'));
+        group.find('.flight-location-suggestions').hide().empty();
+    });
+
+    $(document).on('click', function (e) {
+        if (!$(e.target).closest('.search-input-group').length) {
+            $('.flight-location-suggestions').hide();
         }
     });
 

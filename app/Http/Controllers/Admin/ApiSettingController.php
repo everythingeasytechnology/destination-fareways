@@ -4,33 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ApiSetting;
+use App\Services\BookingFlightService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class ApiSettingController extends Controller
 {
     /**
      * Display the GDS/Flight API settings panel.
      */
-    public function index()
+    public function index(BookingFlightService $bookingFlightService)
     {
         $apiSetting = ApiSetting::firstOrCreate([
             'id' => 1
-        ], [
-            'provider' => 'Amadeus GDS',
-            'base_url' => 'https://test.api.amadeus.com',
-            'mode' => 'sandbox',
-            'endpoint_search' => '/v2/shopping/flight-offers',
-            'endpoint_booking' => '/v1/booking/flight-orders',
-            'endpoint_fare_rules' => '/v1/shopping/flight-offers/pricing',
-            'endpoint_cancellation' => '/v1/booking/flight-orders',
-            'endpoint_refund' => '/v1/booking/flight-refunds',
-            'endpoint_webhook' => '/api/webhooks/amadeus',
-            'api_status' => 'inactive',
-            'currency' => 'USD',
-            'markup_percent' => 5.00,
-            'commission_percent' => 3.00,
-        ]);
+        ], $bookingFlightService->defaultSettings());
 
         return view('admin.api-settings.index', compact('apiSetting'));
     }
@@ -42,17 +28,38 @@ class ApiSettingController extends Controller
     {
         $apiSetting = ApiSetting::findOrFail(1);
 
+        $request->merge([
+            'base_url' => $this->normalizeEndpointText($request->input('base_url')),
+            'rapidapi_host' => $this->normalizeEndpointText($request->input('rapidapi_host')),
+            'endpoint_location' => $this->normalizeEndpointText($request->input('endpoint_location')),
+            'endpoint_search' => $this->normalizeEndpointText($request->input('endpoint_search')),
+            'endpoint_multi_stop' => $this->normalizeEndpointText($request->input('endpoint_multi_stop')),
+            'endpoint_details' => $this->normalizeEndpointText($request->input('endpoint_details')),
+            'endpoint_min_price' => $this->normalizeEndpointText($request->input('endpoint_min_price')),
+            'endpoint_booking' => $this->normalizeEndpointText($request->input('endpoint_booking')),
+            'endpoint_fare_rules' => $this->normalizeEndpointText($request->input('endpoint_fare_rules')),
+            'endpoint_cancellation' => $this->normalizeEndpointText($request->input('endpoint_cancellation')),
+            'endpoint_refund' => $this->normalizeEndpointText($request->input('endpoint_refund')),
+            'endpoint_webhook' => $this->normalizeEndpointText($request->input('endpoint_webhook')),
+        ]);
+
         $rules = [
             'provider' => ['required', 'string', 'max:100'],
             'base_url' => ['required', 'url', 'max:255'],
+            'rapidapi_host' => ['required', 'string', 'max:255'],
             'mode' => ['required', 'string', 'in:sandbox,live'],
-            'endpoint_search' => ['required', 'string', 'max:100'],
-            'endpoint_booking' => ['required', 'string', 'max:100'],
-            'endpoint_fare_rules' => ['required', 'string', 'max:100'],
-            'endpoint_cancellation' => ['required', 'string', 'max:100'],
-            'endpoint_refund' => ['required', 'string', 'max:100'],
-            'endpoint_webhook' => ['required', 'string', 'max:100'],
+            'endpoint_location' => ['required', 'string', 'max:150'],
+            'endpoint_search' => ['required', 'string', 'max:150'],
+            'endpoint_multi_stop' => ['required', 'string', 'max:150'],
+            'endpoint_details' => ['required', 'string', 'max:150'],
+            'endpoint_min_price' => ['required', 'string', 'max:150'],
+            'endpoint_booking' => ['nullable', 'string', 'max:150'],
+            'endpoint_fare_rules' => ['nullable', 'string', 'max:150'],
+            'endpoint_cancellation' => ['nullable', 'string', 'max:150'],
+            'endpoint_refund' => ['nullable', 'string', 'max:150'],
+            'endpoint_webhook' => ['nullable', 'string', 'max:150'],
             'currency' => ['required', 'string', 'max:10'],
+            'language_code' => ['required', 'string', 'max:10'],
             'markup_percent' => ['required', 'numeric', 'min:0', 'max:100'],
             'commission_percent' => ['required', 'numeric', 'min:0', 'max:100'],
             'api_status' => ['required', 'string', 'in:active,inactive,error'],
@@ -78,27 +85,21 @@ class ApiSettingController extends Controller
 
         $apiSetting->update($validatedData);
 
-        return redirect()->route('admin.api-settings.index')->with('success', 'GDS API configuration updated successfully.');
+        return redirect()->route('admin.api-settings.index')->with('success', 'Booking.com15 API configuration updated successfully.');
     }
 
     /**
      * Test the API Connection log.
      */
-    public function testConnection(Request $request)
+    public function testConnection(Request $request, BookingFlightService $bookingFlightService)
     {
         $apiSetting = ApiSetting::findOrFail(1);
 
         try {
-            // Perform a simulated ping or basic auth call to the base URL
-            $url = rtrim($apiSetting->base_url, '/');
-            
-            // To be extremely robust and safe (since it's a test environment), we do a timeout-limited ping
-            // We simulate a responsive API call or fallback gracefully if no internet is present
-            $response = Http::timeout(3)->get($url);
+            $result = $bookingFlightService->testConnection();
 
             $status = 'active';
-            $statusCode = $response->status();
-            $log = "Connection Successful!\nHTTP Status: {$statusCode}\nTarget: {$url}\nTimestamp: " . now()->toIso8601String() . "\nConnection latency: Stable.";
+            $log = "Connection Successful!\nProvider: {$apiSetting->provider}\nHost: {$apiSetting->rapidapi_host}\nEndpoint: {$apiSetting->endpoint_location}\nMessage: {$result['message']}\nTimestamp: " . now()->toIso8601String();
             
             $apiSetting->update([
                 'api_status' => 'active',
@@ -114,7 +115,7 @@ class ApiSettingController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            $log = "Connection Failed!\nError: " . $e->getMessage() . "\nTarget: " . ($apiSetting->base_url ?? 'N/A') . "\nTimestamp: " . now()->toIso8601String();
+            $log = "Connection Failed!\nError: " . $e->getMessage() . "\nTarget: " . ($apiSetting->base_url ?? 'N/A') . "\nHost: " . ($apiSetting->rapidapi_host ?? 'N/A') . "\nTimestamp: " . now()->toIso8601String();
             
             $apiSetting->update([
                 'api_status' => 'error',
@@ -128,5 +129,14 @@ class ApiSettingController extends Controller
                 'log' => $log,
             ]);
         }
+    }
+
+    private function normalizeEndpointText(?string $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        return trim(str_replace(['–', '—', '−'], '-', $value));
     }
 }

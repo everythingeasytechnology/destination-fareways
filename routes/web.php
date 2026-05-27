@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\SeoController;
 use App\Http\Controllers\Admin\SchemaController;
+use App\Http\Controllers\Admin\SitemapController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\UserController;
@@ -40,6 +41,7 @@ use App\Http\Controllers\Frontend\SitemapController as FrontSitemapController;
 // ===================== FRONTEND ROUTES =====================
 Route::get('/', [FrontHomeController::class, 'index'])->name('home');
 Route::get('/flights/search', [FrontFlightController::class, 'search'])->name('flights.search');
+Route::get('/flights/locations', [FrontFlightController::class, 'locations'])->name('flights.locations');
 Route::get('/flights/results', [FrontFlightController::class, 'results'])->name('flights.results');
 Route::get('/flights/details/{id}', [FrontFlightController::class, 'details'])->name('flights.details');
 Route::get('/booking-enquiry', [FrontFlightController::class, 'enquiryForm'])->name('booking.enquiry');
@@ -119,6 +121,10 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
         Route::get('seo', [SeoController::class, 'index'])->name('seo.index');
         Route::get('seo/{seo}/edit', [SeoController::class, 'edit'])->name('seo.edit');
         Route::put('seo/{seo}', [SeoController::class, 'update'])->name('seo.update');
+
+        // Sitemap Manager
+        Route::get('sitemap', [SitemapController::class, 'index'])->name('sitemap.index');
+        Route::post('sitemap/refresh', [SitemapController::class, 'refresh'])->name('sitemap.refresh');
 
         // Schema Settings
         Route::resource('schema', SchemaController::class);

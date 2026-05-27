@@ -119,6 +119,10 @@
                     <i class="fa-solid fa-code"></i>
                     <span>Schema Markups</span>
                 </a>
+                <a href="{{ route('admin.sitemap.index') }}" class="nav-link {{ request()->routeIs('admin.sitemap.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-sitemap"></i>
+                    <span>Sitemap Manager</span>
+                </a>
             @endif
 
             <!-- Configuration Group -->
