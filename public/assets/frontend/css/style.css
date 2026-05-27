@@ -507,6 +507,40 @@ section {
   min-width: 280px;
 }
 
+.flight-location-suggestions {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    right: 0;
+    z-index: 1060;
+    display: none;
+    max-height: 280px;
+    overflow-y: auto;
+    background: #fff;
+    border: 1px solid rgba(7, 17, 31, 0.12);
+    border-radius: 8px;
+    box-shadow: 0 16px 40px rgba(7, 17, 31, 0.16);
+}
+
+.flight-location-option {
+    width: 100%;
+    padding: 10px 12px;
+    border: 0;
+    border-bottom: 1px solid rgba(7, 17, 31, 0.08);
+    background: #fff;
+    color: #07111F;
+    text-align: left;
+}
+
+.flight-location-option:hover,
+.flight-location-option:focus {
+    background: #f6f8fb;
+}
+
+.flight-location-option:last-child {
+    border-bottom: 0;
+}
+
 .passenger-row {
   display: flex;
   justify-content: space-between;

@@ -3,17 +3,22 @@
     <form action="{{ route('flights.results') }}" method="GET" id="filter-sidebar-form">
         <!-- Persistent parameters from search -->
         <input type="hidden" name="from" value="{{ request('from') }}">
+        <input type="hidden" name="fromId" value="{{ request('fromId') }}">
         <input type="hidden" name="to" value="{{ request('to') }}">
+        <input type="hidden" name="toId" value="{{ request('toId') }}">
         <input type="hidden" name="depart" value="{{ request('depart') }}">
         <input type="hidden" name="return" value="{{ request('return') }}">
         <input type="hidden" name="total_passengers" value="{{ request('total_passengers') }}">
+        <input type="hidden" name="adults" value="{{ request('adults', 1) }}">
+        <input type="hidden" name="children" value="{{ request('children', 0) }}">
+        <input type="hidden" name="infants" value="{{ request('infants', 0) }}">
         <input type="hidden" name="cabin_class" value="{{ request('cabin_class') }}">
         <input type="hidden" name="trip_type" value="{{ request('trip_type') }}">
         <input type="hidden" name="sort" value="{{ request('sort', 'price_asc') }}">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="fw-bold text-navy mb-0" style="font-family: 'DM Sans', sans-serif;">Filter Flights</h5>
-            <a href="{{ route('flights.results') }}?from={{ request('from') }}&to={{ request('to') }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ request('cabin_class') }}" class="small text-decoration-underline text-secondary">Reset</a>
+            <a href="{{ route('flights.results') }}?from={{ request('from') }}&fromId={{ request('fromId') }}&to={{ request('to') }}&toId={{ request('toId') }}&depart={{ request('depart') }}&return={{ request('return') }}&cabin_class={{ request('cabin_class') }}" class="small text-decoration-underline text-secondary">Reset</a>
         </div>
 
         <!-- 1. Stops -->

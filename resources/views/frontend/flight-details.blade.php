@@ -59,19 +59,19 @@
                             <tbody>
                                 <tr style="font-size: 0.95rem;">
                                     <td class="text-secondary ps-0">Base airfare (1 Adult)</td>
-                                    <td class="text-end pe-0 font-monospace fw-semibold text-navy">${{ number_format($flight['base_fare'], 2) }}</td>
+                                    <td class="text-end pe-0 font-monospace fw-semibold text-navy">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['base_fare'], 2) }}</td>
                                 </tr>
                                 <tr style="font-size: 0.95rem;">
                                     <td class="text-secondary ps-0">Taxes & governmental surcharges</td>
-                                    <td class="text-end pe-0 font-monospace fw-semibold text-navy">${{ number_format($flight['taxes'], 2) }}</td>
+                                    <td class="text-end pe-0 font-monospace fw-semibold text-navy">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['taxes'], 2) }}</td>
                                 </tr>
                                 <tr style="font-size: 0.95rem;">
                                     <td class="text-secondary ps-0">Ticketing & security processing fees</td>
-                                    <td class="text-end pe-0 font-monospace fw-semibold text-navy">${{ number_format($flight['fees'], 2) }}</td>
+                                    <td class="text-end pe-0 font-monospace fw-semibold text-navy">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['fees'], 2) }}</td>
                                 </tr>
                                 <tr class="border-top" style="font-size: 1.1rem;">
                                     <td class="text-navy fw-bold ps-0 pt-3">Total Ticket Cost</td>
-                                    <td class="text-end pe-0 font-monospace fw-bold text-gold pt-3" style="font-size: 1.3rem;">${{ number_format($flight['total'], 2) }}</td>
+                                    <td class="text-end pe-0 font-monospace fw-bold text-gold pt-3" style="font-size: 1.3rem;">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['total'], 2) }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -158,7 +158,7 @@
                             <input type="hidden" name="cabin_class" value="{{ strtolower(str_replace(' ', '_', $flight['cabin_class'])) }}">
                             <input type="hidden" name="trip_type" value="{{ request('return') ? 'round_trip' : 'one_way' }}">
                             <input type="hidden" name="preferred_airline" value="{{ $flight['airline_name'] }}">
-                            <input type="hidden" name="budget" value="${{ $flight['price'] }}">
+                            <input type="hidden" name="budget" value="{{ $flight['currency'] ?? 'USD' }} {{ $flight['price'] }}">
 
                             <div class="mb-3">
                                 <label for="enq-name" class="form-label text-navy small fw-semibold">Full Name *</label>
