@@ -133,3 +133,8 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
     // Account settings are available to the signed-in user; team management is guarded inside the controller.
     Route::resource('users', UserController::class);
 });
+
+// Dynamic CMS pages from Admin > Pages. Keep this after all fixed routes.
+Route::get('/{slug}', [FrontPageController::class, 'show'])
+    ->where('slug', '[A-Za-z0-9-]+')
+    ->name('pages.show');

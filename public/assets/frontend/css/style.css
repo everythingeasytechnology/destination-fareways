@@ -105,6 +105,14 @@ section {
   color: #fff !important;
 }
 
+.navbar-brand, .navbar-brand span, footer a span.display-font {
+  color: #fff !important;
+}
+
+footer .border-top p {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
 .navbar-solid {
   background-color: var(--navy) !important;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -384,6 +392,8 @@ section {
 
 /* Search Form Component */
 .search-form-card {
+  position: relative;
+  z-index: 20;
   background-color: var(--white);
   border-radius: 16px;
   border: 1px solid var(--border);
@@ -494,58 +504,181 @@ section {
 .passenger-dropdown {
   position: absolute;
   top: 100%;
-  right: 0;
   left: 0;
+  right: auto;
+  width: 100%;
+  min-width: 300px;
   margin-top: 8px;
   background-color: var(--white);
   border: 1px solid var(--border);
   border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  padding: 20px;
-  z-index: 100;
+  box-shadow: 0 10px 35px rgba(7, 17, 31, 0.12);
+  padding: 16px;
+  z-index: 1050;
   display: none;
-  min-width: 280px;
 }
 
+.custom-page-hero {
+  background-color: var(--navy);
+  background-position: center;
+  background-size: cover;
+}
+
+/* Flight Autocomplete Suggestions Dropdown */
 .flight-location-suggestions {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    right: 0;
-    z-index: 1060;
-    display: none;
-    max-height: 280px;
-    overflow-y: auto;
-    background: #fff;
-    border: 1px solid rgba(7, 17, 31, 0.12);
-    border-radius: 8px;
-    box-shadow: 0 16px 40px rgba(7, 17, 31, 0.16);
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 1060;
+  display: none;
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border: 1.5px solid rgba(7, 17, 31, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 15px 45px rgba(7, 17, 31, 0.16);
+  padding: 8px 0;
 }
 
 .flight-location-option {
-    width: 100%;
-    padding: 10px 12px;
-    border: 0;
-    border-bottom: 1px solid rgba(7, 17, 31, 0.08);
-    background: #fff;
-    color: #07111F;
-    text-align: left;
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  border-bottom: 1px solid rgba(7, 17, 31, 0.04);
+  background: transparent;
+  color: var(--navy);
+  text-align: left;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .flight-location-option:hover,
 .flight-location-option:focus {
-    background: #f6f8fb;
+  background-color: rgba(245, 158, 11, 0.08); /* light gold hint */
+  outline: none;
 }
 
 .flight-location-option:last-child {
-    border-bottom: 0;
+  border-bottom: 0;
+}
+
+.flight-location-option .fw-semibold {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 0.92rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flight-location-option .small.text-muted {
+  font-size: 0.76rem;
+  margin-top: 3px;
+  color: #64748b !important;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.search-passenger-trigger {
+  background-color: var(--softgray);
+  color: var(--navy);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 8px 18px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease-in-out;
+  border-style: solid;
+  cursor: pointer;
+}
+
+.search-passenger-trigger:hover {
+  background-color: var(--border);
+}
+
+.swap-btn-absolute {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  width: 0;
+  height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swap-btn-vertical {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  width: 0;
+  height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swap-btn-vertical .swap-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.swap-btn-vertical .swap-btn:hover {
+  background-color: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+  transform: scale(1.1) translate(-45%, -45%); /* maintain scale + center */
+}
+
+.swap-btn-absolute .swap-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--white);
+  border: 1px solid var(--border);
+  color: var(--navy);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.swap-btn-absolute .swap-btn:hover {
+  background-color: var(--navy);
+  color: var(--white);
+  border-color: var(--navy);
+  transform: scale(1.1);
 }
 
 .passenger-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .passenger-row:last-child {
@@ -587,18 +720,18 @@ section {
 /* Custom Hero Section */
 .hero-section {
   position: relative;
+  z-index: 10;
   background-color: var(--navy);
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  padding-top: 100px;
-  overflow: hidden;
+  min-height: auto;
+  padding-top: 140px; /* Generous top spacing for transparent navbar on scroll */
+  padding-bottom: 80px;
+  overflow: visible; /* Prevents passenger dropdown and flatpickr calendars from being clipped */
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1501504905252-473c47e087f8?w=1600&q=80&auto=format');
+  background-image: url('thumbnail.png'); /* Placeholder image path */
   background-size: cover;
   background-position: center;
   opacity: 0.15;
@@ -856,6 +989,33 @@ section {
   font-weight: 600;
 }
 
+/* Light Breadcrumb colors on Dark Backgrounds */
+.bg-navy .custom-breadcrumb .breadcrumb-item a,
+.bg-dark .custom-breadcrumb .breadcrumb-item a,
+.text-white .custom-breadcrumb .breadcrumb-item a {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.bg-navy .custom-breadcrumb .breadcrumb-item a:hover,
+.bg-dark .custom-breadcrumb .breadcrumb-item a:hover,
+.text-white .custom-breadcrumb .breadcrumb-item a:hover {
+  color: #ffffff !important;
+}
+
+.bg-navy .custom-breadcrumb .breadcrumb-item.active,
+.bg-dark .custom-breadcrumb .breadcrumb-item.active,
+.text-white .custom-breadcrumb .breadcrumb-item.active {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.bg-navy .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before,
+.bg-dark .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before,
+.text-white .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
 /* Static & CMS Pages Content layout */
 .prose-content {
   font-family: 'DM Sans', sans-serif;
@@ -988,5 +1148,922 @@ section {
     min-height: auto;
     padding-top: 120px;
     padding-bottom: 60px;
+    overflow: visible;
   }
+}
+
+@media (max-width: 575.98px) {
+  .passenger-dropdown {
+    left: 0;
+    right: 0;
+    width: 100%;
+    min-width: 100%;
+    box-shadow: 0 15px 40px rgba(7, 17, 31, 0.18);
+  }
+  
+  .search-tabs-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 12px;
+  }
+  
+  .search-passenger-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  #passenger_dropdown_container {
+    width: 100%;
+  }
+}
+
+/* Flight Results Luxury Redesign Additions */
+@media (min-width: 992px) {
+  .border-start-lg {
+    border-left: 1.5px solid rgba(7, 17, 31, 0.08) !important;
+  }
+}
+
+.hover-shadow-lg:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 35px rgba(7, 17, 31, 0.08) !important;
+}
+
+/* Custom Gold Form Range Slider */
+input[type="range"].form-range::-webkit-slider-thumb {
+  background: #F59E0B !important;
+}
+input[type="range"].form-range::-moz-range-thumb {
+  background: #F59E0B !important;
+}
+input[type="range"].form-range::-ms-thumb {
+  background: #F59E0B !important;
+}
+
+/* Premium Time Chips checkbox wrapper styling */
+.time-chip-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid rgba(7, 17, 31, 0.08) !important;
+  border-radius: 10px !important;
+  padding: 10px 8px !important;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 700 !important;
+  color: var(--navy) !important;
+  cursor: pointer;
+  flex: 1 0 45%;
+  text-align: center;
+  background-color: #f8fafc;
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.time-chip-label:hover {
+  background-color: #f1f5f9;
+  border-color: rgba(7, 17, 31, 0.15) !important;
+}
+
+.time-chip-input:checked + .time-chip-label {
+  border-color: #F59E0B !important;
+  background-color: rgba(245, 158, 11, 0.06) !important;
+  color: #07111F !important;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.1);
+}
+
+.time-chip-input:checked + .time-chip-label i {
+  color: #F59E0B !important;
+}
+
+/* Custom premium check radio highlights */
+.filter-card .form-check-input:checked {
+  background-color: #F59E0B !important;
+  border-color: #F59E0B !important;
+}
+
+.filter-card .form-check-input {
+  cursor: pointer;
+  border-color: rgba(7, 17, 31, 0.2);
+}
+
+.filter-card .form-check-label {
+  cursor: pointer;
+  font-weight: 500;
+  color: #07111F !important;
+  transition: color 0.15s ease;
+}
+
+.filter-card .form-check-label:hover {
+  color: #F59E0B !important;
+}
+
+/* Luxury Card Flight Style */
+.card-flight {
+  background: #ffffff;
+  border: 1.5px solid rgba(7, 17, 31, 0.04) !important;
+  border-radius: 16px !important;
+}
+
+.sort-bar {
+  background-color: #f8fafc !important;
+  border: 1px solid rgba(7, 17, 31, 0.05) !important;
+  border-radius: 12px !important;
+  padding: 14px 24px !important;
+  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.01);
+}
+
+.sort-link {
+  color: #64748b !important;
+  transition: all 0.2s ease;
+}
+
+.sort-link.active, .sort-link:hover {
+  color: #F59E0B !important;
+  font-weight: 700;
+}
+
+/* ============================================
+   COMPREHENSIVE MOBILE RESPONSIVE STYLES
+   All pages: Home, Destinations, Flights, etc.
+   ============================================ */
+
+/* --- TABLET: 768px to 991px --- */
+@media (max-width: 991.98px) {
+
+  /* Search Form */
+  .search-form-card {
+    padding: 20px !important;
+    border-radius: 12px;
+  }
+
+  .search-input-group {
+    padding: 8px 12px;
+  }
+
+  /* Flight Results - card layout on tablet */
+  .card-flight .row.align-items-center.g-3 {
+    gap: 12px !important;
+  }
+
+  /* Sort Bar tablet */
+  .sort-bar {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 16px !important;
+  }
+
+  /* Destination Hero */
+  .dest-card {
+    height: 240px;
+  }
+
+  /* Feature box */
+  .feature-box {
+    padding: 24px 16px;
+  }
+
+  /* Section title */
+  .section-title-wrapper {
+    margin-bottom: 36px;
+  }
+}
+
+/* --- MOBILE: up to 767px --- */
+@media (max-width: 767.98px) {
+
+  /* Base typography */
+  h1 {
+    font-size: clamp(1.8rem, 6vw, 2.4rem) !important;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: clamp(1.4rem, 5vw, 1.9rem) !important;
+  }
+
+  h3 {
+    font-size: clamp(1.2rem, 4vw, 1.5rem) !important;
+  }
+
+  section {
+    padding: 48px 0 !important;
+  }
+
+  /* --- Navbar mobile --- */
+  .navbar {
+    padding: 12px 0 !important;
+  }
+
+  .navbar-collapse {
+    background-color: var(--navy);
+    padding: 16px;
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    margin-top: 8px;
+  }
+
+  /* --- HERO Section --- */
+  .hero-section {
+    padding-top: 100px !important;
+    padding-bottom: 48px !important;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(1.8rem, 7vw, 2.5rem) !important;
+  }
+
+  .hero-badges-row {
+    justify-content: center !important;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .hero-badge-pill {
+    font-size: 0.72rem;
+    padding: 5px 12px;
+  }
+
+  /* --- Flight Search Form --- */
+  .search-form-card {
+    padding: 16px !important;
+    border-radius: 12px;
+  }
+
+  .search-tabs-row {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 10px;
+    margin-bottom: 16px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .search-tab-btn {
+    padding: 10px 16px;
+    font-size: 0.875rem;
+  }
+
+  .search-input-group {
+    padding: 10px 14px;
+  }
+
+  .search-input-group label {
+    font-size: 0.7rem;
+    margin-bottom: 3px;
+  }
+
+  .search-input-group input,
+  .search-input-group select {
+    font-size: 0.9rem;
+  }
+
+  /* Search submit button full width */
+  #flight-search-main-form .col-lg-2.col-md-12.col-12 button[type="submit"] {
+    height: 52px !important;
+    border-radius: 10px !important;
+  }
+
+  /* --- Flight Results Page --- */
+  /* Header banner responsive */
+  div[style*="padding-top: 110px"] {
+    padding-top: 90px !important;
+    padding-bottom: 20px !important;
+  }
+
+  /* Flight result card mobile stacked layout */
+  .card-flight .col-lg-3.col-md-4.col-12 {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(7,17,31,0.05);
+  }
+
+  .card-flight .col-lg-5.col-md-8.col-12 {
+    padding: 8px 0;
+  }
+
+  .card-flight .col-lg-2.col-md-6.col-12 {
+    padding-top: 8px;
+  }
+
+  /* Route times on mobile - bigger and centered */
+  .card-flight .fw-extrabold.text-navy.fs-4 {
+    font-size: 1.5rem !important;
+  }
+
+  /* Flight card price section */
+  .card-flight .col-lg-2.col-md-6.col-12.text-center.text-lg-end {
+    text-align: center !important;
+  }
+
+  .card-flight .price.text-gold {
+    font-size: 1.6rem !important;
+  }
+
+  /* Sort bar mobile */
+  .sort-bar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 12px 14px !important;
+  }
+
+  .sort-options {
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .sort-link {
+    font-size: 0.8rem !important;
+  }
+
+  /* --- Popular Routes Cards --- */
+  .popular-route-card {
+    padding: 16px;
+  }
+
+  /* Routes scroll container */
+  .routes-scroll-container {
+    gap: 14px;
+  }
+
+  /* --- Destination Cards --- */
+  .dest-card {
+    height: 220px;
+  }
+
+  .dest-card .dest-name {
+    font-size: 1.25rem;
+  }
+
+  .dest-card .overlay {
+    padding: 16px;
+  }
+
+  /* --- Destination Single Page (show.blade.php) --- */
+  /* Hero section min-height */
+  section[style*="min-height: 450px"] {
+    min-height: 320px !important;
+    padding-top: 80px !important;
+  }
+
+  /* Hero h1 */
+  section[style*="min-height: 450px"] h1.display-3 {
+    font-size: clamp(1.8rem, 7vw, 2.5rem) !important;
+  }
+
+  /* Destination price box - make full width */
+  .col-md-4 .d-inline-block[style*="max-width: 280px"] {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin-top: 16px;
+  }
+
+  /* Destination info pills - stack on mobile */
+  .col-md-4 .card .card-body {
+    padding: 20px 16px !important;
+  }
+
+  /* Gallery items - 2 cols on mobile */
+  .gallery-grid .col-6 {
+    padding: 4px;
+  }
+
+  /* Sticky sidebar becomes normal flow on mobile */
+  .sticky-top {
+    position: static !important;
+  }
+
+  /* --- Flight Details Page --- */
+  .card-flight .col-sm-5.text-center.text-sm-start,
+  .card-flight .col-sm-5.text-center.text-sm-end {
+    text-align: center !important;
+  }
+
+  /* --- Feature Boxes (Why Choose Us) --- */
+  .feature-box {
+    padding: 20px 14px;
+  }
+
+  .feature-icon-circle {
+    width: 44px;
+    height: 44px;
+    font-size: 1.1rem;
+    margin-bottom: 14px;
+  }
+
+  .feature-box h4 {
+    font-size: 1rem;
+  }
+
+  /* --- Footer --- */
+  footer {
+    padding-top: 40px !important;
+    padding-bottom: 24px !important;
+  }
+
+  footer .row.g-4 > div {
+    margin-bottom: 24px !important;
+  }
+
+  footer .col-lg-3,
+  footer .col-lg-2,
+  footer .col-lg-3.col-md-6,
+  footer .col-lg-4.col-md-6 {
+    text-align: center !important;
+  }
+
+  footer ul.list-unstyled {
+    align-items: center !important;
+  }
+
+  footer ul.list-unstyled li a,
+  footer ul.list-unstyled li {
+    justify-content: center !important;
+  }
+
+  /* Popular Routes in footer - center text */
+  footer .d-flex.justify-content-between {
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+
+  /* Footer bottom copyright */
+  footer .border-top .row {
+    gap: 8px;
+  }
+
+  footer .col-md-6.text-center.text-md-end {
+    text-align: center !important;
+  }
+
+  /* Footer newsletter - full width */
+  footer form#newsletter-form {
+    max-width: 100% !important;
+  }
+
+  /* --- Call CTA Section --- */
+  section[style*="background-color: #07111F"] .col-lg-7 h3 {
+    font-size: 1.5rem !important;
+  }
+
+  section[style*="background-color: #07111F"] .col-lg-5 h2 {
+    font-size: 1.75rem !important;
+  }
+
+  section[style*="background-color: #07111F"] .d-flex.gap-3 {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  section[style*="background-color: #07111F"] .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  /* --- Newsletter section --- */
+  #home-newsletter-form {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  #home-newsletter-form input[type="email"] {
+    text-align: center !important;
+  }
+
+  #home-newsletter-form button[type="submit"] {
+    width: 100%;
+  }
+
+  /* --- Booking Enquiry Form / Destination sidebar --- */
+  .card-body .needs-validation .input-group {
+    flex-wrap: nowrap;
+  }
+
+  /* --- Breadcrumb --- */
+  .custom-breadcrumb {
+    font-size: 0.8rem;
+  }
+
+  /* --- Table responsive fix --- */
+  .table-responsive table {
+    font-size: 0.85rem;
+  }
+
+  /* --- Accordion mobile --- */
+  .custom-accordion .accordion-button {
+    padding: 16px 18px;
+    font-size: 0.9rem;
+  }
+
+  .custom-accordion .accordion-body {
+    padding: 16px 18px;
+    font-size: 0.88rem;
+  }
+
+  /* --- FAQ Section layout fix --- */
+  .col-lg-4[data-aos="fade-up"] {
+    text-align: center;
+  }
+
+  .col-lg-4 .section-title-wrapper.left {
+    text-align: center;
+  }
+
+  .col-lg-4 .section-title-wrapper.left .btn {
+    margin: 0 auto;
+  }
+
+  /* --- Swiper Testimonials --- */
+  .swiper-testimonials .card-flight {
+    padding: 24px 20px !important;
+  }
+
+  .swiper-testimonials p.fst-italic {
+    font-size: 0.875rem !important;
+  }
+
+  /* --- Filter sidebar card on mobile (shown in offcanvas) --- */
+  .filter-card {
+    padding: 16px;
+  }
+
+  /* --- Passenger dropdown z-index fix on mobile --- */
+  .passenger-dropdown {
+    left: 0 !important;
+    right: 0 !important;
+    min-width: 100% !important;
+    z-index: 2000;
+  }
+
+  /* --- Flight autocomplete suggestions --- */
+  .flight-location-suggestions {
+    z-index: 2010;
+  }
+
+  /* --- Multi-city leg badges --- */
+  .multi-city-fields .col-lg-1 span.badge {
+    font-size: 0.7rem;
+    padding: 8px 10px;
+  }
+
+  /* --- Floating CTA button - always visible on mobile --- */
+  .floating-call-btn {
+    display: flex !important;
+    bottom: 16px;
+    right: 16px;
+    padding: 10px 18px;
+    font-size: 13px;
+  }
+
+  .floating-whatsapp-btn {
+    display: flex !important;
+    bottom: 70px;
+    right: 16px;
+  }
+
+  /* === Blog page cards === */
+  .card-flight .p-4 {
+    padding: 20px !important;
+  }
+
+  /* === Offers page cards === */
+  .card-flight[style*="height: 200px"],
+  div[style*="height: 200px"] {
+    height: 180px !important;
+  }
+}
+
+/* --- SMALL MOBILE: up to 480px --- */
+@media (max-width: 480px) {
+
+  h1 {
+    font-size: clamp(1.5rem, 7vw, 2rem) !important;
+  }
+
+  h2 {
+    font-size: clamp(1.25rem, 5.5vw, 1.6rem) !important;
+  }
+
+  section {
+    padding: 36px 0 !important;
+  }
+
+  /* Hero super small */
+  .hero-section {
+    padding-top: 88px !important;
+    padding-bottom: 36px !important;
+  }
+
+  /* Search form ultra compact */
+  .search-form-card {
+    padding: 14px !important;
+  }
+
+  .search-tab-btn {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+  }
+
+  /* Destination card shorter on tiny screens */
+  .dest-card {
+    height: 190px;
+  }
+
+  /* Flight result card */
+  .card-flight {
+    padding: 14px !important;
+  }
+
+  /* Price on tiny screens */
+  .card-flight .price.text-gold {
+    font-size: 1.35rem !important;
+  }
+
+  /* Trust badges */
+  .col-4.text-center .small {
+    font-size: 0.7rem;
+  }
+
+  /* Footer popular routes */
+  footer .d-flex.justify-content-between span {
+    font-size: 0.8rem;
+  }
+
+  /* Navbar brand font */
+  .navbar-brand span.display-font {
+    font-size: 1rem !important;
+  }
+
+  /* Floating CTA */
+  .floating-call-btn {
+    padding: 9px 14px;
+    font-size: 12px;
+    right: 12px;
+    bottom: 12px;
+  }
+
+  .floating-whatsapp-btn {
+    right: 12px;
+    bottom: 62px;
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Sort bar full column */
+  .sort-bar {
+    padding: 10px 12px !important;
+  }
+
+  .sort-options {
+    gap: 8px;
+  }
+
+  /* Accordion ultra compact */
+  .custom-accordion .accordion-button {
+    padding: 14px 14px;
+    font-size: 0.85rem;
+  }
+
+  /* Newsletter section compact */
+  section[style*="background-color: #07111F"] {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+}
+
+/* ============================================
+   SMOOTH ANIMATION TRANSITIONS (all devices)
+   ============================================ */
+
+.card-flight,
+.dest-card,
+.feature-box,
+.popular-route-card {
+  transition: transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
+              box-shadow 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Smooth button interactions */
+.btn {
+  transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+/* Smooth navbar on mobile */
+.navbar-collapse {
+  transition: all 0.3s ease !important;
+}
+
+/* Smooth input focus */
+.search-input-group {
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--royal);
+  box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.08);
+}
+
+/* Swiper smooth scroll */
+.swiper-testimonials {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Image transitions */
+.dest-card img,
+.gallery-item img {
+  transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Fade-in for skeleton to real content */
+#real-results-container {
+  animation: fadeInUp 0.4s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Smooth dropdown openings */
+.passenger-dropdown,
+.flight-location-suggestions {
+  animation: dropDown 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+@keyframes dropDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================
+   UTILITY HELPERS
+   ============================================ */
+
+/* Text truncate for long airport names */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Scrollbar styling for horizontal scrollers */
+.routes-scroll-container::-webkit-scrollbar,
+.overflow-auto::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+}
+
+.routes-scroll-container::-webkit-scrollbar-track,
+.overflow-auto::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.routes-scroll-container::-webkit-scrollbar-thumb,
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Touch-friendly tap targets */
+@media (hover: none) and (pointer: coarse) {
+  .btn,
+  .nav-link,
+  .dropdown-item,
+  .sort-link,
+  .counter-btn,
+  .search-tab-btn,
+  .filter-card .form-check-label {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .counter-btn {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  /* Larger tap targets for mobile filter chips */
+  .time-chip-label {
+    min-height: 52px;
+  }
+}
+
+/* ==========================================================================
+   Destination Fareways - Premium Custom Utilities and Page Overrides
+   ========================================================================== */
+
+/* Global Premium Utilities */
+.bg-navy {
+  background-color: var(--navy) !important;
+}
+
+.text-navy {
+  color: var(--navy) !important;
+}
+
+.text-gold {
+  color: var(--gold) !important;
+}
+
+.text-muted-white {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.inset-0 {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+/* Ensure no blue default link color leaks inside destination cards */
+.dest-card,
+.dest-card a,
+.dest-card span:not(.price) {
+  color: var(--white) !important;
+}
+
+.dest-card .text-muted-white {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+.dest-card .text-gold,
+.dest-card i.text-gold {
+  color: var(--gold) !important;
+}
+
+/* Premium Breadcrumbs Styling in Light Sections */
+.custom-breadcrumb .breadcrumb-item a {
+  color: var(--muted) !important;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.custom-breadcrumb .breadcrumb-item a:hover {
+  color: var(--gold) !important;
+}
+
+.custom-breadcrumb .breadcrumb-item.active {
+  color: var(--navy) !important;
+  font-weight: 600;
+}
+
+.custom-breadcrumb .breadcrumb-item i {
+  font-size: 0.85em;
+}
+
+/* Beautiful Category Tabs globally for all custom search & category tab selectors */
+.custom-search-tabs {
+  background-color: var(--softgray) !important;
+  padding: 6px !important;
+  border-radius: 50px !important;
+  display: inline-flex !important;
+  border: 1px solid var(--border) !important;
+}
+
+.custom-search-tabs .nav-item {
+  margin: 0 !important;
+}
+
+.custom-search-tabs .nav-link {
+  color: var(--muted) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 50px !important;
+  padding: 10px 24px !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  margin: 0 !important;
+}
+
+.custom-search-tabs .nav-link::after {
+  display: none !important; /* Remove main menu gold underline behavior */
+}
+
+.custom-search-tabs .nav-link:hover {
+  color: var(--navy) !important;
+}
+
+.custom-search-tabs .nav-link.active {
+  background-color: var(--navy) !important;
+  color: var(--white) !important;
+  box-shadow: 0 4px 12px rgba(7, 17, 31, 0.15) !important;
 }

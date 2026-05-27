@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Blog;
 use App\Models\Destination;
 use App\Models\Offer;
+use App\Models\Page;
 use Illuminate\Support\Collection;
 
 class SitemapService
@@ -73,6 +74,20 @@ class SitemapService
             ]);
         });
 
+        Page::where('status', 'active')
+            ->whereNotIn('slug', $this->reservedPageSlugs())
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->each(function (Page $page) use ($urls) {
+                $urls->push([
+                    'loc' => route('pages.show', $page->slug),
+                    'lastmod' => $page->updated_at->format('Y-m-d'),
+                    'changefreq' => 'monthly',
+                    'priority' => '0.6',
+                    'type' => 'Page',
+                ]);
+            });
+
         return $urls;
     }
 
@@ -86,6 +101,7 @@ class SitemapService
             'offers' => $urls->where('type', 'Offer')->count(),
             'blogs' => $urls->where('type', 'Blog')->count(),
             'destinations' => $urls->where('type', 'Destination')->count(),
+            'pages' => $urls->where('type', 'Page')->count(),
             'latest_lastmod' => $urls->max('lastmod'),
         ];
     }
@@ -104,6 +120,27 @@ class SitemapService
             'faq' => ['priority' => '0.7', 'changefreq' => 'daily'],
             'privacy' => ['priority' => '0.5', 'changefreq' => 'daily'],
             'terms' => ['priority' => '0.5', 'changefreq' => 'daily'],
+        ];
+    }
+
+    private function reservedPageSlugs(): array
+    {
+        return [
+            'about',
+            'admin',
+            'blog',
+            'booking-enquiry',
+            'contact',
+            'destinations',
+            'faq',
+            'flights',
+            'lead',
+            'newsletter',
+            'offers',
+            'privacy-policy',
+            'robots.txt',
+            'sitemap.xml',
+            'terms-conditions',
         ];
     }
 }

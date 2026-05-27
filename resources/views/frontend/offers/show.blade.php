@@ -191,7 +191,7 @@
                 
                 @foreach($relatedOffers as $related)
                     <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
-                        <div class="card card-flight h-100 dest-card shadow-sm">
+                        <div class="card card-flight h-100 shadow-sm">
                             <div class="position-relative overflow-hidden" style="height: 160px;">
                                 <img src="{{ $related->image ?? 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80&auto=format' }}" 
                                      alt="{{ $related->title }}" 

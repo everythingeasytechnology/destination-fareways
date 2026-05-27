@@ -81,6 +81,12 @@
                     </td>
                     <td class="text-end">
                         <div class="d-flex align-items-center justify-content-end gap-1">
+                            @if($page->status === 'active')
+                                <a href="{{ route('pages.show', $page->slug) }}" class="btn btn-sm btn-light border text-success" title="View Frontend Page" target="_blank">
+                                    <i class="fa-regular fa-eye"></i>
+                                </a>
+                            @endif
+
                             <!-- Edit Button -->
                             <a href="{{ route('admin.pages.edit', $page->id) }}" class="btn btn-sm btn-light border text-navy" title="Edit Page">
                                 <i class="fa-regular fa-pen-to-square"></i>

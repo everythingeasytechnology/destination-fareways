@@ -1,10 +1,23 @@
 <!-- Navbar Header Section -->
+<style>
+/* Bulletproof Navbar Brand Logo Color Override */
+#frontend-navbar .navbar-brand,
+#frontend-navbar .navbar-brand span,
+.navbar-brand,
+.navbar-brand span {
+    color: #ffffff !important;
+}
+#frontend-navbar .navbar-brand i,
+.navbar-brand i {
+    color: #F59E0B !important; /* Gold plane icon */
+}
+</style>
 <nav class="navbar navbar-expand-lg fixed-top {{ request()->routeIs('home') ? 'navbar-transparent' : 'navbar-solid scrolled' }}" id="frontend-navbar">
     <div class="container py-1.5">
         <!-- Logo -->
-        <a class="navbar-brand d-flex align-items-center text-white text-decoration-none fw-bold" href="{{ route('home') }}">
-            <i class="fa-solid fa-plane-departure text-gold me-2 fs-4"></i>
-            <span class="display-font tracking-wide text-uppercase" style="font-size: 1.15rem; font-weight: 700;">
+        <a class="navbar-brand d-flex align-items-center text-white text-decoration-none fw-bold" href="{{ route('home') }}" style="color: #fff !important;">
+            <i class="fa-solid fa-plane-departure text-gold me-2 fs-4" style="color: #F59E0B !important;"></i>
+            <span class="display-font tracking-wide text-uppercase" style="font-size: 1.15rem; font-weight: 700; color: #fff !important;">
                 {{ $settings->site_name ?? 'Fareways' }}
             </span>
         </a>

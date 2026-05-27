@@ -130,7 +130,7 @@
                 @foreach($blogs as $blog)
                     @if(empty($featuredBlog) || $blog->id !== $featuredBlog->id || request('q') || request('category') || (request('page') && request('page') > 1))
                         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 100 }}">
-                            <div class="card card-flight h-100 dest-card shadow-sm border-light">
+                            <div class="card card-flight h-100 shadow-sm border-light">
                                 <!-- Featured Image -->
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
                                     <img src="{{ $blog->featured_image ?? 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format' }}" 
