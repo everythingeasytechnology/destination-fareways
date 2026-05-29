@@ -1,6 +1,17 @@
 @extends('layouts.frontend')
 
 @section('content')
+@php
+    $blogImageUrl = function ($path, $fallback) {
+        if (empty($path)) {
+            return $fallback;
+        }
+
+        return \Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])
+            ? $path
+            : asset('storage/' . ltrim($path, '/'));
+    };
+@endphp
 <!-- Blog Header Banner -->
 <section class="bg-navy text-white py-5 mt-5">
     <div class="container py-4 text-center">
@@ -54,15 +65,23 @@
 <!-- Blog Posts Section -->
 <section class="py-5 bg-white">
     <div class="container py-3">
+        @php
+            $showFeaturedBlog = !empty($featuredBlog)
+                && !request('q')
+                && !request('category')
+                && (!request('page') || request('page') == 1)
+                && $blogs->total() > 3;
+        @endphp
+
         <!-- Featured Blog Card (Only on page 1 without filters/search query) -->
-        @if(!empty($featuredBlog) && !request('q') && !request('category') && (!request('page') || request('page') == 1))
+        @if($showFeaturedBlog)
             <div class="row mb-5" data-aos="fade-up">
                 <div class="col-12">
                     <div class="card border-light shadow-sm overflow-hidden" style="border-radius: 16px;">
                         <div class="row g-0">
                             <!-- Image Left -->
                             <div class="col-lg-7 position-relative overflow-hidden" style="min-height: 380px;">
-                                <img src="{{ $featuredBlog->featured_image ?? 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1000&q=80&auto=format' }}" 
+                                <img src="{{ $blogImageUrl($featuredBlog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1000&q=80&auto=format') }}" 
                                      alt="{{ $featuredBlog->title }}" 
                                      class="w-100 h-100 object-fit-cover transition-transform" 
                                      style="object-position: center;">
@@ -128,12 +147,12 @@
         @else
             <div class="row g-4 mb-5">
                 @foreach($blogs as $blog)
-                    @if(empty($featuredBlog) || $blog->id !== $featuredBlog->id || request('q') || request('category') || (request('page') && request('page') > 1))
+                    @if(!$showFeaturedBlog || $blog->id !== $featuredBlog->id || request('q') || request('category') || (request('page') && request('page') > 1))
                         <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 100 }}">
                             <div class="card card-flight h-100 shadow-sm border-light">
                                 <!-- Featured Image -->
                                 <div class="position-relative overflow-hidden" style="height: 200px;">
-                                    <img src="{{ $blog->featured_image ?? 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format' }}" 
+                                    <img src="{{ $blogImageUrl($blog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format') }}" 
                                          alt="{{ $blog->title }}" 
                                          class="w-100 h-100 object-fit-cover transition-transform" 
                                          loading="lazy">
@@ -164,7 +183,7 @@
                                     <!-- Author and date footer -->
                                     <div class="d-flex align-items-center justify-content-between mt-auto border-top pt-3 border-light">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="{{ $blog->author_image ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop' }}" 
+                                            <img src="{{ $blogImageUrl($blog->author_image, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop') }}" 
                                                  alt="{{ $blog->author_name }}" 
                                                  class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
                                             <div>

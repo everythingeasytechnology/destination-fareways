@@ -54,7 +54,7 @@ class SitemapService
             ]);
         });
 
-        Blog::where('status', 'published')->orderBy('updated_at', 'desc')->get()->each(function (Blog $blog) use ($urls) {
+        Blog::whereIn('status', ['published', 'active'])->orderBy('updated_at', 'desc')->get()->each(function (Blog $blog) use ($urls) {
             $urls->push([
                 'loc' => route('blog.show', $blog->slug),
                 'lastmod' => ($blog->published_at ?: $blog->updated_at)->format('Y-m-d'),

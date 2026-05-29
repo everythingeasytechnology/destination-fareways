@@ -40,9 +40,9 @@ class HomeController extends Controller
             ->take(6)
             ->get();
             
-        // Latest Featured Blogs (take 3)
-        $featuredBlogs = Blog::where('status', 'published')
-            ->where('is_featured', true)
+        // Latest published blogs (take 3)
+        $featuredBlogs = Blog::whereIn('status', ['published', 'active'])
+            ->orderByDesc('is_featured')
             ->orderBy('published_at', 'desc')
             ->take(3)
             ->get();

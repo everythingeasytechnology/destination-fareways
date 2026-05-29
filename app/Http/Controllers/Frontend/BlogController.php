@@ -18,7 +18,7 @@ class BlogController extends Controller
         $settings = Setting::first();
         $seoData = SeoSetting::where('page_identifier', 'blogs')->first();
 
-        $query = Blog::where('status', 'published')->orderBy('published_at', 'desc');
+        $query = Blog::whereIn('status', ['published', 'active'])->orderBy('published_at', 'desc');
 
         // Apply Category Filter if present
         $category = $request->input('category');
@@ -37,13 +37,13 @@ class BlogController extends Controller
         }
 
         // Get a Featured post
-        $featuredBlog = Blog::where('status', 'published')
+        $featuredBlog = Blog::whereIn('status', ['published', 'active'])
             ->where('is_featured', true)
             ->orderBy('published_at', 'desc')
             ->first();
             
         if (!$featuredBlog) {
-            $featuredBlog = Blog::where('status', 'published')
+            $featuredBlog = Blog::whereIn('status', ['published', 'active'])
                 ->orderBy('published_at', 'desc')
                 ->first();
         }
@@ -51,7 +51,7 @@ class BlogController extends Controller
         $blogs = $query->paginate(9)->withQueryString();
 
         // Fetch dynamic categories
-        $categories = Blog::where('status', 'published')
+        $categories = Blog::whereIn('status', ['published', 'active'])
             ->distinct()
             ->pluck('category')
             ->filter();
@@ -71,14 +71,14 @@ class BlogController extends Controller
         $settings = Setting::first();
         
         $blog = Blog::where('slug', $slug)
-            ->where('status', 'published')
+            ->whereIn('status', ['published', 'active'])
             ->firstOrFail();
 
         // Increment view count safely
         $blog->increment('views');
 
         // Fetch related posts excluding the current one
-        $relatedBlogs = Blog::where('status', 'published')
+        $relatedBlogs = Blog::whereIn('status', ['published', 'active'])
             ->where('id', '!=', $blog->id)
             ->orderBy('published_at', 'desc')
             ->take(3)

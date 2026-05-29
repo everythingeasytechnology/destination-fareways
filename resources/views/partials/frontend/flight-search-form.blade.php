@@ -62,14 +62,14 @@
                     <div class="col-6">
                         <div class="search-input-group">
                             <label for="depart_date_input"><i class="fa-solid fa-calendar me-1 text-gold"></i> Depart</label>
-                            <input type="text" name="depart" id="depart_date_input" class="flatpickr-date" placeholder="Depart Date" required value="{{ request('depart', date('Y-m-d', strtotime('+7 days'))) }}">
+                            <input type="text" name="depart" id="depart_date_input" class="flatpickr-date" placeholder="Depart Date" required value="{{ request('depart', date('Y-m-d')) }}">
                         </div>
                     </div>
                     
                     <div class="col-6" id="return_date_wrapper">
                         <div class="search-input-group">
                             <label for="return_date_input"><i class="fa-solid fa-calendar me-1 text-gold"></i> Return</label>
-                            <input type="text" name="return" id="return_date_input" class="flatpickr-date" placeholder="Return Date" value="{{ request('return', date('Y-m-d', strtotime('+14 days'))) }}">
+                            <input type="text" name="return" id="return_date_input" class="flatpickr-date" placeholder="Return Date" value="{{ request('return', date('Y-m-d')) }}">
                         </div>
                     </div>
                 </div>
@@ -79,15 +79,17 @@
             <div class="col-lg-2 col-md-6 col-12">
                 <div class="position-relative w-100" id="passenger_dropdown_container">
                     <div class="search-input-group cursor-pointer" id="passengers_input_wrapper" style="cursor: pointer;">
-                        <label><i class="fa-solid fa-users me-1 text-gold"></i> Passengers & Class</label>
-                        <div class="d-flex align-items-center justify-content-between" style="height: 24px;">
-                            <span id="passengers_summary_text" class="text-navy fw-semibold text-truncate" style="font-size: 0.95rem; font-family: 'DM Sans', sans-serif;">
-                                {{ request('total_passengers', 1) }} Passenger{{ (int) request('total_passengers', 1) > 1 ? 's' : '' }}, {{ request('cabin_class', 'Economy') }}
+                        <label class="d-block small">
+    <i class="fa-solid fa-users me-1 text-gold"></i> Pax & Class
+</label>
+                        <div class="d-flex align-items-center" style="min-height: 28px; gap:8px;">
+                            <span id="passengers_summary_text" class="text-navy fw-semibold" style="font-size: 0.92rem; font-family: 'DM Sans', sans-serif; display: inline-block; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                {{ (int) request('total_passengers', 1) }} Pax · {{ (request('cabin_class', 'Economy') === 'Premium Economy') ? 'Prem Econ' : (request('cabin_class', 'Economy') === 'Economy' ? 'Economy' : (request('cabin_class') === 'Business' ? 'Business' : (request('cabin_class') === 'First' ? 'First' : request('cabin_class')))) }}
                             </span>
-                            <i class="fa-solid fa-chevron-down fs-8 text-muted"></i>
+                            <i class="fa-solid fa-chevron-down fs-8 text-muted ms-2" style="flex: 0 0 auto;"></i>
                         </div>
                     </div>
-                    
+
                     <!-- Selector Dropdown -->
                     <div class="passenger-dropdown border shadow-lg" id="passenger_dropdown_menu">
                         <!-- Adults Count -->
@@ -175,9 +177,9 @@
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-12 col-12">
-                                <div class="search-input-group">
+                                    <div class="search-input-group">
                                     <label><i class="fa-solid fa-calendar me-1 text-gold"></i> Date</label>
-                                    <input type="text" name="legs[{{ $i }}][date]" class="flatpickr-date" placeholder="Select Date" value="{{ request("legs.$i.date", $i === 0 ? request('depart', date('Y-m-d', strtotime('+7 days'))) : '') }}">
+                                    <input type="text" name="legs[{{ $i }}][date]" class="flatpickr-date" placeholder="Select Date" value="{{ request("legs.$i.date", $i === 0 ? request('depart', date('Y-m-d')) : '') }}">
                                 </div>
                             </div>
                         </div>
