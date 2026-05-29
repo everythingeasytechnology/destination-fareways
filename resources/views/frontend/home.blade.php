@@ -1,7 +1,6 @@
 @extends('layouts.frontend')
 
 @section('content')
-
 <!-- SECTION 1 & 2: Hero Section & Search Form -->
 <section class="hero-section text-white p-0 position-relative">
     <div class="hero-overlay"></div>
@@ -100,11 +99,7 @@
                         
                         <!-- Image -->
                         <div style="height: 200px; overflow: hidden;">
-                            @if($offer->image)
-                                <img src="{{ asset('storage/' . $offer->image) }}" class="w-100 h-100 object-fit-cover" alt="{{ $offer->title }}">
-                            @else
-                                <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80&auto=format" class="w-100 h-100 object-fit-cover" alt="Flight Deal">
-                            @endif
+                            <img src="{{ !empty($offer->image) ? (\Illuminate\Support\Str::startsWith($offer->image, ['http://', 'https://']) ? $offer->image : asset('storage/' . ltrim($offer->image, '/'))) : 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&q=80&auto=format' }}" class="w-100 h-100 object-fit-cover" alt="{{ $offer->title }}">
                         </div>
 
                         <!-- Card Body -->

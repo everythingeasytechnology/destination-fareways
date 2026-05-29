@@ -1,6 +1,17 @@
 @extends('layouts.frontend')
 
 @section('content')
+@php
+    $blogImageUrl = function ($path, $fallback) {
+        if (empty($path)) {
+            return $fallback;
+        }
+
+        return \Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])
+            ? $path
+            : asset('storage/' . ltrim($path, '/'));
+    };
+@endphp
 <!-- Title Section -->
 <section class="bg-navy text-white py-5 mt-5">
     <div class="container py-4 text-center">
@@ -25,7 +36,7 @@
             <div class="col-lg-8" data-aos="fade-up">
                 <!-- Large Article Banner -->
                 <div class="rounded-4 overflow-hidden mb-4 shadow-sm border border-light" style="max-height: 440px;">
-                    <img src="{{ $blog->banner_image ?? $blog->featured_image ?? 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80&auto=format' }}" 
+                    <img src="{{ $blogImageUrl($blog->banner_image ?? $blog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&q=80&auto=format') }}" 
                          alt="{{ $blog->title }}" 
                          class="w-100 h-100 object-fit-cover">
                 </div>
@@ -34,7 +45,7 @@
                 <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 border-bottom pb-4 mb-4 border-light">
                     <!-- Author Box -->
                     <div class="d-flex align-items-center gap-3">
-                        <img src="{{ $blog->author_image ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop' }}" 
+                        <img src="{{ $blogImageUrl($blog->author_image, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop') }}" 
                              alt="{{ $blog->author_name }}" 
                              class="rounded-circle" style="width: 48px; height: 48px; object-fit: cover;">
                         <div>
@@ -151,7 +162,7 @@
                                     <input type="date" name="departure_date" class="form-control bg-white py-2.5" required min="{{ date('Y-m-d') }}">
                                 </div>
 
-                                <button type="submit" class="btn btn-gold w-100 py-3 text-navy fw-bold rounded-3 mb-2.5 transition-lift">
+                                <button type="submit" class="btn btn-gold w-100 py-3 text-navy fw-bold rounded-3 mb-3 transition-lift">
                                     <i class="fa-solid fa-paper-plane me-2"></i> Submit Booking Enquiry
                                 </button>
                             </form>
@@ -183,7 +194,7 @@
                     <div class="col-md-4" data-aos="fade-up" data-aos-delay="{{ $loop->index * 100 }}">
                         <div class="card card-flight h-100 shadow-sm border-light">
                             <div class="position-relative overflow-hidden" style="height: 160px;">
-                                <img src="{{ $related->featured_image ?? 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format' }}" 
+                                <img src="{{ $blogImageUrl($related->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format') }}" 
                                      alt="{{ $related->title }}" 
                                      class="w-100 h-100 object-fit-cover transition-transform" 
                                      loading="lazy">

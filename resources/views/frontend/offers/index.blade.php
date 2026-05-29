@@ -1,6 +1,17 @@
 @extends('layouts.frontend')
 
 @section('content')
+@php
+    $offerImageUrl = function ($path, $fallback) {
+        if (empty($path)) {
+            return $fallback;
+        }
+
+        return \Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])
+            ? $path
+            : asset('storage/' . ltrim($path, '/'));
+    };
+@endphp
 <!-- Page Banner Header -->
 <section class="bg-navy text-white py-5 mt-5">
     <div class="container py-4 text-center">
@@ -66,7 +77,7 @@
                         <div class="card card-flight h-100 shadow-sm border-light">
                             <!-- Image container with Zoom hover and discount tag -->
                             <div class="position-relative overflow-hidden" style="height: 200px;">
-                                <img src="{{ $offer->image ?? 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80&auto=format' }}" 
+                                <img src="{{ $offerImageUrl($offer->image, 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=800&q=80&auto=format') }}" 
                                      alt="{{ $offer->title }}" 
                                      class="w-100 h-100 object-fit-cover transition-transform" 
                                      loading="lazy">
