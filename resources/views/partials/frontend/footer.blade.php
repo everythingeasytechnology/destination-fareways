@@ -99,7 +99,7 @@
             <div class="col-lg-3 col-md-6 mb-4 text-center text-md-start">
                 <h5 class="text-white mb-3" style="font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; font-weight: 700; color: #fff !important;">Contact & Support</h5>
                 <ul class="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2.5 mb-4">
-                    <li class="d-flex align-items-center align-items-md-start gap-2.5">
+                    <li class="d-flex align-items-center align-items-md-start gap-2">
                         <i class="fa-solid fa-phone mt-1 text-gold" style="color: #F59E0B !important;"></i>
                         <div>
                             @if(!empty($callSettings) && $callSettings->status)
@@ -110,11 +110,11 @@
                             <div class="small" style="color: rgba(255, 255, 255, 0.5) !important;">24/7 Booking Support Line</div>
                         </div>
                     </li>
-                    <li class="d-flex align-items-center align-items-md-start gap-2.5" style="color: rgba(255, 255, 255, 0.7) !important;">
+                    <li class="d-flex align-items-center align-items-md-start gap-2" style="color: rgba(255, 255, 255, 0.7) !important;">
                         <i class="fa-solid fa-envelope mt-1 text-gold" style="color: #F59E0B !important;"></i>
                         <span>{{ $settings->primary_email ?? 'info@destinationfareways.com' }}</span>
                     </li>
-                    <li class="d-flex align-items-center align-items-md-start gap-2.5" style="color: rgba(255, 255, 255, 0.7) !important;">
+                    <li class="d-flex align-items-center align-items-md-start gap-2" style="color: rgba(255, 255, 255, 0.7) !important;">
                         <i class="fa-solid fa-location-dot mt-1 text-gold" style="color: #F59E0B !important;"></i>
                         <span>{{ $settings->address ?? '100 Premium Fareways Blvd' }}, {{ $settings->city ?? 'New York' }}, {{ $settings->state ?? 'NY' }} {{ $settings->zip ?? '10001' }}</span>
                     </li>

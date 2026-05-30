@@ -19,17 +19,17 @@
     <div class="container py-3">
         <!-- Interactive Category Tabs -->
         <div class="row mb-5 justify-content-center" data-aos="fade-up">
-            <div class="col-lg-6 text-center">
-                <ul class="nav nav-pills custom-search-tabs justify-content-center border-0" id="destinationTabs" role="tablist">
+            <div class="col-lg-6 text-center destination-tabs-wrap">
+                <ul class="nav nav-pills custom-search-tabs justify-content-center border-0 flex-nowrap flex-sm-wrap" id="destinationTabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active px-4 py-2.5 text-uppercase fw-semibold text-decoration-none" 
+                        <button class="nav-link active px-4 py-2.5 text-uppercase fw-semibold text-decoration-none destination-tab-btn" 
                                 id="domestic-tab" data-bs-toggle="pill" data-bs-target="#domestic-panes" 
                                 type="button" role="tab" aria-controls="domestic-panes" aria-selected="true">
                             Domestic USA
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link px-4 py-2.5 text-uppercase fw-semibold text-decoration-none ms-2" 
+                        <button class="nav-link px-4 py-2.5 text-uppercase fw-semibold text-decoration-none ms-2 destination-tab-btn" 
                                 id="international-tab" data-bs-toggle="pill" data-bs-target="#international-panes" 
                                 type="button" role="tab" aria-controls="international-panes" aria-selected="false">
                             International
@@ -144,3 +144,67 @@
     </div>
 </section>
 @endsection
+
+<style>
+@media (max-width: 575.98px) {
+    .destination-tabs-wrap {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .destination-tabs-wrap .custom-search-tabs {
+        width: 100%;
+        gap: 0.5rem;
+    }
+
+    .destination-tabs-wrap .nav-item {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .destination-tabs-wrap .destination-tab-btn {
+        width: 100%;
+        margin-left: 0 !important;
+        padding: 0.7rem 0.6rem !important;
+        font-size: 0.72rem;
+        line-height: 1.1;
+        white-space: normal;
+        border-radius: 999px;
+    }
+
+    .destination-tabs-wrap .destination-tab-btn.active {
+        box-shadow: 0 8px 20px rgba(7, 17, 31, 0.14);
+    }
+
+    #domestic-panes .dest-card,
+    #international-panes .dest-card {
+        height: 250px !important;
+    }
+
+    #domestic-panes .overlay,
+    #international-panes .overlay {
+        padding: 1rem !important;
+    }
+
+    #domestic-panes .overlay .h4,
+    #international-panes .overlay .h4 {
+        font-size: 1.05rem;
+        margin-bottom: 0.25rem !important;
+    }
+
+    #domestic-panes .overlay .small,
+    #international-panes .overlay .small {
+        font-size: 0.75rem;
+    }
+
+    #domestic-panes .overlay .price,
+    #international-panes .overlay .price {
+        font-size: 1rem !important;
+    }
+
+    #domestic-panes .overlay .text-gold,
+    #international-panes .overlay .text-gold {
+        font-size: 0.75rem;
+    }
+}
+</style>

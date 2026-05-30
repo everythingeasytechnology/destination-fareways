@@ -550,10 +550,10 @@
                 </p>
 
                 <!-- Subscription Input -->
-                <form id="home-newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST" class="d-flex flex-column flex-sm-row justify-content-center gap-2 max-width-600 mx-auto">
+                <form id="home-newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST" class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-2 max-width-600 mx-auto">
                     @csrf
                     <input type="email" name="email" class="form-control py-3 px-4 bg-dark border-secondary text-white text-center text-sm-start rounded-pill" placeholder="Enter your email address" required style="font-size: 0.95rem; border-color: rgba(255,255,255,0.2) !important;">
-                    <button type="submit" class="btn btn-gold text-uppercase font-monospace py-3 px-5 tracking-wide text-navy" style="font-weight: 700;">Subscribe <i class="fa-solid fa-arrow-right ms-1"></i></button>
+                    <button type="submit" class="btn btn-gold text-uppercase font-monospace py-2 px-3 tracking-wide text-navy mx-auto mx-sm-0" style="font-weight: 600;">Subscribe <i class="fa-solid fa-arrow-right ms-1"></i></button>
                 </form>
                 <div class="text-white-50 small mt-2" style="font-size: 0.75rem;">No spam. Unsubscribe anytime.</div>
             </div>
