@@ -240,28 +240,28 @@
 
         <div class="row g-4" data-aos="fade-up">
             <div class="col-lg-3 col-md-6">
-                <div class="feature-box">
+                <div class="feature-box text-center">
                     <div class="feature-icon-circle"><i class="fa-solid fa-tags"></i></div>
                     <h4>Best Price Guarantee</h4>
                     <p>Access contracted and phone-exclusive airline tickets up to 30% cheaper.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-box">
+                <div class="feature-box text-center">
                     <div class="feature-icon-circle"><i class="fa-solid fa-user-shield"></i></div>
                     <h4>Secure & Trusted</h4>
                     <p>Encrypted payment portals protecting your financial information.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-box">
+                <div class="feature-box text-center">
                     <div class="feature-icon-circle"><i class="fa-solid fa-headset"></i></div>
                     <h4>24/7 Support</h4>
                     <p>Talk to our dedicated travel concierges directly. Zero wait times.</p>
                 </div>
             </div>
             <div class="col-lg-3 col-md-6">
-                <div class="feature-box">
+                <div class="feature-box text-center">
                     <div class="feature-icon-circle"><i class="fa-solid fa-ban"></i></div>
                     <h4>No Hidden Fees</h4>
                     <p>Transparent flat pricing with clear fare and taxes breakdowns.</p>
