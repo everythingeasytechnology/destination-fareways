@@ -47,8 +47,19 @@
                 </ul>
             </div>
 
-            <!-- Column 3: Popular Routes -->
-            <div class="col-lg-3 col-md-6 mb-4 text-center text-md-start">
+            <!-- Column 3: Legal Links -->
+            <div class="col-lg-2 col-md-6 mb-4 text-center text-md-start">
+                <h5 class="text-white mb-3" style="font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; font-weight: 700; color: #fff !important;">Legal</h5>
+                <ul class="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2">
+                    <li><a href="{{ route('privacy') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Privacy Policy</a></li>
+                    <li><a href="{{ route('terms') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Terms & Conditions</a></li>
+                    <li><a href="{{ route('cookies') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Cookies Policy</a></li>
+                    <li><a href="{{ route('refund-policy') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Refund Policy</a></li>
+                </ul>
+            </div>
+
+            <!-- Column 4: Popular Routes -->
+            <div class="col-lg-2 col-md-6 mb-4 text-center text-md-start">
                 <h5 class="text-white mb-3" style="font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; font-weight: 700; color: #fff !important;">Popular Routes</h5>
                 <ul class="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2 w-100">
                     <li class="w-100" style="max-width: 280px;">
@@ -84,8 +95,8 @@
                 </ul>
             </div>
 
-            <!-- Column 4: Contact & Newsletter -->
-            <div class="col-lg-4 col-md-6 mb-4 text-center text-md-start">
+            <!-- Column 5: Contact & Newsletter -->
+            <div class="col-lg-3 col-md-6 mb-4 text-center text-md-start">
                 <h5 class="text-white mb-3" style="font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; font-family: 'DM Sans', sans-serif; font-weight: 700; color: #fff !important;">Contact & Support</h5>
                 <ul class="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2.5 mb-4">
                     <li class="d-flex align-items-center align-items-md-start gap-2.5">
