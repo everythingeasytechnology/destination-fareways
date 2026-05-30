@@ -57,7 +57,14 @@ Route::get('/contact', [FrontPageController::class, 'contact'])->name('contact')
 Route::post('/contact', [FrontContactController::class, 'submit'])->name('contact.submit');
 Route::get('/faq', [FrontFaqController::class, 'index'])->name('faq');
 Route::get('/privacy-policy', [FrontPageController::class, 'privacy'])->name('privacy');
+Route::redirect('/PrivacyPolicy', '/privacy-policy', 301);
+Route::get('/cookies', [FrontPageController::class, 'cookies'])->name('cookies');
+Route::redirect('/Cookies', '/cookies', 301);
+Route::get('/refund-policy', [FrontPageController::class, 'refundPolicy'])->name('refund-policy');
+Route::redirect('/RefundPolicy', '/refund-policy', 301);
 Route::get('/terms-conditions', [FrontPageController::class, 'terms'])->name('terms');
+Route::redirect('/Termsandconditions', '/terms-conditions', 301);
+Route::redirect('/TermsConditions', '/terms-conditions', 301);
 Route::post('/newsletter/subscribe', [FrontNewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::post('/lead/submit', [FrontHomeController::class, 'submitLead'])->name('lead.submit');
 Route::get('/sitemap.xml', [FrontSitemapController::class, 'index']);
