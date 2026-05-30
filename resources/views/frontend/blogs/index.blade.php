@@ -3,210 +3,350 @@
 @section('content')
 @php
     $blogImageUrl = function ($path, $fallback) {
-        if (empty($path)) {
-            return $fallback;
-        }
-
+        if (empty($path)) return $fallback;
         return \Illuminate\Support\Str::startsWith($path, ['http://', 'https://'])
             ? $path
             : asset('storage/' . ltrim($path, '/'));
     };
+    $showFeaturedBlog = !empty($featuredBlog)
+        && !request('q')
+        && !request('category')
+        && (!request('page') || request('page') == 1)
+        && $blogs->total() > 3;
 @endphp
-<!-- Blog Header Banner -->
-<section class="bg-navy text-white py-5 mt-5">
-    <div class="container py-4 text-center">
-        <h1 class="display-5 fw-bold mb-3" data-aos="fade-up">Travel Tips & Guides</h1>
-        <p class="lead text-muted-white mb-4" data-aos="fade-up" data-aos-delay="100">
-            Discover cheap flights secrets, expert itineraries, and smart travel packing tips.
+
+{{-- ── HERO (mirrors offers/destinations hero) ── --}}
+<section class="offers-hero-section bg-navy text-white mt-5 position-relative overflow-hidden">
+    <div class="offers-hero-pattern"></div>
+    <div class="offers-hero-orb orb-1"></div>
+    <div class="offers-hero-orb orb-2"></div>
+
+    <div class="container py-5 text-center position-relative" style="z-index:2;">
+        <div class="d-inline-flex align-items-center gap-2 offers-live-badge mb-3" data-aos="fade-up">
+            <span class="live-dot"></span>
+            <span>Fresh Articles — Updated Weekly</span>
+        </div>
+        <h1 class="display-5 fw-bold text-white mb-3" data-aos="fade-up" data-aos-delay="60">
+            Travel Tips &amp; Guides
+        </h1>
+        <p class="lead mb-4 text-muted-white" data-aos="fade-up" data-aos-delay="120">
+            Discover cheap flight secrets, expert itineraries, and smart travel packing tips.
         </p>
-        <div class="d-flex justify-content-center" data-aos="fade-up" data-aos-delay="200">
+        <div class="d-flex justify-content-center mb-4" data-aos="fade-up" data-aos-delay="160">
             @include('partials.frontend.breadcrumb')
+        </div>
+        <div class="d-flex justify-content-center gap-3 flex-wrap" data-aos="fade-up" data-aos-delay="220">
+            <div class="offers-stat-pill">
+                <i class="fa-solid fa-newspaper text-gold me-2"></i>{{ $blogs->total() }}+ Articles
+            </div>
+            <div class="offers-stat-pill">
+                <i class="fa-solid fa-pen-nib text-gold me-2"></i>Expert Travel Writers
+            </div>
+            <div class="offers-stat-pill">
+                <i class="fa-solid fa-compass text-gold me-2"></i>Tips, Guides &amp; Reviews
+            </div>
         </div>
     </div>
 </section>
 
-<!-- Blog Filter / Search Toolbar -->
-<section class="py-4 bg-light border-bottom border-light">
+{{-- ── FILTER + GRID ── --}}
+<section class="py-5 bg-softgray offers-main-section">
     <div class="container">
-        <div class="row align-items-center g-3">
-            <!-- Categories filter -->
-            <div class="col-lg-8" data-aos="fade-up">
-                <div class="d-flex flex-wrap gap-2 align-items-center">
-                    <span class="text-muted small fw-semibold text-uppercase me-2">Categories:</span>
-                    <a href="{{ route('blog.index') }}" 
-                       class="btn btn-sm rounded-pill px-3 py-1.5 {{ !request('category') ? 'btn-navy' : 'btn-outline-navy' }}">
-                        All Posts
-                    </a>
-                    @foreach($categories as $category)
-                        <a href="{{ route('blog.index', ['category' => $category]) }}" 
-                           class="btn btn-sm rounded-pill px-3 py-1.5 {{ request('category') === $category ? 'btn-navy' : 'btn-outline-navy' }}">
-                            {{ $category }}
-                        </a>
-                    @endforeach
+
+        {{-- Filter tabs + Search ──────────────────────────────── --}}
+        <div class="row mb-5 justify-content-center align-items-center g-3" data-aos="fade-up">
+            {{-- Category tabs --}}
+            <div class="col-12 col-lg-auto">
+                <div class="offers-filter-scroll">
+                    <ul class="nav border-0 justify-content-center custom-search-tabs offers-filter-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link {{ !request('category') ? 'active' : '' }}"
+                               href="{{ route('blog.index', request('q') ? ['q' => request('q')] : []) }}">
+                                <i class="fa-solid fa-border-all me-1"></i> All Posts
+                            </a>
+                        </li>
+                        @foreach($categories as $category)
+                            <li class="nav-item">
+                                <a class="nav-link {{ request('category') === $category ? 'active' : '' }}"
+                                   href="{{ route('blog.index', array_filter(['category' => $category, 'q' => request('q')])) }}">
+                                    {{ $category }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
                 </div>
             </div>
-            <!-- Search bar -->
-            <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                <form action="{{ route('blog.index') }}" method="GET" class="position-relative">
+
+            {{-- Search --}}
+            <div class="col-12 col-lg-auto">
+                <form action="{{ route('blog.index') }}" method="GET" class="blog-search-form">
                     @if(request('category'))
                         <input type="hidden" name="category" value="{{ request('category') }}">
                     @endif
-                    <input type="text" name="q" class="form-control rounded-pill py-2.5 ps-4 pe-5 text-navy fs-8 border-light shadow-sm" 
-                           placeholder="Search travel posts..." value="{{ request('q') }}">
-                    <button type="submit" class="btn border-0 position-absolute end-0 top-0 mt-1 me-2 text-navy" style="background: transparent;">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </button>
+                    <div class="blog-search-wrap">
+                        <i class="fa-solid fa-magnifying-glass blog-search-icon"></i>
+                        <input type="text" name="q" class="blog-search-input"
+                               placeholder="Search articles..." value="{{ request('q') }}">
+                        <button type="submit" class="blog-search-btn">Search</button>
+                    </div>
                 </form>
             </div>
         </div>
-    </div>
-</section>
 
-<!-- Blog Posts Section -->
-<section class="py-5 bg-white">
-    <div class="container py-3">
-        @php
-            $showFeaturedBlog = !empty($featuredBlog)
-                && !request('q')
-                && !request('category')
-                && (!request('page') || request('page') == 1)
-                && $blogs->total() > 3;
-        @endphp
-
-        <!-- Featured Blog Card (Only on page 1 without filters/search query) -->
+        {{-- Featured Blog ──────────────────────────────────────── --}}
         @if($showFeaturedBlog)
-            <div class="row mb-5" data-aos="fade-up">
-                <div class="col-12">
-                    <div class="card border-light shadow-sm overflow-hidden" style="border-radius: 16px;">
-                        <div class="row g-0">
-                            <!-- Image Left -->
-                            <div class="col-lg-7 position-relative overflow-hidden" style="min-height: 380px;">
-                                <img src="{{ $blogImageUrl($featuredBlog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1000&q=80&auto=format') }}" 
-                                     alt="{{ $featuredBlog->title }}" 
-                                     class="w-100 h-100 object-fit-cover transition-transform" 
-                                     style="object-position: center;">
-                                <span class="position-absolute top-4 start-4 badge bg-navy text-gold text-uppercase fw-bold px-3 py-2 fs-8 shadow">
-                                    Featured Article
+            <div class="mb-5" data-aos="fade-up">
+                <div class="blog-featured-card">
+                    <div class="row g-0">
+                        {{-- Image --}}
+                        <div class="col-lg-6 blog-featured-img-wrap">
+                            <img src="{{ $blogImageUrl($featuredBlog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1000&q=80&auto=format') }}"
+                                 alt="{{ $featuredBlog->title }}" loading="lazy">
+                            <span class="blog-featured-badge">
+                                <i class="fa-solid fa-star me-1"></i>Featured
+                            </span>
+                        </div>
+                        {{-- Content --}}
+                        <div class="col-lg-6 blog-featured-body">
+                            <div class="d-flex align-items-center gap-2 mb-3">
+                                <span class="offer-airline-tag">
+                                    <i class="fa-solid fa-tag text-gold"></i>
+                                    {{ $featuredBlog->category ?? 'Travel Guide' }}
                                 </span>
-                            </div>
-                            <!-- Content Right -->
-                            <div class="col-lg-5 p-4 p-lg-5 d-flex flex-column justify-content-center bg-softgray">
-                                <div class="mb-3 d-flex align-items-center gap-2">
-                                    <span class="badge text-uppercase text-muted border border-light bg-white rounded-pill px-2.5 py-1 fs-8">
-                                        {{ $featuredBlog->category ?? 'Travel Guide' }}
+                                @if(!empty($featuredBlog->read_time))
+                                    <span class="text-muted small">
+                                        <i class="fa-regular fa-clock text-gold me-1"></i>{{ $featuredBlog->read_time }} mins
                                     </span>
-                                    @if(!empty($featuredBlog->read_time))
-                                        <span class="text-muted small"><i class="fa-regular fa-clock text-gold"></i> {{ $featuredBlog->read_time }} mins read</span>
-                                    @endif
-                                </div>
-                                
-                                <h2 class="display-6 fw-bold text-navy mb-3">
-                                    <a href="{{ route('blog.show', $featuredBlog->slug) }}" class="text-navy text-decoration-none hover-gold-text">
-                                        {{ $featuredBlog->title }}
-                                    </a>
-                                </h2>
-                                
-                                <p class="text-muted mb-4 lead" style="font-size: 0.95rem;">
-                                    {{ $featuredBlog->excerpt }}
-                                </p>
-                                
-                                <div class="d-flex align-items-center justify-content-between mt-auto border-top pt-4 border-light">
-                                    <div class="d-flex align-items-center gap-2.5">
-                                        <img src="{{ $featuredBlog->author_image ?? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop' }}" 
-                                             alt="{{ $featuredBlog->author_name }}" 
-                                             class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                                        <div>
-                                            <span class="d-block fw-semibold text-navy small">{{ $featuredBlog->author_name ?? 'Editorial Staff' }}</span>
-                                            <span class="text-muted fs-8">{{ $featuredBlog->published_at ? $featuredBlog->published_at->format('M d, Y') : 'Recent' }}</span>
-                                        </div>
+                                @endif
+                            </div>
+                            <h2 class="display-font text-navy fw-bold mb-3" style="font-size:clamp(1.4rem,3vw,1.9rem);line-height:1.25;">
+                                <a href="{{ route('blog.show', $featuredBlog->slug) }}" class="text-navy text-decoration-none blog-title-link">
+                                    {{ $featuredBlog->title }}
+                                </a>
+                            </h2>
+                            <p class="text-muted mb-4" style="font-size:.95rem;line-height:1.7;">
+                                {{ Str::limit($featuredBlog->excerpt, 180) }}
+                            </p>
+                            <div class="d-flex align-items-center justify-content-between mt-auto border-top pt-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="{{ $blogImageUrl($featuredBlog->author_image ?? null, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop') }}"
+                                         alt="{{ $featuredBlog->author_name }}"
+                                         class="rounded-circle" style="width:38px;height:38px;object-fit:cover;border:2px solid #E2E8F0;">
+                                    <div>
+                                        <span class="d-block fw-bold text-navy" style="font-size:.85rem;">{{ $featuredBlog->author_name ?? 'Editorial Staff' }}</span>
+                                        <span class="text-muted" style="font-size:.75rem;">{{ $featuredBlog->published_at ? $featuredBlog->published_at->format('M d, Y') : 'Recent' }}</span>
                                     </div>
-                                    <a href="{{ route('blog.show', $featuredBlog->slug) }}" class="btn btn-navy px-4 py-2">
-                                        Read Article <i class="fa-solid fa-arrow-right ms-2 fs-9"></i>
-                                    </a>
                                 </div>
+                                <a href="{{ route('blog.show', $featuredBlog->slug) }}" class="btn btn-navy px-4 py-2 d-flex align-items-center gap-2">
+                                    Read Article <i class="fa-solid fa-arrow-right"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            
-            <!-- Mid grid separation bar -->
-            <div class="border-bottom border-light pb-5 mb-5">
-                <h3 class="h3 fw-bold text-navy mb-0">Latest Articles</h3>
+
+                <div class="d-flex align-items-center gap-3 mt-5 mb-2">
+                    <h3 class="display-font text-navy fw-bold mb-0" style="font-size:1.5rem;">Latest Articles</h3>
+                    <div class="flex-grow-1" style="height:1px;background:#E2E8F0;"></div>
+                </div>
             </div>
         @endif
 
-        <!-- Blogs Grid -->
+        {{-- Blog Grid ──────────────────────────────────────────── --}}
         @if($blogs->isEmpty())
-            <div class="text-center py-5" data-aos="fade-up">
-                <i class="fa-regular fa-newspaper fs-1 text-muted mb-3"></i>
-                <h3>No Blog Posts Found</h3>
-                <p class="text-muted">We couldn't find any articles matching your search query. Please try searching for something else.</p>
-                <a href="{{ route('blog.index') }}" class="btn btn-navy px-4 py-2 mt-2">Clear Filters & Search</a>
+            <div class="text-center py-5 mx-auto" style="max-width:460px;" data-aos="fade-up">
+                <div class="offers-empty-icon mb-4"><i class="fa-regular fa-newspaper"></i></div>
+                <h3 class="h4 fw-bold text-navy mb-2">No Articles Found</h3>
+                <p class="text-muted mb-4">We couldn't find articles matching your search. Try clearing the filters.</p>
+                <a href="{{ route('blog.index') }}" class="btn btn-gold px-4 py-2 d-inline-flex align-items-center gap-2">
+                    <i class="fa-solid fa-xmark"></i> Clear Filters
+                </a>
             </div>
         @else
             <div class="row g-4 mb-5">
                 @foreach($blogs as $blog)
                     @if(!$showFeaturedBlog || $blog->id !== $featuredBlog->id || request('q') || request('category') || (request('page') && request('page') > 1))
-                        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 100 }}">
-                            <div class="card card-flight h-100 shadow-sm border-light">
-                                <!-- Featured Image -->
-                                <div class="position-relative overflow-hidden" style="height: 200px;">
-                                    <img src="{{ $blogImageUrl($blog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format') }}" 
-                                         alt="{{ $blog->title }}" 
-                                         class="w-100 h-100 object-fit-cover transition-transform" 
-                                         loading="lazy">
-                                    <span class="position-absolute top-3 start-3 badge bg-navy text-gold text-uppercase fw-bold px-2.5 py-1.5 fs-8 shadow">
-                                        {{ $blog->category ?? 'Travel' }}
-                                    </span>
-                                </div>
+                        <div class="col-md-6 col-lg-4" data-aos="fade-up" data-aos-delay="{{ ($loop->index % 3) * 80 }}">
+                            <a href="{{ route('blog.show', $blog->slug) }}" class="offer-premium-card d-flex flex-column h-100 text-decoration-none">
 
-                                <!-- Card Body -->
-                                <div class="card-body p-4 d-flex flex-column">
+                                {{-- Image Zone --}}
+                                <div class="offer-card-img-wrap">
+                                    <img src="{{ $blogImageUrl($blog->featured_image, 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80&auto=format') }}"
+                                         alt="{{ $blog->title }}" loading="lazy" class="offer-card-img">
+                                    <div class="offer-card-img-gradient"></div>
+
+                                    {{-- Category badge --}}
+                                    <div class="offer-card-top-badges">
+                                        <span class="offer-badge-save">{{ $blog->category ?? 'Travel' }}</span>
+                                    </div>
+
+                                    {{-- Read time strip --}}
                                     @if(!empty($blog->read_time))
-                                        <div class="text-muted fs-8 mb-2 d-flex align-items-center gap-1.5">
-                                            <i class="fa-regular fa-clock text-gold"></i>
-                                            <span>{{ $blog->read_time }} mins read</span>
+                                        <div class="offer-card-route-strip">
+                                            <i class="fa-regular fa-clock text-gold me-1"></i>
+                                            <span class="fw-bold">{{ $blog->read_time }} mins read</span>
                                         </div>
                                     @endif
+                                </div>
 
-                                    <h4 class="h5 fw-bold text-navy mb-2 line-clamp-2">
-                                        <a href="{{ route('blog.show', $blog->slug) }}" class="text-navy text-decoration-none hover-gold-text">
-                                            {{ $blog->title }}
-                                        </a>
-                                    </h4>
+                                {{-- Body Zone --}}
+                                <div class="offer-card-body-premium flex-grow-1 d-flex flex-column">
+                                    {{-- Author tag --}}
+                                    <div class="offer-airline-tag mb-2">
+                                        <i class="fa-solid fa-pen-nib text-gold"></i>
+                                        <span>{{ $blog->author_name ?? 'Editorial Staff' }}</span>
+                                    </div>
 
-                                    <p class="card-text text-muted small flex-grow-1 mb-4 line-clamp-3">
-                                        {{ $blog->excerpt }}
+                                    <h3 class="offer-card-title-premium mb-1">
+                                        {{ Str::limit($blog->title, 65) }}
+                                    </h3>
+
+                                    <p class="offer-card-desc-premium flex-grow-1 mb-3">
+                                        {{ Str::limit($blog->excerpt, 100) }}
                                     </p>
 
-                                    <!-- Author and date footer -->
-                                    <div class="d-flex align-items-center justify-content-between mt-auto border-top pt-3 border-light">
+                                    {{-- Date row --}}
+                                    <div class="offer-price-row-premium">
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="{{ $blogImageUrl($blog->author_image, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop') }}" 
-                                                 alt="{{ $blog->author_name }}" 
-                                                 class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
-                                            <div>
-                                                <span class="d-block fw-semibold text-navy fs-8">{{ $blog->author_name ?? 'Staff' }}</span>
-                                                <span class="text-muted fs-9">{{ $blog->published_at ? $blog->published_at->format('M d, Y') : 'Recent' }}</span>
-                                            </div>
+                                            <img src="{{ $blogImageUrl($blog->author_image ?? null, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=80&h=80&fit=crop') }}"
+                                                 alt="{{ $blog->author_name }}"
+                                                 class="rounded-circle" style="width:28px;height:28px;object-fit:cover;border:1.5px solid #E2E8F0;">
+                                            <span class="text-muted" style="font-size:.78rem;">
+                                                {{ $blog->published_at ? $blog->published_at->format('M d, Y') : 'Recent' }}
+                                            </span>
                                         </div>
-                                        <a href="{{ route('blog.show', $blog->slug) }}" class="btn btn-outline-navy btn-sm px-3 rounded-pill py-1.5 fs-8">
-                                            Read More
-                                        </a>
+                                    </div>
+
+                                    {{-- CTA row --}}
+                                    <div class="offer-card-cta-row mt-3">
+                                        <span class="offer-cta-label">Read Article</span>
+                                        <span class="offer-cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
                                     </div>
                                 </div>
-                            </div>
+                            </a>
                         </div>
                     @endif
                 @endforeach
             </div>
 
-            <!-- Pagination Links -->
-            <div class="d-flex justify-content-center" data-aos="fade-up">
-                {{ $blogs->links('pagination::bootstrap-5') }}
-            </div>
+            {{-- Pagination --}}
+            @if($blogs->hasPages())
+                <div class="d-flex justify-content-center" data-aos="fade-up">
+                    {{ $blogs->links('pagination::bootstrap-5') }}
+                </div>
+            @endif
         @endif
+
     </div>
 </section>
+
+{{-- ── CTA Strip (identical to offers/destinations) ── --}}
+<section class="py-5 bg-white border-top border-light">
+    <div class="container">
+        <div class="offers-cta-card" data-aos="fade-up">
+            <div class="offers-cta-glow"></div>
+            <div class="row align-items-center g-4 position-relative" style="z-index:2;">
+                <div class="col-12 col-lg-7">
+                    <span class="badge bg-gold text-navy px-3 py-1 mb-2 fw-bold" style="font-size:.7rem;letter-spacing:1px;">EXCLUSIVE ACCESS</span>
+                    <h3 class="h2 fw-bold text-white mb-2">Ready to Book Your Next Trip?</h3>
+                    <p class="mb-0" style="color:rgba(255,255,255,.72);">
+                        Our wholesale contracts unlock private fares up to 40% below online prices. One call is all it takes.
+                    </p>
+                </div>
+                <div class="col-12 col-lg-5 text-center text-lg-end">
+                    <a href="tel:{{ $callSettings->phone ?? '+18005550199' }}"
+                       class="btn btn-gold px-4 py-3 d-inline-flex align-items-center gap-2 fw-bold fs-6">
+                        <i class="fa-solid fa-phone"></i> Call Reservations Now
+                    </a>
+                    <p class="mt-2 mb-0 small" style="color:rgba(255,255,255,.5);">Available 24/7 — No hold music</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 @endsection
+
+<style>
+/* ── Search Bar ─────────────────────────────────── */
+.blog-search-wrap {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border: 1.5px solid #E2E8F0;
+    border-radius: 100px;
+    overflow: hidden;
+    padding: 4px 4px 4px 16px;
+    box-shadow: 0 2px 12px rgba(7,17,31,.06);
+    transition: border-color .2s ease, box-shadow .2s ease;
+    min-width: 260px;
+}
+.blog-search-wrap:focus-within {
+    border-color: #F59E0B;
+    box-shadow: 0 0 0 3px rgba(245,158,11,.1);
+}
+.blog-search-icon { color: #94a3b8; font-size: .9rem; margin-right: 8px; flex-shrink: 0; }
+.blog-search-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-family: 'DM Sans', sans-serif; font-size: .88rem; color: #07111F;
+}
+.blog-search-input::placeholder { color: #94a3b8; }
+.blog-search-btn {
+    background: #07111F; color: #fff;
+    border: none; border-radius: 100px;
+    padding: 8px 18px; font-size: .8rem;
+    font-weight: 700; cursor: pointer;
+    transition: background .2s ease;
+    white-space: nowrap;
+}
+.blog-search-btn:hover { background: #F59E0B; color: #07111F; }
+
+/* ── Featured Card ──────────────────────────────── */
+.blog-featured-card {
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid rgba(7,17,31,.07);
+    box-shadow: 0 8px 32px rgba(7,17,31,.09);
+    overflow: hidden;
+}
+.blog-featured-img-wrap {
+    position: relative;
+    min-height: 360px;
+    overflow: hidden;
+}
+.blog-featured-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+    transition: transform .6s cubic-bezier(.165,.84,.44,1);
+}
+.blog-featured-card:hover .blog-featured-img-wrap img { transform: scale(1.04); }
+.blog-featured-badge {
+    position: absolute; top: 16px; left: 16px;
+    background: #F59E0B; color: #07111F;
+    font-size: .72rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .6px;
+    padding: 5px 14px; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(245,158,11,.35);
+}
+.blog-featured-body {
+    padding: 36px 40px;
+    display: flex; flex-direction: column; justify-content: center;
+    background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+}
+.blog-title-link:hover { color: #F59E0B !important; }
+
+/* ── Mobile ──────────────────────────────────────── */
+@media (max-width: 991.98px) {
+    .blog-featured-img-wrap { min-height: 280px; }
+    .blog-featured-body { padding: 28px; }
+}
+@media (max-width: 767.98px) {
+    .blog-featured-img-wrap { min-height: 220px; }
+    .blog-featured-body { padding: 20px; }
+    .blog-search-wrap { min-width: 100%; }
+}
+@media (max-width: 575.98px) {
+    .offers-filter-scroll { justify-content: flex-start; }
+    .offers-filter-tabs .nav-link { padding: 8px 14px !important; font-size: .78rem !important; }
+}
+</style>

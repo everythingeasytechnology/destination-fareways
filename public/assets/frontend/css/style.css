@@ -2067,3 +2067,1724 @@ input[type="range"].form-range::-ms-thumb {
   color: var(--white) !important;
   box-shadow: 0 4px 12px rgba(7, 17, 31, 0.15) !important;
 }
+
+/* ============================================
+   OFFERS PAGE — MOBILE RESPONSIVE STYLES
+   ============================================ */
+
+/* Filter tabs scroll container — prevents overflow on mobile */
+.offers-filter-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  display: flex;
+  justify-content: center;
+}
+
+.offers-filter-tabs {
+  flex-wrap: nowrap !important;
+  white-space: nowrap;
+  min-width: max-content;
+}
+
+/* Offer detail sidebar — only sticky on desktop (lg+) */
+@media (max-width: 991.98px) {
+  .offer-sidebar-sticky {
+    position: static !important;
+  }
+}
+
+/* Mobile sticky bottom CTA bar */
+.offer-mobile-cta {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--navy);
+  padding: 12px 16px;
+  z-index: 1040;
+  border-top: 2px solid var(--gold);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+}
+
+.offer-mobile-cta .btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 0.875rem;
+}
+
+/* Add bottom padding to page content so mobile CTA doesn't cover it */
+@media (max-width: 991.98px) {
+  body:has(.offer-mobile-cta) main {
+    padding-bottom: 80px;
+  }
+}
+
+/* Offer detail — image height on small screens */
+@media (max-width: 767.98px) {
+  /* Hero banner section */
+  .offers-hero-banner {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+
+  /* Main offer image on detail page */
+  .offer-detail-image {
+    max-height: 240px !important;
+  }
+
+  /* Route overview card — center stack */
+  .offer-route-card .col-md-5,
+  .offer-route-card .col-md-2 {
+    text-align: center !important;
+  }
+
+  /* Promo code widget — stack vertically */
+  .offer-promo-widget .d-flex {
+    flex-direction: column;
+    align-items: center !important;
+    gap: 12px;
+  }
+
+  .offer-promo-widget .btn {
+    width: 100%;
+  }
+
+  /* Deal meta specs — 2 columns on mobile */
+  .offer-meta-specs .col-6 {
+    width: 50% !important;
+  }
+
+  /* Filter tabs centered pill on small screens */
+  .offers-filter-scroll {
+    justify-content: flex-start;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .offers-filter-tabs {
+    padding: 4px !important;
+  }
+
+  .offers-filter-tabs .nav-link {
+    padding: 8px 16px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Related offers — single column on phone */
+  .related-offers-grid .col-md-4 {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Offer card image height */
+  .offers-grid-card .position-relative[style*="height: 200px"] {
+    height: 170px !important;
+  }
+
+  /* Offer price in card */
+  .offers-grid-card .price.fs-4 {
+    font-size: 1.4rem !important;
+  }
+
+  /* Mobile CTA bar tighter on very small screens */
+  .offer-mobile-cta {
+    padding: 10px 12px;
+  }
+
+  .offer-mobile-cta .btn {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+  }
+}
+
+/* ==========================================================================
+   PREMIUM OFFERS PAGE — NEW DESIGN SYSTEM
+   ========================================================================== */
+
+/* ---- Hero Section ---- */
+.offers-hero-section {
+  padding: 80px 0 60px;
+}
+
+.offers-hero-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(245,158,11,0.07) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(29,78,216,0.12) 0%, transparent 45%);
+  z-index: 1;
+}
+
+.offers-hero-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.offers-hero-orb.orb-1 {
+  width: 400px;
+  height: 400px;
+  background: rgba(245, 158, 11, 0.06);
+  top: -80px;
+  right: -60px;
+}
+
+.offers-hero-orb.orb-2 {
+  width: 300px;
+  height: 300px;
+  background: rgba(29, 78, 216, 0.08);
+  bottom: -60px;
+  left: -40px;
+}
+
+/* Live badge */
+.offers-live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: var(--gold);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 50px;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: live-pulse 1.8s ease infinite;
+  flex-shrink: 0;
+}
+
+@keyframes live-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.5); }
+  50%       { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); }
+}
+
+/* Stats pills in hero */
+.offers-stat-pill {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 50px;
+  backdrop-filter: blur(4px);
+}
+
+/* ---- Offers Main Section ---- */
+.offers-main-section {
+  background: var(--softgray);
+}
+
+/* ---- Empty State ---- */
+.offers-empty-icon {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(7,17,31,0.06));
+  border: 2px solid rgba(245,158,11,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  font-size: 2rem;
+  color: var(--gold);
+}
+
+/* ---- Premium Offer Card ---- */
+.offer-premium-card {
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1.5px solid rgba(7,17,31,0.06);
+  box-shadow: 0 4px 20px rgba(7,17,31,0.05);
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.165,0.84,0.44,1),
+              box-shadow 0.35s cubic-bezier(0.165,0.84,0.44,1),
+              border-color 0.3s ease;
+  cursor: pointer;
+  color: inherit;
+}
+
+.offer-premium-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(7,17,31,0.12);
+  border-color: rgba(245,158,11,0.3);
+  color: inherit;
+}
+
+/* Image zone */
+.offer-card-img-wrap {
+  position: relative;
+  height: 210px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.offer-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.55s cubic-bezier(0.165,0.84,0.44,1);
+}
+
+.offer-premium-card:hover .offer-card-img {
+  transform: scale(1.06);
+}
+
+.offer-card-img-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(7,17,31,0) 30%,
+    rgba(7,17,31,0.7) 100%
+  );
+}
+
+/* Badges on image */
+.offer-card-top-badges {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 3;
+}
+
+.offer-badge-save {
+  display: inline-block;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(245,158,11,0.35);
+}
+
+.offer-badge-expiring {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(220,38,38,0.9);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.offer-badge-new {
+  display: inline-block;
+  background: rgba(29,78,216,0.9);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* Route strip at bottom of image */
+.offer-card-route-strip {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 16px;
+  color: #fff;
+  font-size: 0.82rem;
+  letter-spacing: 0.6px;
+}
+
+.offer-route-icon {
+  font-size: 0.85rem;
+  color: var(--gold);
+  transform: rotate(45deg);
+  display: inline-flex;
+}
+
+/* Body zone */
+.offer-card-body-premium {
+  padding: 20px 22px 22px;
+}
+
+.offer-airline-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--softgray);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  padding: 4px 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.offer-card-title-premium {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.35;
+}
+
+.offer-card-desc-premium {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* Price row */
+.offer-price-row-premium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  gap: 8px;
+}
+
+.offer-original-price-premium {
+  display: block;
+  text-decoration: line-through;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-family: 'JetBrains Mono', monospace;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.offer-price-premium {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.offer-price-unit {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.offer-validity {
+  font-size: 0.72rem;
+  color: var(--muted);
+  text-align: right;
+  line-height: 1.4;
+}
+
+.offer-validity-urgent {
+  color: #dc2626 !important;
+  font-weight: 600;
+}
+
+/* CTA Row */
+.offer-card-cta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--softgray);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.offer-premium-card:hover .offer-card-cta-row {
+  background: var(--navy);
+  border-color: var(--navy);
+}
+
+.offer-cta-label {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy);
+  transition: color 0.25s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offer-premium-card:hover .offer-cta-label {
+  color: #fff;
+}
+
+.offer-cta-arrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  transition: background 0.25s ease, transform 0.25s ease;
+}
+
+.offer-premium-card:hover .offer-cta-arrow {
+  background: var(--gold);
+  color: var(--navy);
+  transform: translateX(3px);
+}
+
+/* ---- CTA Strip Section ---- */
+.offers-cta-card {
+  background: linear-gradient(135deg, var(--navy) 0%, #0d1f38 100%);
+  border-radius: 20px;
+  padding: 44px 48px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(7,17,31,0.15);
+}
+
+.offers-cta-glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: rgba(245,158,11,0.08);
+  filter: blur(60px);
+  pointer-events: none;
+}
+
+@media (max-width: 767.98px) {
+  .offers-cta-card {
+    padding: 32px 24px;
+    border-radius: 16px;
+  }
+}
+
+/* ==========================================================================
+   OFFER DETAIL PAGE — PREMIUM STYLES
+   ========================================================================== */
+
+/* Detail Hero */
+.offer-detail-hero {
+  padding: 60px 0 80px;
+}
+
+.offer-detail-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.35) saturate(0.8);
+  z-index: 0;
+}
+
+.offer-detail-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(7,17,31,0.75) 0%,
+    rgba(7,17,31,0.5) 100%
+  );
+  z-index: 1;
+}
+
+/* Route Premium Card */
+.offer-route-premium-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 20px rgba(7,17,31,0.05);
+}
+
+.offer-city-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.offer-route-visual {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+}
+
+.route-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.2);
+  flex-shrink: 0;
+}
+
+.route-line {
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold), rgba(245,158,11,0.3), var(--gold));
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.route-plane-icon {
+  background: #fff;
+  padding: 2px 4px;
+  font-size: 1rem;
+}
+
+/* Detail Image */
+.offer-detail-image-wrap {
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(7,17,31,0.12);
+}
+
+.offer-detail-image-full {
+  width: 100%;
+  height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.offer-detail-discount-badge {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: var(--gold);
+  color: var(--navy);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(245,158,11,0.4);
+}
+
+/* Promo Card */
+.offer-promo-card {
+  background: linear-gradient(135deg, rgba(245,158,11,0.06) 0%, rgba(7,17,31,0.03) 100%);
+  border: 1.5px solid rgba(245,158,11,0.3);
+  border-radius: 16px;
+  padding: 28px 24px;
+  text-align: center;
+}
+
+.offer-promo-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--muted);
+}
+
+.offer-promo-code-box {
+  background: #fff;
+  border: 1.5px dashed rgba(245,158,11,0.5);
+  border-radius: 10px;
+  padding: 12px 24px;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 16px rgba(7,17,31,0.06);
+}
+
+/* Meta Spec Tiles */
+.offer-meta-tile {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 16px;
+  text-align: center;
+  height: 100%;
+  transition: border-color 0.25s, box-shadow 0.25s;
+}
+
+.offer-meta-tile:hover {
+  border-color: rgba(245,158,11,0.4);
+  box-shadow: 0 6px 20px rgba(7,17,31,0.06);
+}
+
+.offer-meta-tile-urgent {
+  border-color: rgba(220,38,38,0.2) !important;
+}
+
+/* Trust Pills */
+.offer-trust-row {
+  padding-top: 4px;
+}
+
+.offer-trust-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  padding: 7px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* ---- Sidebar Card ---- */
+.offer-sidebar-card {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 12px 40px rgba(7,17,31,0.1);
+}
+
+.offer-sidebar-header {
+  background: linear-gradient(135deg, var(--navy) 0%, #0d1f38 100%);
+  padding: 24px 24px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.offer-sidebar-header::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  right: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(245,158,11,0.07);
+  filter: blur(30px);
+}
+
+.offer-sidebar-badge {
+  display: inline-block;
+  background: rgba(245,158,11,0.18);
+  border: 1px solid rgba(245,158,11,0.35);
+  color: var(--gold);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.offer-sidebar-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.offer-sidebar-savings {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.25);
+  color: #16a34a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 50px;
+  margin-top: 4px;
+}
+
+.offer-sidebar-body {
+  padding: 24px 24px 16px;
+}
+
+/* Form inputs inside sidebar */
+.offer-form-input {
+  border: 1.5px solid var(--border) !important;
+  border-radius: 10px !important;
+  padding: 10px 14px !important;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.offer-form-input:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.1) !important;
+}
+
+/* Divider */
+.offer-sidebar-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.offer-sidebar-divider::before,
+.offer-sidebar-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* Trust micro-row */
+.offer-sidebar-trust {
+  display: flex;
+  justify-content: space-around;
+  padding: 14px 24px 18px;
+  border-top: 1px solid var(--border);
+  background: var(--softgray);
+}
+
+.offer-sidebar-trust-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.offer-sidebar-trust-item i {
+  font-size: 1.1rem;
+}
+
+/* Sidebar sticky */
+.offer-sidebar-sticky {
+  position: sticky;
+}
+
+/* Expiry Alert */
+.offer-expiry-alert {
+  display: flex;
+  align-items: center;
+  background: rgba(220,38,38,0.05);
+  border: 1.5px solid rgba(220,38,38,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+
+/* Responsive detail page fixes */
+@media (max-width: 767.98px) {
+  .offer-detail-image-full {
+    height: 240px !important;
+  }
+
+  .offer-route-premium-card {
+    padding: 20px 18px;
+  }
+
+  .offer-city-name {
+    font-size: 1.2rem;
+  }
+
+  .offer-sidebar-price {
+    font-size: 2rem;
+  }
+
+  .offer-card-img-wrap {
+    height: 180px;
+  }
+
+  .offers-cta-card {
+    padding: 28px 20px;
+  }
+
+  .offers-hero-section {
+    padding: 60px 0 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .offer-card-img-wrap {
+    height: 165px;
+  }
+
+  .offer-price-premium {
+    font-size: 1.45rem;
+  }
+}
+
+/* ── Premium Filter Tab Pills (override old minimal styles) ───────────────── */
+.offers-filter-tabs {
+  background: var(--softgray);
+  border: 1.5px solid var(--border);
+  border-radius: 100px;
+  padding: 5px 6px;
+  gap: 2px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.offers-filter-tabs .nav-item {
+  display: inline-flex;
+}
+
+.offers-filter-tabs .nav-link {
+  border-radius: 100px;
+  padding: 9px 22px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted) !important;
+  border: none !important;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+  background: transparent;
+  margin-bottom: 0;
+}
+
+.offers-filter-tabs .nav-link:hover {
+  color: var(--navy) !important;
+  background: rgba(7, 17, 31, 0.06);
+}
+
+.offers-filter-tabs .nav-link.active {
+  background: var(--navy) !important;
+  color: var(--white) !important;
+  box-shadow: 0 4px 14px rgba(7, 17, 31, 0.2);
+}
+
+/* ── Offer Main Section bg tweak ─────────────────────────────────────────── */
+.offers-main-section {
+  background: var(--softgray);
+}
+
+/* ── Offer hero section spacing ──────────────────────────────────────────── */
+.offers-hero-section {
+  padding: 60px 0 60px !important;
+}
+
+/* ── Offer detail hero color ensure ─────────────────────────────────────── */
+.offer-detail-hero .offers-live-badge {
+  background: rgba(245,158,11,0.15);
+  border-color: rgba(245,158,11,0.3);
+  color: var(--gold);
+}
+
+/* ── Route card on show page: softgray bg context ────────────────────────── */
+.offer-route-premium-card {
+  background: #fff;
+}
+
+/* ── Sidebar sticky at right column ─────────────────────────────────────── */
+@media (min-width: 992px) {
+  .offer-sidebar-sticky {
+    position: sticky;
+    top: 100px;
+  }
+}
+
+/* ── Detail hero full-bleed bg image ────────────────────────────────────── */
+.offer-detail-hero-bg {
+  z-index: 0;
+}
+
+.offer-detail-hero > .container {
+  z-index: 2;
+}
+
+/* ── Keep offer card link color neutral ──────────────────────────────────── */
+a.offer-premium-card,
+a.offer-premium-card:hover,
+a.offer-premium-card:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
+
+/* ==========================================================================
+   PREMIUM UI UPGRADE — DESTINATION FAREWAYS
+   Advanced visual polish, depth, and luxury feel enhancements
+   ========================================================================== */
+
+/* ── Premium CSS Variables ─────────────────────────────────────────────────── */
+:root {
+  --gradient-gold: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  --gradient-navy: linear-gradient(135deg, #07111F 0%, #0d1f38 100%);
+  --gradient-hero: linear-gradient(160deg, #07111F 0%, #0e2040 50%, #07111F 100%);
+  --shadow-xs:  0 1px 3px rgba(7,17,31,0.08);
+  --shadow-sm:  0 4px 12px rgba(7,17,31,0.08);
+  --shadow-md:  0 8px 28px rgba(7,17,31,0.10);
+  --shadow-lg:  0 20px 50px rgba(7,17,31,0.14);
+  --shadow-gold: 0 6px 24px rgba(245,158,11,0.28);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 100px;
+  --transition-fast: 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: 0.35s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* ── Global Base Refinements ────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: rgba(245,158,11,0.25);
+  color: #07111F;
+}
+
+/* ── Premium Navbar ────────────────────────────────────────────────────────── */
+#frontend-navbar {
+  transition: background-color 0.4s ease,
+              box-shadow 0.4s ease,
+              backdrop-filter 0.4s ease,
+              padding 0.4s ease;
+}
+
+#frontend-navbar.scrolled,
+#frontend-navbar.navbar-solid {
+  background: rgba(7,17,31,0.96) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25), 0 1px 0 rgba(255,255,255,0.04) inset !important;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+#frontend-navbar .dropdown-menu {
+  background: rgba(7,17,31,0.97) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35) !important;
+  margin-top: 8px !important;
+}
+
+#frontend-navbar .dropdown-item {
+  border-radius: 8px;
+  margin: 2px 6px;
+  padding: 10px 12px !important;
+  transition: all var(--transition-fast);
+}
+
+#frontend-navbar .dropdown-item:hover {
+  background: rgba(245,158,11,0.12) !important;
+  color: var(--gold) !important;
+}
+
+/* Phone button on navbar — gradient glow */
+#frontend-navbar .btn-gold {
+  background: var(--gradient-gold) !important;
+  box-shadow: var(--shadow-gold);
+  letter-spacing: 0.3px;
+}
+
+#frontend-navbar .btn-gold:hover {
+  box-shadow: 0 8px 32px rgba(245,158,11,0.4);
+  transform: translateY(-2px);
+}
+
+/* ── Premium Hero Section ──────────────────────────────────────────────────── */
+.hero-section {
+  background: var(--gradient-hero) !important;
+}
+
+.hero-overlay {
+  background-image: none !important;
+  background: radial-gradient(ellipse at 70% 40%, rgba(29,78,216,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 20% 70%, rgba(245,158,11,0.07) 0%, transparent 55%);
+  opacity: 1 !important;
+}
+
+/* Subtle animated grid pattern for hero */
+.hero-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3 !important;
+}
+
+/* Badge pills shine effect */
+.hero-badge-pill {
+  background: rgba(255,255,255,0.06) !important;
+  border-color: rgba(255,255,255,0.14) !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.hero-badge-pill:hover {
+  background: rgba(245,158,11,0.12) !important;
+  border-color: rgba(245,158,11,0.3) !important;
+}
+
+/* ── Premium Buttons ───────────────────────────────────────────────────────── */
+.btn-gold {
+  background: var(--gradient-gold) !important;
+  border-color: #D97706 !important;
+  box-shadow: var(--shadow-gold);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.btn-gold:hover {
+  background: linear-gradient(135deg, #F59E0B 0%, #B45309 100%) !important;
+  box-shadow: 0 8px 32px rgba(245,158,11,0.45) !important;
+  transform: translateY(-2px);
+}
+
+.btn-navy {
+  background: var(--gradient-navy) !important;
+  border-color: #0d1f38 !important;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-navy::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.btn-navy:hover {
+  box-shadow: 0 10px 32px rgba(7,17,31,0.3) !important;
+  transform: translateY(-2px);
+}
+
+.btn-outline-navy {
+  border-color: rgba(7,17,31,0.3) !important;
+  transition: all var(--transition-smooth) !important;
+}
+
+.btn-outline-navy:hover {
+  background: var(--gradient-navy) !important;
+  border-color: var(--navy) !important;
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Premium Section Titles ────────────────────────────────────────────────── */
+.section-title-wrapper h2 {
+  position: relative;
+  display: inline-block;
+  letter-spacing: -0.3px;
+}
+
+.section-title-wrapper.center h2::after,
+.section-title-wrapper.left h2::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 48px;
+  height: 3px;
+  background: var(--gradient-gold);
+  border-radius: 2px;
+}
+
+.section-title-wrapper.center h2::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.section-title-wrapper p {
+  margin-top: 20px !important;
+}
+
+/* ── Premium Cards (Flight + Blog) ─────────────────────────────────────────── */
+.card-flight {
+  border: 1px solid rgba(7,17,31,0.06) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: transform var(--transition-smooth),
+              box-shadow var(--transition-smooth),
+              border-color var(--transition-smooth) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-flight::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-gold);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.card-flight:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: var(--shadow-lg) !important;
+  border-color: rgba(245,158,11,0.2) !important;
+}
+
+.card-flight:hover::before {
+  opacity: 1;
+}
+
+/* Card image zoom */
+.card-flight img.object-fit-cover {
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.card-flight:hover img.object-fit-cover {
+  transform: scale(1.04);
+}
+
+/* ── Premium Destination Cards ──────────────────────────────────────────────── */
+.dest-card {
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-sm) !important;
+  transition: transform var(--transition-smooth),
+              box-shadow var(--transition-smooth) !important;
+}
+
+.dest-card:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+/* ── Premium Route Cards ───────────────────────────────────────────────────── */
+.popular-route-card {
+  border: 1px solid rgba(7,17,31,0.06) !important;
+  border-radius: var(--radius-md) !important;
+  background: #fff;
+  box-shadow: var(--shadow-xs) !important;
+  transition: transform var(--transition-smooth),
+              box-shadow var(--transition-smooth),
+              border-color var(--transition-smooth) !important;
+}
+
+.popular-route-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-color: rgba(245,158,11,0.25) !important;
+}
+
+/* ── Premium Feature Boxes ─────────────────────────────────────────────────── */
+.feature-box {
+  border: 1px solid rgba(7,17,31,0.06) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: transform var(--transition-smooth),
+              box-shadow var(--transition-smooth),
+              border-color var(--transition-smooth) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-box::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-gold);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.feature-box:hover {
+  transform: translateY(-6px) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-color: rgba(245,158,11,0.2) !important;
+}
+
+.feature-box:hover::before {
+  opacity: 1;
+}
+
+.feature-icon-circle {
+  background: var(--gradient-navy) !important;
+  width: 60px !important;
+  height: 60px !important;
+  font-size: 1.4rem !important;
+  box-shadow: 0 8px 20px rgba(7,17,31,0.25) !important;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+}
+
+.feature-box:hover .feature-icon-circle {
+  transform: scale(1.1) rotate(-5deg);
+  box-shadow: 0 12px 28px rgba(7,17,31,0.3) !important;
+}
+
+/* ── Premium Testimonial Cards ─────────────────────────────────────────────── */
+.swiper-testimonials .card-flight {
+  background: #fff !important;
+  border: 1px solid rgba(7,17,31,0.06) !important;
+  border-radius: var(--radius-md) !important;
+}
+
+.swiper-testimonials .card-flight:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-md) !important;
+  border-color: rgba(245,158,11,0.2) !important;
+}
+
+/* Avatar circle gradient */
+.swiper-testimonials .rounded-circle.bg-light {
+  background: linear-gradient(135deg, #f1f5f9, #e2e8f0) !important;
+  border: 2px solid rgba(245,158,11,0.2);
+  color: var(--navy) !important;
+  font-weight: 800 !important;
+}
+
+/* ── Premium Accordion ──────────────────────────────────────────────────────── */
+.custom-accordion .accordion-item {
+  border: 1px solid rgba(7,17,31,0.07) !important;
+  border-radius: var(--radius-sm) !important;
+  margin-bottom: 12px !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+  overflow: hidden;
+}
+
+.custom-accordion .accordion-item:hover {
+  border-color: rgba(245,158,11,0.25) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.custom-accordion .accordion-button {
+  font-weight: 700 !important;
+  letter-spacing: -0.1px;
+}
+
+.custom-accordion .accordion-button:not(.collapsed) {
+  border-bottom: 1px solid rgba(7,17,31,0.06) !important;
+  background: linear-gradient(135deg, #fafafa 0%, #f8fafc 100%) !important;
+}
+
+.custom-accordion .accordion-button::after {
+  color: var(--gold) !important;
+}
+
+/* ── Premium Search Form ────────────────────────────────────────────────────── */
+.search-form-card {
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  box-shadow: 0 24px 60px rgba(7,17,31,0.28) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(255,255,255,0.97) !important;
+}
+
+.search-input-group {
+  border: 1.5px solid rgba(7,17,31,0.08) !important;
+  border-radius: 12px !important;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-fast) !important;
+}
+
+.search-input-group:hover {
+  border-color: rgba(7,17,31,0.14) !important;
+  background: #fafafa !important;
+}
+
+.search-input-group:focus-within {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.12) !important;
+  background: #fffdf5 !important;
+}
+
+.swap-btn {
+  box-shadow: 0 2px 10px rgba(7,17,31,0.1) !important;
+  transition: all var(--transition-smooth) !important;
+}
+
+.swap-btn:hover {
+  box-shadow: 0 6px 18px rgba(7,17,31,0.2) !important;
+}
+
+/* ── Premium Discount Badge ─────────────────────────────────────────────────── */
+.discount-badge {
+  background: var(--gradient-gold) !important;
+  border-radius: 8px !important;
+  font-size: 0.72rem !important;
+  box-shadow: var(--shadow-gold) !important;
+  letter-spacing: 0.3px;
+}
+
+/* ── Premium Newsletter Section ─────────────────────────────────────────────── */
+section[style*="background-color: #07111F"].text-white {
+  background: var(--gradient-hero) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+section[style*="background-color: #07111F"].text-white::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+section[style*="background-color: #07111F"].text-white::after {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  left: -80px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(29,78,216,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Newsletter form input */
+#home-newsletter-form input[type="email"],
+footer #newsletter-form input[type="email"] {
+  border-color: rgba(255,255,255,0.15) !important;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast) !important;
+}
+
+#home-newsletter-form input[type="email"]:focus,
+footer #newsletter-form input[type="email"]:focus {
+  border-color: rgba(245,158,11,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.1) !important;
+}
+
+/* ── Premium CTA Banner ─────────────────────────────────────────────────────── */
+section[style*="background-color: #07111F"]:not(.text-white.py-5.border-bottom) {
+  position: relative;
+  overflow: hidden;
+}
+
+/* ── Premium Footer ──────────────────────────────────────────────────────────── */
+footer {
+  background: var(--gradient-hero) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  right: -80px;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(245,158,11,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+footer .display-font {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.85) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+footer .hover-white {
+  transition: color var(--transition-fast), transform var(--transition-fast) !important;
+}
+
+footer .hover-white:hover {
+  color: #fff !important;
+  transform: translateX(3px);
+}
+
+/* Social links in footer */
+footer .d-flex a[target="_blank"] {
+  transition: color var(--transition-fast), transform var(--transition-fast) !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+footer .d-flex a[target="_blank"]:hover {
+  color: var(--gold) !important;
+  border-color: rgba(245,158,11,0.4) !important;
+  background: rgba(245,158,11,0.08);
+  transform: translateY(-2px);
+}
+
+/* ── Premium Breadcrumbs ─────────────────────────────────────────────────────── */
+.custom-breadcrumb .breadcrumb-item a:hover {
+  color: var(--gold) !important;
+}
+
+/* ── Premium Form Focus States ──────────────────────────────────────────────── */
+.form-control:focus {
+  border-color: var(--gold) !important;
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.1) !important;
+}
+
+/* ── Premium Pagination ─────────────────────────────────────────────────────── */
+.pagination .page-link {
+  border-radius: 8px !important;
+  margin: 0 2px;
+  border: 1px solid rgba(7,17,31,0.1);
+  color: var(--navy);
+  transition: all var(--transition-fast);
+  font-weight: 600;
+}
+
+.pagination .page-link:hover {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination .page-item.active .page-link {
+  background: var(--gradient-gold) !important;
+  border-color: var(--gold) !important;
+  color: var(--navy) !important;
+  box-shadow: var(--shadow-gold);
+}
+
+/* ── Premium Swiper Controls ────────────────────────────────────────────────── */
+.swiper-pagination-bullet {
+  background: rgba(7,17,31,0.2) !important;
+  opacity: 1 !important;
+  width: 8px !important;
+  height: 8px !important;
+  transition: all var(--transition-smooth) !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: var(--gold) !important;
+  width: 24px !important;
+  border-radius: 4px !important;
+  box-shadow: var(--shadow-gold);
+}
+
+/* ── Premium Floating Buttons ───────────────────────────────────────────────── */
+.floating-call-btn {
+  background: var(--gradient-gold) !important;
+  box-shadow: 0 6px 28px rgba(245,158,11,0.45) !important;
+}
+
+.floating-call-btn:hover {
+  box-shadow: 0 10px 36px rgba(245,158,11,0.55) !important;
+  transform: translateY(-2px);
+}
+
+/* ── Premium Section Backgrounds ───────────────────────────────────────────── */
+.section-alt {
+  background: linear-gradient(180deg, #F8FAFC 0%, #f0f4f8 100%) !important;
+}
+
+/* ── Premium Bg utility ─────────────────────────────────────────────────────── */
+.bg-softgray {
+  background: linear-gradient(180deg, #F8FAFC 0%, #f0f4f8 100%) !important;
+}
+
+/* ── Micro-interaction: Link arrows ─────────────────────────────────────────── */
+a .fa-arrow-right,
+a .fa-arrow-right-long,
+a .fa-chevron-right {
+  transition: transform var(--transition-fast);
+  display: inline-block;
+}
+
+a:hover .fa-arrow-right,
+a:hover .fa-arrow-right-long,
+a:hover .fa-chevron-right {
+  transform: translateX(4px);
+}
+
+/* ── Premium Tag/Badge Global ───────────────────────────────────────────────── */
+.badge {
+  letter-spacing: 0.3px;
+}
+
+/* ── Smooth Image Loading ────────────────────────────────────────────────────── */
+img {
+  transition: opacity 0.3s ease;
+}
+
+/* ── Destination Hero Custom Pages ─────────────────────────────────────────── */
+.custom-page-hero {
+  background: var(--gradient-hero) !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.custom-page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Premium Filter Card (Flight Filters) ──────────────────────────────────── */
+.filter-card {
+  border: 1px solid rgba(7,17,31,0.06) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+.filter-title {
+  font-size: 0.8rem !important;
+  letter-spacing: 0.8px !important;
+  color: var(--muted) !important;
+}
+
+/* ── Premium Sort Bar ───────────────────────────────────────────────────────── */
+.sort-bar {
+  border-radius: var(--radius-md) !important;
+  background: linear-gradient(135deg, #fafbfc 0%, #f1f5f9 100%) !important;
+}
+
+/* ── Smooth Scroll Chrome ────────────────────────────────────────────────────── */
+* {
+  -webkit-tap-highlight-color: rgba(245,158,11,0.15);
+}
+
+/* ── Premium "text-navy" links ──────────────────────────────────────────────── */
+a.text-navy:hover {
+  color: var(--gold) !important;
+}
+
+/* ── Premium View All links ─────────────────────────────────────────────────── */
+.text-navy.border-bottom {
+  border-color: rgba(7,17,31,0.25) !important;
+  transition: color var(--transition-fast), border-color var(--transition-fast) !important;
+}
+
+.text-navy.border-bottom:hover {
+  color: var(--gold) !important;
+  border-color: var(--gold) !important;
+}
+
+/* ── Glassmorphism Stat Pills (Offers hero already has these, globalise) ──── */
+.offers-stat-pill,
+.hero-badge-pill {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* ── Premium prose content ──────────────────────────────────────────────────── */
+.prose-content a {
+  color: var(--gold) !important;
+  border-bottom: 1px solid rgba(245,158,11,0.3);
+  transition: border-color var(--transition-fast);
+}
+
+.prose-content a:hover {
+  border-color: var(--gold);
+}
+
+/* ── Custom Tab Pills ───────────────────────────────────────────────────────── */
+.custom-search-tabs .nav-link.active {
+  background: var(--gradient-navy) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* ── Prevent horizontal overflow from scroll containers ──────────────────── */
+body {
+  overflow-x: hidden;
+}
+
+/* ── Shine shimmer on gold elements (subtle) ──────────────────────────────── */
+/* NOTE: .discount-badge intentionally excluded — it needs position:absolute */
+.btn-gold,
+.offer-badge-save {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gold::before,
+.offer-badge-save::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+  transform: skewX(-15deg);
+  transition: none;
+}
+
+.btn-gold:hover::before,
+.offer-badge-save:hover::before {
+  animation: shine 0.6s ease forwards;
+}
+
+@keyframes shine {
+  from { left: -100%; }
+  to   { left: 150%; }
+}
+

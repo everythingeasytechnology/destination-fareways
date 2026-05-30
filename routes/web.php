@@ -145,3 +145,4 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
 Route::get('/{slug}', [FrontPageController::class, 'show'])
     ->where('slug', '[A-Za-z0-9-]+')
     ->name('pages.show');
+ 
