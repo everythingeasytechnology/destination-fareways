@@ -57,8 +57,8 @@
         <div class="row mb-5 justify-content-center align-items-center g-3" data-aos="fade-up">
             {{-- Category tabs --}}
             <div class="col-12 col-lg-auto">
-                <div class="offers-filter-scroll">
-                    <ul class="nav border-0 justify-content-center custom-search-tabs offers-filter-tabs">
+                <div class="offers-filter-scroll offers-filter-scroll--hscroll">
+                    <ul class="nav border-0 justify-content-center custom-search-tabs offers-filter-tabs offers-filter-tabs--hscroll">
                         <li class="nav-item">
                             <a class="nav-link {{ !request('category') ? 'active' : '' }}"
                                href="{{ route('blog.index', request('q') ? ['q' => request('q')] : []) }}">
@@ -364,8 +364,5 @@
     .blog-featured-body { padding: 20px; }
     .blog-search-wrap { min-width: 100%; }
 }
-@media (max-width: 575.98px) {
-    .offers-filter-scroll { justify-content: flex-start; }
-    .offers-filter-tabs .nav-link { padding: 8px 14px !important; font-size: .78rem !important; }
-}
+
 </style>
