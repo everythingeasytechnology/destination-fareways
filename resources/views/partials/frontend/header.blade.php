@@ -107,7 +107,7 @@
         {{-- Nav links --}}
         <nav class="mob-nav-links flex-grow-1">
 
-            <a href="{{ route('home') }}" class="mob-nav-item {{ request()->routeIs('home') ? 'active' : '' }}" data-bs-dismiss="offcanvas">
+            <a href="{{ route('home') }}" class="mob-nav-item {{ request()->routeIs('home') ? 'active' : '' }}">
                 <i class="fa-solid fa-house"></i>
                 <span>Home</span>
             </a>
@@ -125,40 +125,40 @@
                 </button>
                 <div class="collapse" id="mobFlightsCollapse">
                     <div class="mob-nav-sub">
-                        <a href="{{ route('flights.search') }}" data-bs-dismiss="offcanvas">
+                        <a href="{{ route('flights.search') }}">
                             <i class="fa-solid fa-magnifying-glass text-gold"></i> Search Flights
                         </a>
-                        <a href="{{ route('offers.index') }}" data-bs-dismiss="offcanvas">
+                        <a href="{{ route('offers.index') }}">
                             <i class="fa-solid fa-tags text-gold"></i> Flight Deals
                         </a>
-                        <a href="{{ route('booking.enquiry') }}" data-bs-dismiss="offcanvas">
+                        <a href="{{ route('booking.enquiry') }}">
                             <i class="fa-solid fa-file-invoice text-gold"></i> Booking Enquiry
                         </a>
                     </div>
                 </div>
             </div>
 
-            <a href="{{ route('destinations.index') }}" class="mob-nav-item {{ request()->routeIs('destinations.*') ? 'active' : '' }}" data-bs-dismiss="offcanvas">
+            <a href="{{ route('destinations.index') }}" class="mob-nav-item {{ request()->routeIs('destinations.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-earth-americas"></i>
                 <span>Destinations</span>
             </a>
 
-            <a href="{{ route('offers.index') }}" class="mob-nav-item {{ request()->routeIs('offers.*') ? 'active' : '' }}" data-bs-dismiss="offcanvas">
+            <a href="{{ route('offers.index') }}" class="mob-nav-item {{ request()->routeIs('offers.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-ticket"></i>
                 <span>Offers</span>
             </a>
 
-            <a href="{{ route('blog.index') }}" class="mob-nav-item {{ request()->routeIs('blog') || request()->routeIs('blog.*') ? 'active' : '' }}" data-bs-dismiss="offcanvas">
+            <a href="{{ route('blog.index') }}" class="mob-nav-item {{ request()->routeIs('blog') || request()->routeIs('blog.*') ? 'active' : '' }}">
                 <i class="fa-solid fa-newspaper"></i>
                 <span>Blog</span>
             </a>
 
-            <a href="{{ route('about') }}" class="mob-nav-item {{ request()->routeIs('about') ? 'active' : '' }}" data-bs-dismiss="offcanvas">
+            <a href="{{ route('about') }}" class="mob-nav-item {{ request()->routeIs('about') ? 'active' : '' }}">
                 <i class="fa-solid fa-circle-info"></i>
                 <span>About</span>
             </a>
 
-            <a href="{{ route('contact') }}" class="mob-nav-item {{ request()->routeIs('contact') ? 'active' : '' }}" data-bs-dismiss="offcanvas">
+            <a href="{{ route('contact') }}" class="mob-nav-item {{ request()->routeIs('contact') ? 'active' : '' }}">
                 <i class="fa-solid fa-envelope"></i>
                 <span>Contact</span>
             </a>
@@ -176,7 +176,7 @@
                     <i class="fa-solid fa-phone"></i> +1 (800) 555-0199
                 </a>
             @endif
-            <a href="{{ route('booking.enquiry') }}" class="btn btn-outline-light w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2" data-bs-dismiss="offcanvas">
+            <a href="{{ route('booking.enquiry') }}" class="btn btn-outline-light w-100 py-2 fw-semibold d-flex align-items-center justify-content-center gap-2">
                 <i class="fa-solid fa-paper-plane"></i> Book a Flight
             </a>
         </div>
