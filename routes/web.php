@@ -39,36 +39,38 @@ use App\Http\Controllers\Frontend\SitemapController as FrontSitemapController;
 */
 
 // ===================== FRONTEND ROUTES =====================
-Route::get('/', [FrontHomeController::class, 'index'])->name('home');
-Route::get('/flights/search', [FrontFlightController::class, 'search'])->name('flights.search');
-Route::get('/flights/locations', [FrontFlightController::class, 'locations'])->name('flights.locations');
-Route::get('/flights/results', [FrontFlightController::class, 'results'])->name('flights.results');
-Route::get('/flights/details/{id}', [FrontFlightController::class, 'details'])->name('flights.details');
-Route::get('/booking-enquiry', [FrontFlightController::class, 'enquiryForm'])->name('booking.enquiry');
-Route::post('/booking-enquiry', [FrontFlightController::class, 'submitEnquiry'])->name('booking.submit');
-Route::get('/offers', [FrontOfferController::class, 'index'])->name('offers.index');
-Route::get('/offers/{slug}', [FrontOfferController::class, 'show'])->name('offers.show');
-Route::get('/blog', [FrontBlogController::class, 'index'])->name('blog.index');
-Route::get('/blog/{slug}', [FrontBlogController::class, 'show'])->name('blog.show');
-Route::get('/destinations', [FrontDestinationController::class, 'index'])->name('destinations.index');
-Route::get('/destinations/{slug}', [FrontDestinationController::class, 'show'])->name('destinations.show');
-Route::get('/about', [FrontPageController::class, 'about'])->name('about');
-Route::get('/contact', [FrontPageController::class, 'contact'])->name('contact');
-Route::post('/contact', [FrontContactController::class, 'submit'])->name('contact.submit');
-Route::get('/faq', [FrontFaqController::class, 'index'])->name('faq');
-Route::get('/privacy-policy', [FrontPageController::class, 'privacy'])->name('privacy');
-Route::redirect('/PrivacyPolicy', '/privacy-policy', 301);
-Route::get('/cookies', [FrontPageController::class, 'cookies'])->name('cookies');
-Route::redirect('/Cookies', '/cookies', 301);
-Route::get('/refund-policy', [FrontPageController::class, 'refundPolicy'])->name('refund-policy');
-Route::redirect('/RefundPolicy', '/refund-policy', 301);
-Route::get('/terms-conditions', [FrontPageController::class, 'terms'])->name('terms');
-Route::redirect('/Termsandconditions', '/terms-conditions', 301);
-Route::redirect('/TermsConditions', '/terms-conditions', 301);
-Route::post('/newsletter/subscribe', [FrontNewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
-Route::post('/lead/submit', [FrontHomeController::class, 'submitLead'])->name('lead.submit');
-Route::get('/sitemap.xml', [FrontSitemapController::class, 'index']);
-Route::get('/robots.txt', [FrontSitemapController::class, 'robots']);
+Route::middleware('site.maintenance')->group(function () {
+    Route::get('/', [FrontHomeController::class, 'index'])->name('home');
+    Route::get('/flights/search', [FrontFlightController::class, 'search'])->name('flights.search');
+    Route::get('/flights/locations', [FrontFlightController::class, 'locations'])->name('flights.locations');
+    Route::get('/flights/results', [FrontFlightController::class, 'results'])->name('flights.results');
+    Route::get('/flights/details/{id}', [FrontFlightController::class, 'details'])->name('flights.details');
+    Route::get('/booking-enquiry', [FrontFlightController::class, 'enquiryForm'])->name('booking.enquiry');
+    Route::post('/booking-enquiry', [FrontFlightController::class, 'submitEnquiry'])->name('booking.submit');
+    Route::get('/offers', [FrontOfferController::class, 'index'])->name('offers.index');
+    Route::get('/offers/{slug}', [FrontOfferController::class, 'show'])->name('offers.show');
+    Route::get('/blog', [FrontBlogController::class, 'index'])->name('blog.index');
+    Route::get('/blog/{slug}', [FrontBlogController::class, 'show'])->name('blog.show');
+    Route::get('/destinations', [FrontDestinationController::class, 'index'])->name('destinations.index');
+    Route::get('/destinations/{slug}', [FrontDestinationController::class, 'show'])->name('destinations.show');
+    Route::get('/about', [FrontPageController::class, 'about'])->name('about');
+    Route::get('/contact', [FrontPageController::class, 'contact'])->name('contact');
+    Route::post('/contact', [FrontContactController::class, 'submit'])->name('contact.submit');
+    Route::get('/faq', [FrontFaqController::class, 'index'])->name('faq');
+    Route::get('/privacy-policy', [FrontPageController::class, 'privacy'])->name('privacy');
+    Route::redirect('/PrivacyPolicy', '/privacy-policy', 301);
+    Route::get('/cookies', [FrontPageController::class, 'cookies'])->name('cookies');
+    Route::redirect('/Cookies', '/cookies', 301);
+    Route::get('/refund-policy', [FrontPageController::class, 'refundPolicy'])->name('refund-policy');
+    Route::redirect('/RefundPolicy', '/refund-policy', 301);
+    Route::get('/terms-conditions', [FrontPageController::class, 'terms'])->name('terms');
+    Route::redirect('/Termsandconditions', '/terms-conditions', 301);
+    Route::redirect('/TermsConditions', '/terms-conditions', 301);
+    Route::post('/newsletter/subscribe', [FrontNewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
+    Route::post('/lead/submit', [FrontHomeController::class, 'submitLead'])->name('lead.submit');
+    Route::get('/sitemap.xml', [FrontSitemapController::class, 'index']);
+    Route::get('/robots.txt', [FrontSitemapController::class, 'robots']);
+});
 
 // Admin Authentication Routes
 Route::group(['prefix' => 'admin'], function () {
@@ -143,6 +145,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
 
 // Dynamic CMS pages from Admin > Pages. Keep this after all fixed routes.
 Route::get('/{slug}', [FrontPageController::class, 'show'])
+    ->middleware('site.maintenance')
     ->where('slug', '[A-Za-z0-9-]+')
     ->name('pages.show');
  
