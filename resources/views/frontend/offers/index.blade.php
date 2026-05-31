@@ -55,8 +55,8 @@
         <!-- Filter Tabs -->
         <div class="row mb-5 justify-content-center" data-aos="fade-up">
             <div class="col-12 col-lg-auto">
-                <div class="offers-filter-scroll">
-                    <ul class="nav border-0 justify-content-center custom-search-tabs offers-filter-tabs">
+                <div class="offers-filter-scroll offers-filter-scroll--hscroll">
+                    <ul class="nav border-0 justify-content-center custom-search-tabs offers-filter-tabs offers-filter-tabs--hscroll">
                         <li class="nav-item">
                             <a class="nav-link {{ !request('type') ? 'active' : '' }}" href="{{ route('offers.index') }}">
                                 <i class="fa-solid fa-border-all me-1"></i> All Deals

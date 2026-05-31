@@ -540,7 +540,7 @@
 </section>
 
 <!-- SECTION 11: Get Exclusive Flight Deals (Newsletter) -->
-<section style="background-color: #07111F;" class="text-white py-5 border-bottom border-secondary text-center">
+<section style="background-color: #07111F;" class="text-white py-5 text-center">
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-lg-7 col-md-10" data-aos="fade-up">
@@ -553,7 +553,7 @@
                 <form id="home-newsletter-form" action="{{ route('newsletter.subscribe') }}" method="POST" class="d-flex flex-column flex-sm-row justify-content-center align-items-center gap-2 max-width-600 mx-auto">
                     @csrf
                     <input type="email" name="email" class="form-control py-3 px-4 bg-dark border-secondary text-white text-center text-sm-start rounded-pill" placeholder="Enter your email address" required style="font-size: 0.95rem; border-color: rgba(255,255,255,0.2) !important;">
-                    <button type="submit" class="btn btn-gold text-uppercase font-monospace py-2 px-3 tracking-wide text-navy mx-auto mx-sm-0" style="font-weight: 600;">Subscribe <i class="fa-solid fa-arrow-right ms-1"></i></button>
+                    <button type="submit" class="btn btn-gold py-3 px-4 fw-semibold text-navy mx-auto mx-sm-0 rounded-pill d-flex align-items-center justify-content-center gap-1" style="letter-spacing:.3px;">Subscribe <i class="fa-solid fa-arrow-right"></i></button>
                 </form>
                 <div class="text-white-50 small mt-2" style="font-size: 0.75rem;">No spam. Unsubscribe anytime.</div>
             </div>
@@ -563,9 +563,9 @@
 
 <!-- SECTION 12: SEO Content Block -->
 @if(!empty($seoData) && !empty($seoData->seo_content_block))
-<section class="bg-white py-5">
-    <div class="container py-4">
-        <div class="mx-auto prose-content" style="max-width: 860px;" data-aos="fade-up">
+<section style="background-color: #07111F;" class="text-white-50 py-4">
+    <div class="container">
+        <div class="mx-auto prose-content text-center" style="max-width: 860px;" data-aos="fade-up">
             {!! $seoData->seo_content_block !!}
         </div>
     </div>
@@ -574,17 +574,17 @@
 
 {{-- ── Mobile Sticky CTA Bar (home page) ── --}}
 <div class="offer-mobile-cta d-lg-none">
-    <div class="d-flex gap-2 align-items-center">
-        <div class="flex-grow-1">
-            <span class="d-block text-muted-white small fw-semibold text-uppercase" style="font-size:.65rem;letter-spacing:.5px;">Best Price Guarantee</span>
-            <span class="text-white fw-bold" style="font-size:.88rem;">Book Cheap Flights</span>
+    <div class="offer-mobile-cta-inner">
+        <div class="offer-mobile-cta-text">
+            <span class="offer-cta-chip"><i class="fa-solid fa-tag"></i> Best Price Guarantee</span>
+            <span class="offer-cta-title">Book Cheap Flights</span>
         </div>
         <a href="tel:{{ $callSettings->phone ?? '+18005550199' }}"
-           class="btn btn-gold px-3 py-2 fw-bold text-navy d-flex align-items-center gap-1 flex-shrink-0" style="font-size:.82rem;">
+           class="btn btn-gold fw-bold text-navy d-flex align-items-center gap-1 offer-cta-btn">
             <i class="fa-solid fa-phone"></i> Call Now
         </a>
         <a href="{{ route('booking.enquiry') }}"
-           class="btn btn-outline-light px-3 py-2 fw-semibold d-flex align-items-center gap-1 flex-shrink-0 offer-enquire-btn" style="font-size:.82rem;">
+           class="btn btn-outline-light fw-semibold d-flex align-items-center gap-1 offer-enquire-btn offer-cta-btn">
             Book Now
         </a>
     </div>
