@@ -2223,7 +2223,7 @@ input[type="range"].form-range::-ms-thumb {
     color: var(--navy);
     font-weight: 700;
     text-transform: uppercase;
-    font-size: clamp(.52rem, 2vw, .65rem);
+    font-size: clamp(.42rem, 1.8vw, .6rem);
     letter-spacing: .4px;
     padding: .2em .6em;
     border-radius: 999px;
