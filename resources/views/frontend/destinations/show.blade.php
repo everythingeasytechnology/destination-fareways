@@ -278,20 +278,19 @@
     </div>
 </section>
 
-{{-- ── Mobile Sticky CTA (exact offer-mobile-cta) ── --}}
+{{-- ── Mobile Sticky CTA ── --}}
 <div class="offer-mobile-cta d-lg-none">
-    <div class="d-flex gap-2 align-items-center">
-        <div class="flex-grow-1">
-            <span class="d-block text-muted-white small fw-semibold text-uppercase" style="font-size:.68rem;letter-spacing:.5px;">From</span>
-            <span class="price fw-bold fs-5 text-gold font-monospace">${{ number_format($destination->starting_price, 0) }}</span>
-            <span class="text-muted-white" style="font-size:.75rem;"> / one-way</span>
+    <div class="offer-mobile-cta-inner">
+        <div class="offer-mobile-cta-text">
+            <span class="offer-cta-chip"><i class="fa-solid fa-tag"></i> Best Price Guarantee</span>
+            <span class="offer-cta-title">Book Cheap Flights</span>
         </div>
         <a href="tel:{{ $callSettings->phone ?? '+18005550199' }}"
-           class="btn btn-gold px-4 py-2 fw-bold text-navy d-flex align-items-center gap-2 flex-shrink-0">
+           class="btn btn-gold fw-bold text-navy d-flex align-items-center gap-1 offer-cta-btn">
             <i class="fa-solid fa-phone"></i> Call Now
         </a>
         <a href="#booking-form-section"
-           class="btn btn-outline-light px-4 py-2 fw-semibold d-flex align-items-center gap-2 flex-shrink-0 offer-enquire-btn">
+           class="btn btn-outline-light fw-semibold d-flex align-items-center gap-1 offer-enquire-btn offer-cta-btn">
             Enquire
         </a>
     </div>
