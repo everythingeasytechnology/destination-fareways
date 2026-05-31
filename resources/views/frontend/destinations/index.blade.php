@@ -321,4 +321,23 @@
     </div>
 </section>
 
+
+{{-- ── Mobile Sticky CTA ── --}}
+<div class="offer-mobile-cta d-lg-none">
+    <div class="d-flex gap-2 align-items-center">
+        <div class="flex-grow-1">
+            <span class="d-block text-muted-white small fw-semibold text-uppercase" style="font-size:.65rem;letter-spacing:.5px;">Best Price Guarantee</span>
+            <span class="text-white fw-bold" style="font-size:.88rem;">Book Cheap Flights</span>
+        </div>
+        <a href="tel:{{ $callSettings->phone ?? '+18005550199' }}"
+           class="btn btn-gold px-3 py-2 fw-bold text-navy d-flex align-items-center gap-1 flex-shrink-0" style="font-size:.82rem;">
+            <i class="fa-solid fa-phone"></i> Call Now
+        </a>
+        <a href="{{ route('booking.enquiry') }}"
+           class="btn btn-outline-light px-3 py-2 fw-semibold d-flex align-items-center gap-1 flex-shrink-0 offer-enquire-btn" style="font-size:.82rem;">
+            Book Now
+        </a>
+    </div>
+</div>
+
 @endsection
