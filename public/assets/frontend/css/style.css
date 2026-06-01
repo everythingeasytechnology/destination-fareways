@@ -106,7 +106,7 @@ section {
     z-index: 1030;
     width: 100%;
     max-width: 100%;
-    overflow-x: hidden;
+    overflow: visible;
 }
 
 /* Mobile Navbar & Offcanvas Drawer */
@@ -3338,6 +3338,7 @@ body {
     border-radius: var(--radius-md) !important;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35) !important;
     margin-top: 8px !important;
+    z-index: 1055;
 }
 
 #frontend-navbar .dropdown-item {
@@ -3350,6 +3351,13 @@ body {
 #frontend-navbar .dropdown-item:hover {
     background: rgba(245, 158, 11, 0.12) !important;
     color: var(--gold) !important;
+}
+
+@media (min-width: 992px) {
+    #frontend-navbar .dropdown:hover > .dropdown-menu,
+    #frontend-navbar .dropdown:focus-within > .dropdown-menu {
+        display: block;
+    }
 }
 
 /* Phone button on navbar — gradient glow */
