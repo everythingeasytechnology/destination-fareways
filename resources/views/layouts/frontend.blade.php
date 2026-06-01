@@ -25,7 +25,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
 
     <!-- Custom Style Sheet -->
-    <link rel="stylesheet" href="{{ asset('assets/frontend/css/style.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/frontend/css/style.css') }}?v={{ filemtime(public_path('assets/frontend/css/style.css')) }}">
     
     @yield('styles')
 
