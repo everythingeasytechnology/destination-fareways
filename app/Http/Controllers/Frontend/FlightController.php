@@ -121,6 +121,14 @@ class FlightController extends Controller
             return 0;
         });
 
+        // Multiply price by passenger count (filters/sorting work on per-person prices above)
+        $passengers = max(1, (int) $passengers);
+        $mockFlights = array_map(function ($flight) use ($passengers) {
+            $flight['price_per_person'] = $flight['price'];
+            $flight['price'] = $flight['price'] * $passengers;
+            return $flight;
+        }, $mockFlights);
+
         // Set breadcrumbs
         $breadcrumbs = [
             ['title' => 'Search Flights', 'url' => route('flights.search')],
