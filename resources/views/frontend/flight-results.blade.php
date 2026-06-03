@@ -227,11 +227,20 @@ if (!function_exists('parseAirport')) {
 
                             {{-- Price + CTA --}}
                             <div class="col-lg-2 col-12 fr-card-price">
-                                <div class="fr-price-label">Total Fare</div>
+                                <div class="fr-price-label">
+                                    @if(($filters['passengers'] ?? 1) > 1)
+                                        Total · {{ $filters['passengers'] }} Pax
+                                    @else
+                                        Total Fare
+                                    @endif
+                                </div>
                                 <div class="fr-price">
                                     <span class="fr-currency">{{ $flight['currency'] ?? 'USD' }}</span>
                                     <span class="fr-amount">{{ number_format($flight['price']) }}</span>
                                 </div>
+                                @if(($filters['passengers'] ?? 1) > 1)
+                                    <div class="fr-per-person">{{ $flight['currency'] ?? 'USD' }} {{ number_format($flight['price_per_person']) }} / person</div>
+                                @endif
                                 <a href="{{ $detailUrl }}" class="btn btn-gold w-100 fw-bold d-flex align-items-center justify-content-center gap-2 fr-select-btn">
                                     Select <i class="fa-solid fa-arrow-right"></i>
                                 </a>
@@ -468,6 +477,7 @@ $(document).ready(function() {
 .fr-currency { font-size:.8rem; font-weight:700; color:#F59E0B; font-family:'JetBrains Mono',monospace; }
 .fr-amount { font-size:1.6rem; font-weight:800; color:#F59E0B; font-family:'JetBrains Mono',monospace; line-height:1; }
 .fr-select-btn { font-size:.82rem; border-radius:10px; padding:8px 0; }
+.fr-per-person { font-size:.7rem; color:#94a3b8; font-family:'JetBrains Mono',monospace; font-weight:600; }
 
 /* Empty state */
 .fr-empty-state { background:#fff; border-radius:18px; border:1px solid rgba(7,17,31,.07); padding:48px 24px; }
