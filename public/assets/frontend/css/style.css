@@ -4038,6 +4038,108 @@ img {
     box-shadow: var(--shadow-xs) !important;
 }
 
+/* ── Route Page Hero Search Styling ───────────────────────────────────────── */
+.custom-page-hero {
+    min-height: 72vh;
+    padding-top: 140px;
+    padding-bottom: 80px;
+}
+
+.custom-page-hero .route-hero-intro {
+    max-width: 840px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.route-hero-title {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+    color: #ffffff;
+}
+
+.route-hero-tagline {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 1.05rem;
+    max-width: 720px;
+}
+
+.custom-page-hero .search-form-card {
+    border: none;
+    padding: 1.75rem 1.5rem;
+    border-radius: 30px;
+    box-shadow: 0 40px 90px rgba(4, 28, 61, 0.24);
+}
+
+.custom-page-hero .search-input-group {
+    background-color: #ffffff;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+    padding: 18px 20px;
+}
+
+.custom-page-hero .search-input-group label {
+    color: rgba(24, 32, 43, 0.8);
+}
+
+.custom-page-hero .search-input-group input,
+.custom-page-hero .search-input-group select {
+    color: #0f172a;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.custom-page-hero .search-tabs-row {
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.custom-page-hero .search-tab-btn {
+    padding: 10px 18px;
+    font-size: 0.95rem;
+}
+
+.custom-page-hero .swap-btn {
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.custom-page-hero .swap-btn:hover {
+    box-shadow: 0 12px 30px rgba(7, 17, 31, 0.14) !important;
+}
+
+.custom-page-hero .btn-gold {
+    min-height: 58px;
+    padding: 0 2rem;
+    border-radius: 18px;
+    font-size: 0.98rem;
+}
+
+@media (max-width: 991.98px) {
+    .custom-page-hero {
+        padding-top: 100px;
+        padding-bottom: 50px;
+    }
+
+    .route-hero-title {
+        font-size: 2.25rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .custom-page-hero {
+        padding-top: 90px;
+        padding-bottom: 40px;
+    }
+
+    .custom-page-hero .search-form-card {
+        padding: 1rem 1rem 1.25rem;
+        border-radius: 24px;
+    }
+}
+
 .filter-title {
     font-size: 0.8rem !important;
     letter-spacing: 0.8px !important;

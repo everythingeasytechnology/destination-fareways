@@ -523,7 +523,16 @@ class BookingFlightService
 
     private function curlOptions(?string $host): array
     {
-        if ($host !== 'booking-com15.p.rapidapi.com' || ! defined('CURLOPT_RESOLVE')) {
+        // Avoid forcing static DNS resolution for RapidAPI.
+        // Direct DNS lookup works for booking-com15.p.rapidapi.com in current environments,
+        // and forcing IPs can cause timeouts when those addresses are unreachable.
+        if (! defined('CURLOPT_RESOLVE')) {
+            return [];
+        }
+
+        $forceResolve = filter_var(env('RAPIDAPI_FORCE_RESOLVE', false), FILTER_VALIDATE_BOOLEAN);
+
+        if ($host !== 'booking-com15.p.rapidapi.com' || ! $forceResolve) {
             return [];
         }
 

@@ -17,8 +17,19 @@
             </div>
         @endif
 
+        @if(isset($routeHeading) && $routeHeading && $routeHeading !== $page->title)
+            <div class="route-hero-intro text-center mt-4" data-aos="fade-up" data-aos-delay="180">
+                <p class="route-hero-title mb-2">{{ $routeHeading }}</p>
+                <p class="route-hero-tagline mx-auto mb-0">{{ $routeTagline }}</p>
+            </div>
+        @elseif(isset($routeTagline) && $routeTagline)
+            <div class="route-hero-intro text-center mt-4" data-aos="fade-up" data-aos-delay="180">
+                <p class="route-hero-tagline mx-auto mb-0">{{ $routeTagline }}</p>
+            </div>
+        @endif
+
         @if(isset($searchDefaults) && $searchDefaults)
-            <div class="row justify-content-center mt-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="row justify-content-center mt-5" data-aos="fade-up" data-aos-delay="200">
                 <div class="col-xl-10">
                     @include('partials.frontend.flight-search-form')
                 </div>
