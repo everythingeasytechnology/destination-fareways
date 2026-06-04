@@ -1,4 +1,5 @@
 <!-- Flight Search Form Component -->
+@php $searchDefaults = $searchDefaults ?? []; @endphp
 <div class="search-form-card p-4" data-aos="fade-up">
     <!-- Top Row: Tabs -->
     <div class="search-tabs-row d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-2 border-bottom">
@@ -27,8 +28,8 @@
                     <div class="col-sm-6 col-12">
                         <div class="search-input-group position-relative">
                             <label for="from_city_input"><i class="fa-solid fa-plane-departure me-1 text-gold"></i> From</label>
-                            <input type="text" name="from" id="from_city_input" class="flight-location-input" data-target="from_location_id" autocomplete="off" placeholder="Origin Airport or City" required value="{{ request('from', 'JFK') }}">
-                            <input type="hidden" name="fromId" id="from_location_id" value="{{ request('fromId') }}">
+                            <input type="text" name="from" id="from_city_input" class="flight-location-input" data-target="from_location_id" autocomplete="off" placeholder="Origin Airport or City" required value="{{ old('from', $searchDefaults['from'] ?? request('from', 'JFK')) }}">
+                            <input type="hidden" name="fromId" id="from_location_id" value="{{ old('fromId', $searchDefaults['fromId'] ?? request('fromId')) }}">
                         </div>
                     </div>
                     
@@ -49,8 +50,8 @@
                     <div class="col-sm-6 col-12">
                         <div class="search-input-group position-relative">
                             <label for="to_city_input"><i class="fa-solid fa-plane-arrival me-1 text-gold"></i> To</label>
-                            <input type="text" name="to" id="to_city_input" class="flight-location-input" data-target="to_location_id" autocomplete="off" placeholder="Destination Airport or City" required value="{{ request('to', 'LAX') }}">
-                            <input type="hidden" name="toId" id="to_location_id" value="{{ request('toId') }}">
+                            <input type="text" name="to" id="to_city_input" class="flight-location-input" data-target="to_location_id" autocomplete="off" placeholder="Destination Airport or City" required value="{{ old('to', $searchDefaults['to'] ?? request('to', 'LAX')) }}">
+                            <input type="hidden" name="toId" id="to_location_id" value="{{ old('toId', $searchDefaults['toId'] ?? request('toId')) }}">
                         </div>
                     </div>
                 </div>
@@ -62,14 +63,14 @@
                     <div class="col-6">
                         <div class="search-input-group">
                             <label for="depart_date_input"><i class="fa-solid fa-calendar me-1 text-gold"></i> Depart</label>
-                            <input type="text" name="depart" id="depart_date_input" class="flatpickr-date" placeholder="Depart Date" required value="{{ request('depart', date('Y-m-d')) }}">
+                            <input type="text" name="depart" id="depart_date_input" class="flatpickr-date" placeholder="Depart Date" required value="{{ old('depart', $searchDefaults['depart'] ?? request('depart', date('Y-m-d'))) }}">
                         </div>
                     </div>
                     
                     <div class="col-6" id="return_date_wrapper">
                         <div class="search-input-group">
                             <label for="return_date_input"><i class="fa-solid fa-calendar me-1 text-gold"></i> Return</label>
-                            <input type="text" name="return" id="return_date_input" class="flatpickr-date" placeholder="Return Date" value="{{ request('return', date('Y-m-d')) }}">
+                            <input type="text" name="return" id="return_date_input" class="flatpickr-date" placeholder="Return Date" value="{{ old('return', $searchDefaults['return'] ?? request('return', date('Y-m-d'))) }}">
                         </div>
                     </div>
                 </div>
@@ -165,21 +166,21 @@
                             <div class="col-lg-4 col-md-5 col-12">
                                 <div class="search-input-group position-relative">
                                     <label><i class="fa-solid fa-plane-departure me-1 text-gold"></i> From</label>
-                                    <input type="text" name="legs[{{ $i }}][from]" id="leg_{{ $i }}_from_input" class="flight-location-input" data-target="leg_{{ $i }}_from_id" autocomplete="off" placeholder="Airport or City" value="{{ request("legs.$i.from", $i === 0 ? request('from', 'JFK') : '') }}">
-                                    <input type="hidden" name="legs[{{ $i }}][fromId]" id="leg_{{ $i }}_from_id" value="{{ request("legs.$i.fromId") }}">
+                                    <input type="text" name="legs[{{ $i }}][from]" id="leg_{{ $i }}_from_input" class="flight-location-input" data-target="leg_{{ $i }}_from_id" autocomplete="off" placeholder="Airport or City" value="{{ request("legs.$i.from", $i === 0 ? old('from', $searchDefaults['from'] ?? request('from', 'JFK')) : '') }}">
+                                    <input type="hidden" name="legs[{{ $i }}][fromId]" id="leg_{{ $i }}_from_id" value="{{ request("legs.$i.fromId", $i === 0 ? old('fromId', $searchDefaults['fromId'] ?? request('fromId')) : '') }}">
                                 </div>
                             </div>
                             <div class="col-lg-4 col-md-5 col-12">
                                 <div class="search-input-group position-relative">
                                     <label><i class="fa-solid fa-plane-arrival me-1 text-gold"></i> To</label>
-                                    <input type="text" name="legs[{{ $i }}][to]" id="leg_{{ $i }}_to_input" class="flight-location-input" data-target="leg_{{ $i }}_to_id" autocomplete="off" placeholder="Airport or City" value="{{ request("legs.$i.to", $i === 0 ? request('to', 'LAX') : '') }}">
-                                    <input type="hidden" name="legs[{{ $i }}][toId]" id="leg_{{ $i }}_to_id" value="{{ request("legs.$i.toId") }}">
+                                    <input type="text" name="legs[{{ $i }}][to]" id="leg_{{ $i }}_to_input" class="flight-location-input" data-target="leg_{{ $i }}_to_id" autocomplete="off" placeholder="Airport or City" value="{{ request("legs.$i.to", $i === 0 ? old('to', $searchDefaults['to'] ?? request('to', 'LAX')) : '') }}">
+                                    <input type="hidden" name="legs[{{ $i }}][toId]" id="leg_{{ $i }}_to_id" value="{{ request("legs.$i.toId", $i === 0 ? old('toId', $searchDefaults['toId'] ?? request('toId')) : '') }}">
                                 </div>
                             </div>
                             <div class="col-lg-3 col-md-12 col-12">
                                     <div class="search-input-group">
                                     <label><i class="fa-solid fa-calendar me-1 text-gold"></i> Date</label>
-                                    <input type="text" name="legs[{{ $i }}][date]" class="flatpickr-date" placeholder="Select Date" value="{{ request("legs.$i.date", $i === 0 ? request('depart', date('Y-m-d')) : '') }}">
+                                    <input type="text" name="legs[{{ $i }}][date]" class="flatpickr-date" placeholder="Select Date" value="{{ request("legs.$i.date", $i === 0 ? old('depart', $searchDefaults['depart'] ?? request('depart', date('Y-m-d'))) : '') }}">
                                 </div>
                             </div>
                         </div>

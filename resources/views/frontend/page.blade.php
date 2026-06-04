@@ -16,6 +16,14 @@
                 @include('partials.frontend.breadcrumb')
             </div>
         @endif
+
+        @if(isset($searchDefaults) && $searchDefaults)
+            <div class="row justify-content-center mt-4" data-aos="fade-up" data-aos-delay="200">
+                <div class="col-xl-10">
+                    @include('partials.frontend.flight-search-form')
+                </div>
+            </div>
+        @endif
     </div>
 </section>
 

@@ -35,11 +35,34 @@ class PageController extends Controller
             'breadcrumb_schema' => $page->breadcrumb_schema,
         ];
 
+        $searchDefaults = null;
+
+        // If this page is a route page, show the flight search form prefilled with route values.
+        if ($page->from_airport_code || $page->to_airport_code) {
+            $searchDefaults = [
+                'from' => $page->from_airport_code,
+                'to' => $page->to_airport_code,
+                'fromId' => null,
+                'toId' => null,
+                'depart' => request('depart', now()->addWeek()->toDateString()),
+                'return' => request('return', now()->addWeeks(2)->toDateString()),
+            ];
+        } elseif (preg_match('/flight-tickets-from-([a-z0-9-]+)-to-([a-z0-9-]+)/', $page->slug, $matches)) {
+            $searchDefaults = [
+                'from' => Str::of($matches[1])->replace('-', ' ')->title(),
+                'to' => Str::of($matches[2])->replace('-', ' ')->title(),
+                'fromId' => null,
+                'toId' => null,
+                'depart' => request('depart', now()->addWeek()->toDateString()),
+                'return' => request('return', now()->addWeeks(2)->toDateString()),
+            ];
+        }
+
         $breadcrumbs = [
             ['title' => $page->title]
         ];
 
-        return view('frontend.page', compact('settings', 'page', 'seoData', 'breadcrumbs'));
+        return view('frontend.page', compact('settings', 'page', 'seoData', 'breadcrumbs', 'searchDefaults'));
     }
 
     /**
