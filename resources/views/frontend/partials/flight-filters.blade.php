@@ -45,17 +45,28 @@
         </div>
 
         <!-- 2. Price Filter Ceiling Slider -->
+        <input type="hidden" name="price_max_active" id="price_max_active" value="{{ request('price_max_active', '0') }}">
         <div class="filter-section">
             <div class="filter-title d-flex justify-content-between">
                 <span>Max Price</span>
                 <span class="text-gold font-monospace fw-bold" id="price-val">${{ request('price_max', '1500') }}</span>
             </div>
-            <input type="range" class="form-range" name="price_max" id="priceRange" min="50" max="1500" step="50" value="{{ request('price_max', '1500') }}" oninput="$('#price-val').text('$' + this.value)" onchange="this.form.submit()">
+            <input type="range" class="form-range" name="{{ request('price_max_active') == '1' ? 'price_max' : '' }}" id="priceRange" min="50" max="1500" step="50" value="{{ request('price_max', '1500') }}" oninput="$('#price-val').text('$' + this.value)" onchange="activatePriceFilterAndSubmit(this)">
             <div class="d-flex justify-content-between text-muted small" style="font-size: 0.7rem;">
                 <span>$50</span>
                 <span>$1,500</span>
             </div>
         </div>
+        <script>
+            function activatePriceFilterAndSubmit(range) {
+                var active = document.getElementById('price_max_active');
+                active.value = '1';
+                if (!range.name) {
+                    range.name = 'price_max';
+                }
+                range.form.submit();
+            }
+        </script>
 
         <!-- 3. Departure Time Period Chips -->
         <div class="filter-section">

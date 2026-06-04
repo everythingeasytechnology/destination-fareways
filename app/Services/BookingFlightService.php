@@ -160,10 +160,19 @@ class BookingFlightService
 
             $flights = $this->normalizeFlights($payload, $request);
 
+            if (empty($flights)) {
+                return [
+                    'source' => 'fallback',
+                    'error' => 'Booking.com15 returned no valid flight offers or the response format is not recognized. Showing sample fares instead.',
+                    'flights' => $this->mockFlights($request),
+                    'raw' => $payload,
+                ];
+            }
+
             return [
                 'source' => 'booking_com15',
                 'error' => null,
-                'flights' => $flights ?: $this->mockFlights($request),
+                'flights' => $flights,
                 'raw' => $payload,
             ];
         } catch (\Throwable $e) {
@@ -464,7 +473,7 @@ class BookingFlightService
 
     private function formatDuration($minutes): string
     {
-        $minutes = (int) $minutes;
+        $minutes = $this->normalizeDurationMinutes($minutes);
 
         if ($minutes <= 0) {
             return 'TBA';
@@ -475,7 +484,25 @@ class BookingFlightService
 
     private function durationHours($minutes): float
     {
-        return max(0.1, ((int) $minutes) / 60);
+        $minutes = $this->normalizeDurationMinutes($minutes);
+
+        return max(0.1, $minutes / 60);
+    }
+
+    private function normalizeDurationMinutes($value): int
+    {
+        $minutes = (int) $value;
+
+        if ($minutes <= 0) {
+            return 0;
+        }
+
+        // Some providers return total flight duration in seconds rather than minutes.
+        if ($minutes > 1440) {
+            $minutes = (int) round($minutes / 60);
+        }
+
+        return $minutes;
     }
 
     private function timePeriod(string $time): string

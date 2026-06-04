@@ -89,7 +89,9 @@ class FlightController extends Controller
             });
         }
 
-        if ($priceFilter !== null) {
+        $priceFilterActive = $request->boolean('price_max_active');
+
+        if ($priceFilterActive && $priceFilter !== null) {
             $mockFlights = array_filter($mockFlights, function ($flight) use ($priceFilter) {
                 return $flight['price'] <= intval($priceFilter);
             });
