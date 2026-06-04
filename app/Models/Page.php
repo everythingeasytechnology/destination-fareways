@@ -28,6 +28,8 @@ class Page extends Model
         'twitter_title',
         'twitter_description',
         'twitter_image',
+        'from_airport_code',
+        'to_airport_code',
         'schema_markup',
         'faq_schema',
         'breadcrumb_schema',

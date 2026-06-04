@@ -60,6 +60,21 @@
                                 </div>
                             </div>
 
+                            <div class="col-12 col-md-6">
+                                <div class="mb-3">
+                                    <label for="from_airport_code" class="form-label fw-bold">From Airport Code</label>
+                                    <input type="text" class="form-control px-3 font-monospace" id="from_airport_code" name="from_airport_code" value="{{ old('from_airport_code', $page->from_airport_code) }}" placeholder="e.g. DEL.AIRPORT">
+                                    <div class="form-text">Enter the origin city airport code.</div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="mb-3">
+                                    <label for="to_airport_code" class="form-label fw-bold">To Airport Code</label>
+                                    <input type="text" class="form-control px-3 font-monospace" id="to_airport_code" name="to_airport_code" value="{{ old('to_airport_code', $page->to_airport_code) }}" placeholder="e.g. BOM.AIRPORT">
+                                    <div class="form-text">Enter the destination city airport code.</div>
+                                </div>
+                            </div>
+
                             <div class="col-12">
                                 <div class="mb-3">
                                     <label for="content" class="form-label fw-bold">Primary Page Content Body</label>
