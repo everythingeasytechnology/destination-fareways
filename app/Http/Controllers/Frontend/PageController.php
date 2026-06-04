@@ -36,6 +36,8 @@ class PageController extends Controller
         ];
 
         $searchDefaults = null;
+        $routeHeading = null;
+        $routeTagline = null;
 
         // If this page is a route page, show the flight search form prefilled with route values.
         if ($page->from_airport_code || $page->to_airport_code) {
@@ -47,6 +49,8 @@ class PageController extends Controller
                 'depart' => request('depart', now()->addWeek()->toDateString()),
                 'return' => request('return', now()->addWeeks(2)->toDateString()),
             ];
+            $routeHeading = $page->title;
+            $routeTagline = $page->subtitle ?: 'Find low fares, direct flights, and flexible dates for your selected route.';
         } elseif (preg_match('/flight-tickets-from-([a-z0-9-]+)-to-([a-z0-9-]+)/', $page->slug, $matches)) {
             $searchDefaults = [
                 'from' => Str::of($matches[1])->replace('-', ' ')->title(),
@@ -56,6 +60,8 @@ class PageController extends Controller
                 'depart' => request('depart', now()->addWeek()->toDateString()),
                 'return' => request('return', now()->addWeeks(2)->toDateString()),
             ];
+            $routeHeading = $page->title ?: 'Flight tickets from ' . Str::of($matches[1])->replace('-', ' ')->title() . ' to ' . Str::of($matches[2])->replace('-', ' ')->title();
+            $routeTagline = $page->subtitle ?: 'Search top fares and book flights between your departure and destination cities.';
         }
 
         $breadcrumbs = [

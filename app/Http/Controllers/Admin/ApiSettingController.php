@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ApiSetting;
 use App\Services\BookingFlightService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ApiSettingController extends Controller
 {
@@ -115,7 +116,14 @@ class ApiSettingController extends Controller
             ]);
 
         } catch (\Exception $e) {
-            $log = "Connection Failed!\nError: " . $e->getMessage() . "\nTarget: " . ($apiSetting->base_url ?? 'N/A') . "\nHost: " . ($apiSetting->rapidapi_host ?? 'N/A') . "\nTimestamp: " . now()->toIso8601String();
+            $errorMessage = $e->getMessage();
+            $suggestion = null;
+
+            if (Str::contains($errorMessage, ['cURL error 28', 'Connection timed out', 'timed out'])) {
+                $suggestion = "Possible causes: network or firewall blocking outbound HTTPS, incorrect RapidAPI host, invalid API key, or forced DNS override in BookingFlightService. Check your settings and remove any CURLOPT_RESOLVE overrides if present.";
+            }
+
+            $log = "Connection Failed!\nError: " . $errorMessage . "\nTarget: " . ($apiSetting->base_url ?? 'N/A') . "\nHost: " . ($apiSetting->rapidapi_host ?? 'N/A') . "\n" . ($suggestion ? "Suggestion: {$suggestion}\n" : '') . "Timestamp: " . now()->toIso8601String();
             
             $apiSetting->update([
                 'api_status' => 'error',
@@ -127,6 +135,7 @@ class ApiSettingController extends Controller
                 'status' => 'error',
                 'message' => 'API Connection failed. See error log for details.',
                 'log' => $log,
+                'suggestion' => $suggestion,
             ]);
         }
     }

@@ -279,19 +279,31 @@
                     termContent.text(data.log).removeClass('d-none');
                     termSpinner.addClass('d-none');
                     btn.prop('disabled', false).html('<i class="fa-solid fa-bolt me-2"></i>Test Booking.com15 API');
-                    
-                    // Show success toast dynamically if it exists
-                    var toastHtml = '<div class="toast show align-items-center text-white bg-success border-0 shadow-lg" role="alert"><div class="d-flex"><div class="toast-body d-flex align-items-center"><i class="fa-solid fa-circle-check fs-5 me-2"></i>' + data.message + '</div></div></div>';
-                    $('.toast-container').append(toastHtml);
-                    setTimeout(function() { $('.toast').last().fadeOut(500, function() { $(this).remove(); }); }, 4000);
 
-                    // Update last sync badge
-                    $('#last-sync-badge').text('Just now');
+                    if (data.success) {
+                        var toastHtml = '<div class="toast show align-items-center text-white bg-success border-0 shadow-lg" role="alert"><div class="d-flex"><div class="toast-body d-flex align-items-center"><i class="fa-solid fa-circle-check fs-5 me-2"></i>' + data.message + '</div></div></div>';
+                        $('.toast-container').append(toastHtml);
+                        $('#last-sync-badge').text('Just now');
+                    } else {
+                        var errorMsg = 'API Connection Failed!\n' + data.log;
+                        if (data.suggestion) {
+                            errorMsg += '\n' + data.suggestion;
+                        }
+                        termContent.text(errorMsg).removeClass('d-none');
+
+                        var toastHtml = '<div class="toast show align-items-center text-white bg-danger border-0 shadow-lg" role="alert"><div class="d-flex"><div class="toast-body d-flex align-items-center"><i class="fa-solid fa-circle-exclamation fs-5 me-2"></i>API connection failed!</div></div></div>';
+                        $('.toast-container').append(toastHtml);
+                    }
+
+                    setTimeout(function() { $('.toast').last().fadeOut(500, function() { $(this).remove(); }); }, 4000);
                 },
                 error: function(xhr) {
                     var errorMsg = "API Call Failed!\n";
                     if (xhr.responseJSON && xhr.responseJSON.log) {
                         errorMsg += xhr.responseJSON.log;
+                        if (xhr.responseJSON.suggestion) {
+                            errorMsg += '\n' + xhr.responseJSON.suggestion;
+                        }
                     } else {
                         errorMsg += "HTTP Error: " + xhr.status + " - " + xhr.statusText;
                     }
