@@ -14,6 +14,17 @@
     <p class="text-muted mb-0">Modify page content, update metadata tags, coordinate Latent Semantic Index keywords, and tune custom LD+JSON scripts.</p>
 </div>
 
+@if ($errors->any())
+    <div class="alert alert-danger border-0 shadow-sm mb-4">
+        <h5 class="mb-2">Unable to save page</h5>
+        <ul class="mb-0 ps-3">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <form id="page-form" action="{{ route('admin.pages.update', $page->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
@@ -327,17 +338,23 @@
                 <div class="mb-3">
                     <label for="status" class="form-label fw-bold">Display Status</label>
                     <select class="form-select px-3" id="status" name="status" required>
-                        <option value="active" {{ $page->status === 'active' ? 'selected' : '' }}>Active (Visible)</option>
-                        <option value="inactive" {{ $page->status === 'inactive' ? 'selected' : '' }}>Inactive / Draft</option>
+                        <option value="active" {{ old('status', $page->status) === 'active' ? 'selected' : '' }}>Active (Visible)</option>
+                        <option value="inactive" {{ old('status', $page->status) === 'inactive' ? 'selected' : '' }}>Inactive / Draft</option>
                     </select>
+                    @error('status')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="show_breadcrumb" class="form-label fw-bold">Display Breadcrumb Bar?</label>
                     <select class="form-select px-3" id="show_breadcrumb" name="show_breadcrumb" required>
-                        <option value="1" {{ $page->show_breadcrumb ? 'selected' : '' }}>Show Breadcrumbs on Page</option>
-                        <option value="0" {{ !$page->show_breadcrumb ? 'selected' : '' }}>Hide Breadcrumbs on Page</option>
+                        <option value="1" {{ old('show_breadcrumb', $page->show_breadcrumb) == 1 ? 'selected' : '' }}>Show Breadcrumbs on Page</option>
+                        <option value="0" {{ old('show_breadcrumb', $page->show_breadcrumb) == 0 ? 'selected' : '' }}>Hide Breadcrumbs on Page</option>
                     </select>
+                    @error('show_breadcrumb')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
