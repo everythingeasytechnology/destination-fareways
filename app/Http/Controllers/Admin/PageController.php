@@ -55,6 +55,9 @@ class PageController extends Controller
             'to_airport_code' => ['nullable', 'string', 'max:50'],
             'schema_markup' => ['nullable', 'string'],
             'faq_schema' => ['nullable', 'string'],
+            'faq_items' => ['nullable', 'array'],
+            'faq_items.*.question' => ['nullable', 'string', 'max:255'],
+            'faq_items.*.answer' => ['nullable', 'string'],
             'breadcrumb_schema' => ['nullable', 'string'],
             'focus_keyword' => ['nullable', 'string', 'max:255'],
         ];
@@ -63,7 +66,34 @@ class PageController extends Controller
 
         // Generate Slug
         $validatedData['slug'] = $validatedData['slug'] ? Str::slug($validatedData['slug']) : Str::slug($validatedData['title']);
-        
+
+        if (empty($validatedData['faq_schema']) && $request->has('faq_items')) {
+            $faqItems = array_filter($request->input('faq_items', []), function ($item) {
+                return !empty($item['question']) && !empty($item['answer']);
+            });
+
+            if (!empty($faqItems)) {
+                $mainEntity = [];
+                foreach ($faqItems as $faqItem) {
+                    $mainEntity[] = [
+                        '@type' => 'Question',
+                        'name' => $faqItem['question'],
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $faqItem['answer'],
+                        ],
+                    ];
+                }
+                $validatedData['faq_schema'] = "<script type=\"application/ld+json\">\n" . json_encode([
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => $mainEntity,
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n</script>";
+            }
+        }
+
+        unset($validatedData['faq_items']);
+
         // Ensure uniqueness for generated slug
         $count = Page::where('slug', $validatedData['slug'])->count();
         if ($count > 0) {
@@ -123,12 +153,42 @@ class PageController extends Controller
             'to_airport_code' => ['nullable', 'string', 'max:50'],
             'schema_markup' => ['nullable', 'string'],
             'faq_schema' => ['nullable', 'string'],
+            'faq_items' => ['nullable', 'array'],
+            'faq_items.*.question' => ['nullable', 'string', 'max:255'],
+            'faq_items.*.answer' => ['nullable', 'string'],
             'breadcrumb_schema' => ['nullable', 'string'],
             'focus_keyword' => ['nullable', 'string', 'max:255'],
         ];
 
         $validatedData = $request->validate($rules);
         $validatedData['slug'] = Str::slug($validatedData['slug']);
+
+        if (empty($validatedData['faq_schema']) && $request->has('faq_items')) {
+            $faqItems = array_filter($request->input('faq_items', []), function ($item) {
+                return !empty($item['question']) && !empty($item['answer']);
+            });
+
+            if (!empty($faqItems)) {
+                $mainEntity = [];
+                foreach ($faqItems as $faqItem) {
+                    $mainEntity[] = [
+                        '@type' => 'Question',
+                        'name' => $faqItem['question'],
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $faqItem['answer'],
+                        ],
+                    ];
+                }
+                $validatedData['faq_schema'] = "<script type=\"application/ld+json\">\n" . json_encode([
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => $mainEntity,
+                ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n</script>";
+            }
+        }
+
+        unset($validatedData['faq_items']);
 
         // Handle Image Uploads & deletions
         if ($request->hasFile('banner_image')) {

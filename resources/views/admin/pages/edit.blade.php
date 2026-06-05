@@ -14,7 +14,7 @@
     <p class="text-muted mb-0">Modify page content, update metadata tags, coordinate Latent Semantic Index keywords, and tune custom LD+JSON scripts.</p>
 </div>
 
-<form action="{{ route('admin.pages.update', $page->id) }}" method="POST" enctype="multipart/form-data">
+<form id="page-form" action="{{ route('admin.pages.update', $page->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
@@ -30,6 +30,9 @@
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link px-4 py-2" id="seo-tab" data-bs-toggle="pill" data-bs-target="#seo" type="button" role="tab"><i class="fa-solid fa-magnifying-glass me-2"></i>SEO & Socials</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link px-4 py-2" id="faq-tab" data-bs-toggle="pill" data-bs-target="#faq" type="button" role="tab"><i class="fa-solid fa-circle-question me-2"></i>FAQ</button>
                     </li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link px-4 py-2" id="schema-tab" data-bs-toggle="pill" data-bs-target="#schema" type="button" role="tab"><i class="fa-solid fa-code me-2"></i>Structured Schemas</button>
@@ -198,7 +201,78 @@
                         </div>
                     </div>
 
-                    <!-- Tab 3: Structured Schemas -->
+                    <!-- Tab 3: FAQ -->
+                    <div class="tab-pane fade" id="faq" role="tabpanel">
+                        @php
+                            $faqItems = old('faq_items', []);
+                            if (empty($faqItems) && !empty($page->faq_schema)) {
+                                try {
+                                    $jsonText = preg_replace('/<script\b[^>]*>([\s\S]*?)<\/script>/i', '$1', $page->faq_schema);
+                                    $parsed = json_decode($jsonText, true);
+                                    if (is_array($parsed) && isset($parsed['mainEntity']) && is_array($parsed['mainEntity'])) {
+                                        foreach ($parsed['mainEntity'] as $entity) {
+                                            if (($entity['@type'] ?? '') === 'Question') {
+                                                $faqItems[] = [
+                                                    'question' => $entity['name'] ?? '',
+                                                    'answer' => $entity['acceptedAnswer']['text'] ?? '',
+                                                ];
+                                            }
+                                        }
+                                    }
+                                } catch (\Throwable $e) {
+                                }
+                            }
+                            if (empty($faqItems)) {
+                                $faqItems = [['question' => '', 'answer' => '']];
+                            }
+                        @endphp
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <div class="mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <h5 class="mb-0">Page FAQ Questions</h5>
+                                        <button type="button" id="addFaqItem" class="btn btn-sm btn-outline-primary px-3 rounded-pill" style="font-size: 0.75rem;">
+                                            <i class="fa-solid fa-plus me-1"></i>Add Question
+                                        </button>
+                                    </div>
+                                    <p class="text-muted small mb-3">Add as many FAQ questions and answers as needed for this page. Generate FAQ structured schema after creating your entries.</p>
+                                    <div id="faq-items-container">
+                                        @foreach($faqItems as $index => $item)
+                                            <div class="faq-item border rounded p-3 mb-3 position-relative">
+                                                <button type="button" class="btn btn-sm btn-outline-danger remove-faq-item position-absolute" style="top: 12px; right: 12px;">Remove</button>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Question</label>
+                                                    <input type="text" class="form-control" data-name="question" name="faq_items[{{ $index }}][question]" value="{{ $item['question'] }}" placeholder="FAQ question">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label fw-semibold">Answer</label>
+                                                    <textarea class="form-control" data-name="answer" name="faq_items[{{ $index }}][answer]" rows="3" placeholder="FAQ answer">{{ $item['answer'] }}</textarea>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <div class="mb-4 border-top pt-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label for="faq_schema" class="form-label fw-bold mb-0">FAQ Schema Block</label>
+                                        <button type="button" id="generate-faq-schema" class="btn btn-sm btn-outline-primary px-3 rounded-pill" style="font-size: 0.75rem;">
+                                            <i class="fa-solid fa-magic me-1"></i>Generate FAQ Schema
+                                        </button>
+                                    </div>
+                                    <textarea class="form-control px-3 font-monospace text-navy schema-validate-trigger" id="faq_schema" name="faq_schema" rows="12" placeholder='<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  ...
+}
+</script>' style="font-size: 0.8rem; background-color: #f8fafc;" data-error-id="faq-err-msg">{{ old('faq_schema', $page->faq_schema) }}</textarea>
+                                    <div id="faq-err-msg" class="small mt-2 d-none"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: Structured Schemas -->
                     <div class="tab-pane fade" id="schema" role="tabpanel">
                         <div class="row g-3">
                             <div class="col-12">
@@ -209,7 +283,7 @@
                                             <i class="fa-solid fa-magic me-1"></i>Generate WebPage Schema
                                         </button>
                                     </div>
-                                    <textarea class="form-control px-3 font-monospace text-navy schema-validate-trigger" id="schema_markup" name="schema_markup" rows="6" placeholder='<script type="application/ld+json">
+                                    <textarea class="form-control px-3 font-monospace text-navy schema-validate-trigger" id="schema_markup" name="schema_markup" rows="8" placeholder='<script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
@@ -217,23 +291,6 @@
 }
 </script>' style="font-size: 0.8rem; background-color: #f8fafc;" data-error-id="schema-err-msg">{{ old('schema_markup', $page->schema_markup) }}</textarea>
                                     <div id="schema-err-msg" class="small mt-2 d-none"></div>
-                                </div>
-
-                                <div class="mb-4 border-top pt-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
-                                        <label for="faq_schema" class="form-label fw-bold mb-0">FAQ Schema Block</label>
-                                        <button type="button" id="generate-faq-schema" class="btn btn-sm btn-outline-primary px-3 rounded-pill" style="font-size: 0.75rem;">
-                                            <i class="fa-solid fa-magic me-1"></i>Generate Default FAQ Schema
-                                        </button>
-                                    </div>
-                                    <textarea class="form-control px-3 font-monospace text-navy schema-validate-trigger" id="faq_schema" name="faq_schema" rows="6" placeholder='<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  ...
-}
-</script>' style="font-size: 0.8rem; background-color: #f8fafc;" data-error-id="faq-err-msg">{{ old('faq_schema', $page->faq_schema) }}</textarea>
-                                    <div id="faq-err-msg" class="small mt-2 d-none"></div>
                                 </div>
 
                                 <div class="mb-3 border-top pt-3">
@@ -410,6 +467,86 @@
             }
         }
 
+        // FAQ row helpers
+        function escapeHtml(text) {
+            return $('<div>').text(text || '').html();
+        }
+
+        function generateFaqSchemaFromItems() {
+            var faqEntities = [];
+            $('#faq-items-container .faq-item').each(function() {
+                var question = $(this).find('[data-name=question]').val().trim();
+                var answer = $(this).find('[data-name=answer]').val().trim();
+                if (question && answer) {
+                    faqEntities.push({
+                        "@type": "Question",
+                        "name": question,
+                        "acceptedAnswer": {
+                            "@type": "Answer",
+                            "text": answer
+                        }
+                    });
+                }
+            });
+            if (faqEntities.length === 0) {
+                return false;
+            }
+            var schemaObject = {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": faqEntities
+            };
+            var schema = '<script type="application/ld+json">\n' + JSON.stringify(schemaObject, null, 2) + '\n<\/script>';
+            $('#faq_schema').val(schema);
+            validateSchema(schema, 'faq-err-msg');
+            return true;
+        }
+
+        function updateFaqIndices() {
+            $('#faq-items-container .faq-item').each(function(index) {
+                $(this).find('[data-name]').each(function() {
+                    var baseName = $(this).data('name');
+                    $(this).attr('name', 'faq_items[' + index + '][' + baseName + ']');
+                });
+            });
+        }
+
+        function addFaqRow(item) {
+            var index = $('#faq-items-container .faq-item').length;
+            var question = escapeHtml(item ? item.question : '');
+            var answer = escapeHtml(item ? item.answer : '');
+            var row = `
+                <div class="faq-item border rounded p-3 mb-3 position-relative">
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-faq-item position-absolute" style="top: 12px; right: 12px;">Remove</button>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Question</label>
+                        <input type="text" class="form-control" data-name="question" name="faq_items[${index}][question]" value="${question}" placeholder="FAQ question">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Answer</label>
+                        <textarea class="form-control" data-name="answer" name="faq_items[${index}][answer]" rows="3" placeholder="FAQ answer">${answer}</textarea>
+                    </div>
+                </div>
+            `;
+            $('#faq-items-container').append(row);
+        }
+
+        $('#addFaqItem').on('click', function() {
+            addFaqRow();
+        });
+
+        $(document).on('click', '.remove-faq-item', function() {
+            $(this).closest('.faq-item').remove();
+            if ($('#faq-items-container .faq-item').length === 0) {
+                addFaqRow();
+            }
+            updateFaqIndices();
+        });
+
+        if ($('#faq-items-container .faq-item').length === 0) {
+            addFaqRow();
+        }
+
         // Schema generation hooks
         $('#generate-generic-schema').on('click', function() {
             var title = $('#title').val() || 'Cheap Flights to London';
@@ -430,22 +567,15 @@
         });
 
         $('#generate-faq-schema').on('click', function() {
-            var schema = `<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [{
-    "@type": "Question",
-    "name": "How do I find the cheapest flight deals?",
-    "acceptedAnswer": {
-      "@type": "Answer",
-      "text": "Booking mid-week and planning 4-6 weeks in advance typically yields the most competitive airline tariffs."
-    }
-  }]
-}
-<\/script>`;
-            $('#faq_schema').val(schema);
-            validateSchema(schema, 'faq-err-msg');
+            if (!generateFaqSchemaFromItems()) {
+                alert('Please add at least one FAQ question and answer before generating the schema.');
+            }
+        });
+
+        $('#page-form').on('submit', function() {
+            if (!$('#faq_schema').val().trim()) {
+                generateFaqSchemaFromItems();
+            }
         });
 
         $('#generate-bread-schema').on('click', function() {

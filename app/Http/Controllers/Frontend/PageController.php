@@ -68,7 +68,41 @@ class PageController extends Controller
             ['title' => $page->title]
         ];
 
-        return view('frontend.page', compact('settings', 'page', 'seoData', 'breadcrumbs', 'searchDefaults'));
+        $routePreviewFlights = [];
+        if ($searchDefaults) {
+            $searchQuery = [
+                'from' => $searchDefaults['from'],
+                'to' => $searchDefaults['to'],
+                'depart' => $searchDefaults['depart'],
+                'return' => $searchDefaults['return'],
+                'cabin_class' => 'economy',
+                'total_passengers' => 1,
+            ];
+
+            $flightBrands = [
+                ['name' => 'American Airlines', 'code' => 'AA', 'logo' => 'https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=80&h=80&fit=crop'],
+                ['name' => 'Delta Air Lines', 'code' => 'DL', 'logo' => 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=80&h=80&fit=crop'],
+                ['name' => 'United Airlines', 'code' => 'UA', 'logo' => 'https://images.unsplash.com/photo-1483450388369-9ed95738483c?w=80&h=80&fit=crop'],
+            ];
+
+            foreach ($flightBrands as $index => $brand) {
+                $price = 129 + ($index * 35);
+                $routePreviewFlights[] = [
+                    'airline_name' => $brand['name'],
+                    'airline_code' => $brand['code'],
+                    'logo' => $brand['logo'],
+                    'departure_time' => ['09:35', '11:20', '13:10'][$index],
+                    'arrival_time' => ['13:15', '15:05', '17:00'][$index],
+                    'duration' => ['3h 40m', '3h 45m', '3h 50m'][$index],
+                    'stops' => [0, 1, 0][$index],
+                    'price' => $price,
+                    'price_person' => 'per person',
+                    'book_url' => route('flights.details', 101 + $index) . '?' . http_build_query($searchQuery),
+                ];
+            }
+        }
+
+        return view('frontend.page', compact('settings', 'page', 'seoData', 'breadcrumbs', 'searchDefaults', 'routeHeading', 'routeTagline', 'routePreviewFlights'));
     }
 
     /**

@@ -1078,6 +1078,8 @@ footer .border-top p {
     font-family: "DM Sans", sans-serif;
     color: var(--text);
     line-height: 1.8;
+    text-align: justify;
+    text-justify: inter-word;
 }
 
 .prose-content h1,
@@ -1109,6 +1111,18 @@ footer .border-top p {
 
 .prose-content li {
     margin-bottom: 8px;
+}
+
+.route-deal-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.route-deal-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+.route-deal-logo {
+    width: 54px;
+    height: 54px;
 }
 
 /* Accordion Customization */
@@ -4051,6 +4065,23 @@ img {
     margin-right: auto;
 }
 
+.custom-page-hero .display-5 {
+    font-size: clamp(3rem, 4vw, 4.2rem);
+    letter-spacing: -0.05em;
+    line-height: 1.02;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.custom-page-hero p.lead {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 1.05rem;
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .route-hero-title {
     font-size: clamp(2.4rem, 5vw, 3.8rem);
     font-weight: 800;
@@ -4070,6 +4101,24 @@ img {
     padding: 1.75rem 1.5rem;
     border-radius: 30px;
     box-shadow: 0 40px 90px rgba(4, 28, 61, 0.24);
+    background: rgba(255, 255, 255, 0.98);
+}
+
+.custom-page-hero .search-form-card .search-input-group {
+    background-color: #ffffff;
+}
+
+.custom-page-hero .custom-breadcrumb {
+    justify-content: center;
+}
+
+.custom-page-hero .custom-breadcrumb .breadcrumb-item a,
+.custom-page-hero .custom-breadcrumb .breadcrumb-item.active {
+    color: #ffffff !important;
+}
+
+.custom-page-hero .custom-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.6) !important;
 }
 
 .custom-page-hero .search-input-group {
