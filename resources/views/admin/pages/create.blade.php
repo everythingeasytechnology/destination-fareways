@@ -14,6 +14,17 @@
     <p class="text-muted mb-0">Build responsive layout elements, coordinate rich keyword densities, configure meta sharing banners, and draft structured schema tags.</p>
 </div>
 
+@if ($errors->any())
+    <div class="alert alert-danger border-0 shadow-sm mb-4">
+        <h5 class="mb-2">Unable to publish page</h5>
+        <ul class="mb-0 ps-3">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
 <form id="page-form" action="{{ route('admin.pages.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
@@ -299,17 +310,23 @@
                 <div class="mb-3">
                     <label for="status" class="form-label fw-bold">Display Status</label>
                     <select class="form-select px-3" id="status" name="status" required>
-                        <option value="active">Active (Visible)</option>
-                        <option value="inactive">Inactive / Draft</option>
+                        <option value="active" {{ old('status', 'active') === 'active' ? 'selected' : '' }}>Active (Visible)</option>
+                        <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Inactive / Draft</option>
                     </select>
+                    @error('status')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="mb-3">
                     <label for="show_breadcrumb" class="form-label fw-bold">Display Breadcrumb Bar?</label>
                     <select class="form-select px-3" id="show_breadcrumb" name="show_breadcrumb" required>
-                        <option value="1">Show Breadcrumbs on Page</option>
-                        <option value="0">Hide Breadcrumbs on Page</option>
+                        <option value="1" {{ old('show_breadcrumb', '1') == 1 ? 'selected' : '' }}>Show Breadcrumbs on Page</option>
+                        <option value="0" {{ old('show_breadcrumb') == 0 ? 'selected' : '' }}>Hide Breadcrumbs on Page</option>
                     </select>
+                    @error('show_breadcrumb')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
             </div>
 
