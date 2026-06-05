@@ -65,14 +65,14 @@
             <!-- Date Columns: Depart, Return -->
             <div class="col-lg-3 col-md-6 col-12">
                 <div class="row g-2">
-                    <div class="col-6">
+                    <div class="col-12 col-sm-6">
                         <div class="search-input-group">
                             <label for="depart_date_input"><i class="fa-solid fa-calendar me-1 text-gold"></i> Depart</label>
                             <input type="text" name="depart" id="depart_date_input" class="flatpickr-date" placeholder="Depart Date" required value="{{ old('depart', $searchDefaults['depart'] ?? request('depart', date('Y-m-d'))) }}">
                         </div>
                     </div>
                     
-                    <div class="col-6" id="return_date_wrapper">
+                    <div class="col-12 col-sm-6" id="return_date_wrapper">
                         <div class="search-input-group">
                             <label for="return_date_input"><i class="fa-solid fa-calendar me-1 text-gold"></i> Return</label>
                             <input type="text" name="return" id="return_date_input" class="flatpickr-date" placeholder="Return Date" value="{{ old('return', $searchDefaults['return'] ?? request('return', date('Y-m-d'))) }}">

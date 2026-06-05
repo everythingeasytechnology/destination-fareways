@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\Page;
 use App\Models\SeoSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PageController extends Controller
 {
@@ -46,8 +47,8 @@ class PageController extends Controller
                 'to' => $page->to_airport_code,
                 'fromId' => null,
                 'toId' => null,
-                'depart' => request('depart', now()->addWeek()->toDateString()),
-                'return' => request('return', now()->addWeeks(2)->toDateString()),
+                'depart' => request('depart', now()->toDateString()),
+                'return' => request('return', now()->toDateString()),
             ];
             $routeHeading = $page->title;
             $routeTagline = $page->subtitle ?: 'Find low fares, direct flights, and flexible dates for your selected route.';
@@ -57,8 +58,8 @@ class PageController extends Controller
                 'to' => Str::of($matches[2])->replace('-', ' ')->title(),
                 'fromId' => null,
                 'toId' => null,
-                'depart' => request('depart', now()->addWeek()->toDateString()),
-                'return' => request('return', now()->addWeeks(2)->toDateString()),
+                'depart' => request('depart', now()->toDateString()),
+                'return' => request('return', now()->toDateString()),
             ];
             $routeHeading = $page->title ?: 'Flight tickets from ' . Str::of($matches[1])->replace('-', ' ')->title() . ' to ' . Str::of($matches[2])->replace('-', ' ')->title();
             $routeTagline = $page->subtitle ?: 'Search top fares and book flights between your departure and destination cities.';

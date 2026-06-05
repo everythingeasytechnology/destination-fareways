@@ -1,7 +1,14 @@
 @extends('layouts.frontend')
 
 @section('content')
-<section class="custom-page-hero text-white py-5 mt-5" @if($page->banner_image) style="background-image: linear-gradient(rgba(7, 17, 31, 0.74), rgba(7, 17, 31, 0.74)), url('{{ asset('storage/' . $page->banner_image) }}');" @endif>
+@php
+    $heroImageUrl = $page->banner_image
+        ? (\Illuminate\Support\Str::startsWith($page->banner_image, ['http://', 'https://'])
+            ? $page->banner_image
+            : asset('storage/' . ltrim($page->banner_image, '/')))
+        : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1600&q=80';
+@endphp
+<section class="custom-page-hero text-white py-5 mt-5" style="background-image: linear-gradient(rgba(7, 17, 31, 0.74), rgba(7, 17, 31, 0.74)), url('{{ $heroImageUrl }}');">
     <div class="container py-4 text-center">
         <h1 class="display-5 fw-bold mb-3 text-white" data-aos="fade-up">{{ $page->title }}</h1>
 
