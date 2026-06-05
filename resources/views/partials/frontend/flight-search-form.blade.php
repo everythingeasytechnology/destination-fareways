@@ -1,8 +1,12 @@
 <!-- Flight Search Form Component -->
-@php $searchDefaults = $searchDefaults ?? []; @endphp
+@php
+    $searchDefaults = $searchDefaults ?? [];
+    $showTripTabs = $showTripTabs ?? true;
+@endphp
 <div class="search-form-card p-4" data-aos="fade-up">
-    <!-- Top Row: Tabs -->
-    <div class="search-tabs-row d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-2 border-bottom">
+    @if($showTripTabs)
+        <!-- Top Row: Tabs -->
+        <div class="search-tabs-row d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4 pb-2 border-bottom">
         <!-- Trip Type Tabs -->
         @php($activeTripType = request('trip_type', 'round-trip'))
         <div class="search-tabs d-flex gap-1 border-0 mb-0">
@@ -11,6 +15,7 @@
             <button type="button" class="search-tab-btn {{ $activeTripType === 'multi-city' || $activeTripType === 'multi_city' ? 'active' : '' }}" data-type="multi-city">Multi-City</button>
         </div>
     </div>
+    @endif
 
     <!-- Flight Search Inputs Row -->
     <form action="{{ route('flights.results') }}" method="GET" id="flight-search-main-form">

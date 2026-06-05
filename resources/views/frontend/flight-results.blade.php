@@ -392,20 +392,29 @@ $(document).ready(function() {
 
 /* Airline col */
 .fr-card-airline {
-    display:flex; align-items:center; gap:14px;
-    padding:20px 16px 20px 22px;
+    display:flex; align-items:center; gap:16px;
+    padding:18px 18px;
     border-right:1px solid rgba(7,17,31,.05);
+    min-width: 180px;
 }
 .fr-airline-logo {
-    width:50px; height:50px; flex-shrink:0;
-    border-radius:12px;
-    border:1.5px solid rgba(7,17,31,.07);
+    width:56px; height:56px; flex-shrink:0;
+    border-radius:14px;
+    border:1.5px solid rgba(7,17,31,.08);
     background:#F8FAFC;
     display:flex; align-items:center; justify-content:center;
     overflow:hidden;
 }
-.fr-airline-logo img { width:34px; height:34px; object-fit:contain; }
-.fr-airline-name { font-weight:700; font-size:.9rem; color:#07111F; margin-bottom:4px; }
+.fr-airline-logo img {
+    width:42px; height:42px;
+    object-fit:contain;
+}
+.fr-airline-name {
+    font-weight:700;
+    font-size:1rem;
+    color:#07111F;
+    margin-bottom:4px;
+}
 .fr-airline-code {
     display:inline-block;
     background:#F8FAFC; border:1px solid #E2E8F0;
