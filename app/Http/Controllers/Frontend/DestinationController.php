@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Models\Destination;
 use App\Models\SeoSetting;
-use Illuminate\Http\Request;
 
 class DestinationController extends Controller
 {
@@ -51,6 +50,14 @@ class DestinationController extends Controller
             ->where('status', 'active')
             ->firstOrFail();
 
+        // Related destinations: same domestic/international type, excluding current
+        $relatedDestinations = Destination::where('status', 'active')
+            ->where('id', '!=', $destination->id)
+            ->where('is_domestic', $destination->is_domestic)
+            ->orderBy('sort_order')
+            ->take(4)
+            ->get();
+
         // Dynamic SEO Details mapping model contents
         $seoData = (object) [
             'meta_title' => $destination->seo_title ?? 'Flights to ' . $destination->name . ' - starting from $' . $destination->starting_price,
@@ -69,6 +76,6 @@ class DestinationController extends Controller
             ['title' => $destination->name]
         ];
 
-        return view('frontend.destinations.show', compact('settings', 'destination', 'seoData', 'breadcrumbs'));
+        return view('frontend.destinations.show', compact('settings', 'destination', 'relatedDestinations', 'seoData', 'breadcrumbs'));
     }
 }

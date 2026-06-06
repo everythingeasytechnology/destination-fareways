@@ -208,8 +208,37 @@
                     </div>
 
                 </div>
-            </div>
 
+                {{-- Popular Destinations widget --}}
+                @if(!empty($popularDestinations) && $popularDestinations->isNotEmpty())
+                <div class="card border-0 shadow-sm rounded-3 overflow-hidden mt-4" data-aos="fade-up">
+                    <div class="card-header bg-navy text-white py-3 px-4" style="background:#07111F !important;">
+                        <h5 class="mb-0 fw-bold" style="font-size:.95rem;letter-spacing:.4px;">
+                            <i class="fa-solid fa-location-dot text-gold me-2"></i> Popular Destinations
+                        </h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        @foreach($popularDestinations as $dest)
+                        <li class="list-group-item px-4 py-3">
+                            <a href="{{ route('destinations.show', $dest->slug) }}"
+                               class="d-flex justify-content-between align-items-center text-decoration-none text-navy">
+                                <span class="fw-semibold" style="font-size:.88rem;">{{ $dest->name }}</span>
+                                <span class="text-gold fw-bold font-monospace" style="font-size:.82rem;">
+                                    from ${{ number_format($dest->starting_price, 0) }}
+                                </span>
+                            </a>
+                        </li>
+                        @endforeach
+                    </ul>
+                    <div class="card-footer bg-white border-top px-4 py-3">
+                        <a href="{{ route('destinations.index') }}" class="btn btn-outline-secondary btn-sm w-100">
+                            View All Destinations <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+                @endif
+
+            </div>
         </div>
 
         {{-- ── Related Articles ── --}}

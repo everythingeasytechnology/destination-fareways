@@ -94,6 +94,10 @@
                     <i class="fa-solid fa-earth-americas"></i>
                     <span>Destinations</span>
                 </a>
+                <a href="{{ route('admin.flight-routes.index') }}" class="nav-link {{ request()->routeIs('admin.flight-routes.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-route"></i>
+                    <span>Flight Routes</span>
+                </a>
                 <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-invoice"></i>
                     <span>Pages Manager</span>

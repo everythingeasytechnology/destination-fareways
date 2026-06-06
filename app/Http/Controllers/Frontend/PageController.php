@@ -489,6 +489,42 @@ HTML
     }
 
     /**
+     * Display the Editorial Policy page
+     */
+    public function editorialPolicy()
+    {
+        $settings = Setting::first();
+
+        $seoData = (object) [
+            'meta_title'       => 'Editorial Policy | Destination Fareways',
+            'meta_description' => 'Learn how Destination Fareways researches, writes, and reviews travel content — our editorial standards, author qualifications, and fact-checking process.',
+            'meta_keywords'    => 'editorial policy, destination fareways editorial standards, travel content accuracy, author expertise, fact checking travel guides',
+            'og_title'         => 'Editorial Policy | Destination Fareways',
+            'og_description'   => 'Destination Fareways editorial policy: how we create, verify, and update travel guides, flight tips, and destination content.',
+            'og_image'         => null,
+            'canonical_url'    => route('editorial-policy'),
+            'robots_tag'       => 'index, follow',
+            'schema_markup'    => json_encode([
+                '@context'  => 'https://schema.org',
+                '@type'     => 'WebPage',
+                'name'      => 'Editorial Policy',
+                'url'       => route('editorial-policy'),
+                'publisher' => [
+                    '@type' => 'Organization',
+                    'name'  => 'Destination Fareways',
+                    'url'   => url('/'),
+                ],
+            ], JSON_UNESCAPED_SLASHES),
+        ];
+
+        $breadcrumbs = [
+            ['title' => 'Editorial Policy'],
+        ];
+
+        return view('frontend.editorial-policy', compact('settings', 'seoData', 'breadcrumbs'));
+    }
+
+    /**
      * Display the Terms and Conditions page
      */
     public function terms()

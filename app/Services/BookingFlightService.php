@@ -147,8 +147,8 @@ class BookingFlightService
 
         if (! $this->isConfigured($setting)) {
             return [
-                'source' => 'fallback',
-                'error' => 'Booking.com15 API is inactive or API key is missing.',
+                'source'  => 'fallback',
+                'error'   => null,
                 'flights' => $this->mockFlights($request),
             ];
         }
@@ -162,10 +162,10 @@ class BookingFlightService
 
             if (empty($flights)) {
                 return [
-                    'source' => 'fallback',
-                    'error' => 'Booking.com15 returned no valid flight offers or the response format is not recognized. Showing sample fares instead.',
+                    'source'  => 'fallback',
+                    'error'   => null,
                     'flights' => $this->mockFlights($request),
-                    'raw' => $payload,
+                    'raw'     => $payload,
                 ];
             }
 
@@ -176,10 +176,19 @@ class BookingFlightService
                 'raw' => $payload,
             ];
         } catch (\Throwable $e) {
+            $msg = $e->getMessage();
+
+            // Detect network-level failures (DNS, timeout, connection refused)
+            $isNetworkError = str_contains($msg, 'cURL error')
+                || str_contains($msg, 'Could not resolve host')
+                || str_contains($msg, 'Connection refused')
+                || str_contains($msg, 'timed out')
+                || str_contains($msg, 'Operation timed out');
+
             return [
-                'source' => 'fallback',
-                'error' => $e->getMessage(),
-                'flights' => $this->mockFlights($request),
+                'source'   => 'fallback',
+                'error'    => $isNetworkError ? null : $msg,
+                'flights'  => $this->mockFlights($request),
             ];
         }
     }
@@ -293,8 +302,8 @@ class BookingFlightService
         $host = $this->normalizeEndpointText($setting->rapidapi_host);
         $url = rtrim($baseUrl, '/') . '/' . ltrim($this->normalizeEndpointText($endpoint ?: ''), '/');
 
-        $response = Http::timeout(20)
-            ->retry(1, 250)
+        $response = Http::timeout(15)
+            ->connectTimeout(8)
             ->withOptions($this->curlOptions($host))
             ->withHeaders([
                 'x-rapidapi-key' => $setting->api_key,

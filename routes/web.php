@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\FaqController;
 use App\Http\Controllers\Admin\TestimonialController;
 use App\Http\Controllers\Admin\SeoController;
+use App\Http\Controllers\Admin\FlightRouteController;
 use App\Http\Controllers\Admin\SchemaController;
 use App\Http\Controllers\Admin\SitemapController;
 use App\Http\Controllers\Admin\ContactMessageController;
@@ -31,6 +32,7 @@ use App\Http\Controllers\Frontend\FaqController as FrontFaqController;
 use App\Http\Controllers\Frontend\ContactController as FrontContactController;
 use App\Http\Controllers\Frontend\NewsletterController as FrontNewsletterController;
 use App\Http\Controllers\Frontend\SitemapController as FrontSitemapController;
+use App\Http\Controllers\Frontend\FlightRouteController as FrontFlightRouteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +70,15 @@ Route::middleware('site.maintenance')->group(function () {
     Route::redirect('/TermsConditions', '/terms-conditions', 301);
     Route::post('/newsletter/subscribe', [FrontNewsletterController::class, 'subscribe'])->name('newsletter.subscribe');
     Route::post('/lead/submit', [FrontHomeController::class, 'submitLead'])->name('lead.submit');
+    Route::get('/flight-routes', [FrontFlightRouteController::class, 'index'])->name('flight-routes.index');
+    Route::get('/flight-routes/{slug}', [FrontFlightRouteController::class, 'show'])->name('flight-routes.show');
+    Route::get('/editorial-policy', [FrontPageController::class, 'editorialPolicy'])->name('editorial-policy');
     Route::get('/sitemap.xml', [FrontSitemapController::class, 'index']);
+    Route::get('/sitemap-pages.xml', [FrontSitemapController::class, 'pages']);
+    Route::get('/sitemap-destinations.xml', [FrontSitemapController::class, 'destinations']);
+    Route::get('/sitemap-blog.xml', [FrontSitemapController::class, 'blog']);
+    Route::get('/sitemap-offers.xml', [FrontSitemapController::class, 'offers']);
+    Route::get('/sitemap-flight-routes.xml', [FrontSitemapController::class, 'flightRoutes']);
     Route::get('/robots.txt', [FrontSitemapController::class, 'robots']);
 });
 
@@ -107,6 +117,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
         Route::resource('offers', OfferController::class);
         Route::resource('blogs', BlogController::class);
         Route::resource('destinations', DestinationController::class);
+        Route::resource('flight-routes', FlightRouteController::class);
         Route::resource('pages', PageController::class);
         Route::resource('faqs', FaqController::class);
         Route::resource('testimonials', TestimonialController::class);

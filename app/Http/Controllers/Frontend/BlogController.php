@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Models\Blog;
+use App\Models\Destination;
 use App\Models\SeoSetting;
 use Illuminate\Http\Request;
 
@@ -84,6 +85,12 @@ class BlogController extends Controller
             ->take(3)
             ->get();
 
+        // Popular destinations for sidebar internal linking
+        $popularDestinations = Destination::where('status', 'active')
+            ->orderBy('sort_order')
+            ->take(5)
+            ->get();
+
         // Dynamic SEO Details mapping model contents
         $seoData = (object) [
             'meta_title' => $blog->seo_title ?? $blog->title . ' | Destination Fareways',
@@ -102,6 +109,6 @@ class BlogController extends Controller
             ['title' => $blog->title]
         ];
 
-        return view('frontend.blogs.show', compact('settings', 'blog', 'relatedBlogs', 'seoData', 'breadcrumbs'));
+        return view('frontend.blogs.show', compact('settings', 'blog', 'relatedBlogs', 'popularDestinations', 'seoData', 'breadcrumbs'));
     }
 }
