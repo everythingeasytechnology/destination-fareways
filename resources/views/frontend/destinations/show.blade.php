@@ -278,6 +278,53 @@
     </div>
 </section>
 
+{{-- ── Related Destinations ── --}}
+@if($relatedDestinations->isNotEmpty())
+<section class="py-5 border-top border-light">
+    <div class="container py-2">
+        <div class="d-flex align-items-center gap-3 mb-4" data-aos="fade-up">
+            <h3 class="display-font text-navy fw-bold mb-0" style="font-size:1.5rem;">
+                More {{ $destination->is_domestic ? 'Domestic' : 'International' }} Destinations
+            </h3>
+            <div class="flex-grow-1" style="height:1px;background:#E2E8F0;"></div>
+            <a href="{{ route('destinations.index') }}" class="btn btn-outline-secondary btn-sm">View All</a>
+        </div>
+        <div class="row g-4">
+            @foreach($relatedDestinations as $related)
+                <div class="col-sm-6 col-lg-3" data-aos="fade-up" data-aos-delay="{{ $loop->index * 60 }}">
+                    <a href="{{ route('destinations.show', $related->slug) }}" class="offer-premium-card d-flex flex-column h-100 text-decoration-none">
+                        <div class="offer-card-img-wrap">
+                            <img src="{{ !empty($related->featured_image) ? (str_starts_with($related->featured_image, 'http') ? $related->featured_image : asset('storage/'.$related->featured_image)) : 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=600&q=80' }}"
+                                 alt="Flights to {{ $related->name }}" class="offer-card-img" loading="lazy">
+                            <div class="offer-card-img-gradient"></div>
+                            <div class="offer-card-top-badges">
+                                <span class="offer-badge-save">{{ $related->is_domestic ? 'Domestic' : 'International' }}</span>
+                            </div>
+                            @if($related->airport_code)
+                                <div class="offer-card-route-strip">
+                                    <i class="fa-solid fa-plane-departure text-gold me-1"></i>
+                                    <span class="fw-bold">{{ $related->airport_code }}</span>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="offer-card-body-premium flex-grow-1 d-flex flex-column">
+                            <h4 class="offer-card-title-premium mb-1">{{ $related->name }}</h4>
+                            <p class="offer-card-desc-premium flex-grow-1 mb-3">
+                                {{ $related->is_domestic ? ($related->state ?? 'USA') : ($related->country ?? 'International') }}
+                            </p>
+                            <div class="offer-card-cta-row mt-auto">
+                                <span class="offer-cta-label">from ${{ number_format($related->starting_price, 0) }}</span>
+                                <span class="offer-cta-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            @endforeach
+        </div>
+    </div>
+</section>
+@endif
+
 {{-- ── Mobile Sticky CTA ── --}}
 <div class="offer-mobile-cta d-lg-none">
     <div class="offer-mobile-cta-inner">

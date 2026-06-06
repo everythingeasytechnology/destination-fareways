@@ -10,7 +10,7 @@ class SitemapController extends Controller
     public function index(SitemapService $sitemapService)
     {
         $summary = $sitemapService->summary();
-        $recentUrls = $sitemapService->urls()->sortByDesc('lastmod')->take(10);
+        $recentUrls = $sitemapService->recentUrls();
 
         return view('admin.sitemap.index', compact('summary', 'recentUrls'));
     }

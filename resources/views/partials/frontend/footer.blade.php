@@ -38,6 +38,7 @@
                 <ul class="list-unstyled d-flex flex-column align-items-center align-items-md-start gap-2">
                     <li><a href="{{ route('home') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Home</a></li>
                     <li><a href="{{ route('flights.search') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Flights</a></li>
+                    <li><a href="{{ route('flight-routes.index') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Flight Routes</a></li>
                     <li><a href="{{ route('destinations.index') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Destinations</a></li>
                     <li><a href="{{ route('offers.index') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Offers</a></li>
                     <li><a href="{{ route('blog.index') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Blog</a></li>
@@ -55,6 +56,7 @@
                     <li><a href="{{ route('terms') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Terms & Conditions</a></li>
                     <li><a href="{{ route('cookies') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Cookies Policy</a></li>
                     <li><a href="{{ route('refund-policy') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Refund Policy</a></li>
+                    <li><a href="{{ route('editorial-policy') }}" class="text-white-50 hover-white text-decoration-none" style="color: rgba(255, 255, 255, 0.7) !important;">Editorial Policy</a></li>
                 </ul>
             </div>
 

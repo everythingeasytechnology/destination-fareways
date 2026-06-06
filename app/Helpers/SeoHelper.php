@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\Schema;
 class SeoHelper
 {
     /**
+     * Resolve an image path to an absolute URL.
+     * Already-absolute URLs (http/https) are returned as-is.
+     */
+    private static function resolveImageUrl(?string $img): ?string
+    {
+        if (empty($img)) return null;
+        if (str_starts_with($img, 'http://') || str_starts_with($img, 'https://')) {
+            return $img;
+        }
+        return asset('storage/' . ltrim($img, '/'));
+    }
+
+    /**
      * Get SEO settings for a page.
      */
     public static function get(string $pageIdentifier): ?SeoSetting
@@ -54,7 +67,7 @@ class SeoHelper
             $html[] = '<meta property="og:description" content="' . e($seo->og_description ?? $seo->meta_description) . '">';
         }
         if ($seo->og_image) {
-            $html[] = '<meta property="og:image" content="' . e(asset('storage/' . $seo->og_image)) . '">';
+            $html[] = '<meta property="og:image" content="' . e(self::resolveImageUrl($seo->og_image)) . '">';
         }
         $html[] = '<meta property="og:url" content="' . e($seo->canonical_url ?? request()->url()) . '">';
         $html[] = '<meta property="og:site_name" content="Destination Fareways">';
@@ -67,7 +80,7 @@ class SeoHelper
             $html[] = '<meta name="twitter:description" content="' . e($seo->twitter_description ?? $seo->og_description ?? $seo->meta_description) . '">';
         }
         if ($seo->twitter_image ?? $seo->og_image) {
-            $html[] = '<meta name="twitter:image" content="' . e(asset('storage/' . ($seo->twitter_image ?? $seo->og_image))) . '">';
+            $html[] = '<meta name="twitter:image" content="' . e(self::resolveImageUrl($seo->twitter_image ?? $seo->og_image)) . '">';
         }
 
         return implode("\n    ", $html);
