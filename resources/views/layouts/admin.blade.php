@@ -98,6 +98,10 @@
                     <i class="fa-solid fa-route"></i>
                     <span>Flight Routes</span>
                 </a>
+                <a href="{{ route('admin.airports.index') }}" class="nav-link {{ request()->routeIs('admin.airports.*') ? 'active' : '' }}">
+                    <i class="fa-solid fa-plane-arrival"></i>
+                    <span>Airports</span>
+                </a>
                 <a href="{{ route('admin.pages.index') }}" class="nav-link {{ request()->routeIs('admin.pages.*') ? 'active' : '' }}">
                     <i class="fa-solid fa-file-invoice"></i>
                     <span>Pages Manager</span>

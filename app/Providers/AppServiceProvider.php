@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
+use Illuminate\Pagination\Paginator;
 use App\Models\Setting;
 use App\Models\CallSetting;
 use App\Models\SchemaSetting;
@@ -17,6 +18,8 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        Paginator::useBootstrapFive();
+
         View::composer('layouts.frontend', function ($view) {
             $settings    = Setting::first();
             $callSettings = CallSetting::first();

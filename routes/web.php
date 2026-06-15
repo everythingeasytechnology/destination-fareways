@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SitemapController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\NewsletterController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AirportController;
 
 use App\Http\Controllers\Frontend\HomeController as FrontHomeController;
 use App\Http\Controllers\Frontend\FlightController as FrontFlightController;
@@ -113,6 +114,12 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
     });
 
     Route::middleware('role:superadmin,admin,editor')->group(function () {
+        // Airports
+        Route::get('airports/import', [AirportController::class, 'importForm'])->name('airports.import.form');
+        Route::post('airports/import', [AirportController::class, 'import'])->name('airports.import');
+        Route::get('airports/sample', [AirportController::class, 'downloadSample'])->name('airports.sample');
+        Route::resource('airports', AirportController::class);
+
         // CMS Content
         Route::resource('offers', OfferController::class);
         Route::resource('blogs', BlogController::class);
