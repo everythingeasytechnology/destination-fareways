@@ -2,6 +2,17 @@
 
 @section('title', 'Add Flight Route')
 
+@section('styles')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" rel="stylesheet">
+<style>
+    .select2-container--bootstrap-5 .select2-selection { min-height: 42px; border-color: #dee2e6; }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered { line-height: 40px; padding-left: 12px; font-family: monospace; }
+    .select2-container--bootstrap-5 .select2-selection--single .select2-selection__placeholder { line-height: 40px; }
+    #ai-status-msg { display:none; }
+</style>
+@endsection
+
 @section('breadcrumb')
     <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}" class="text-decoration-none text-muted">Admin</a></li>
     <li class="breadcrumb-item"><a href="{{ route('admin.flight-routes.index') }}" class="text-decoration-none text-muted">Flight Routes</a></li>
@@ -54,7 +65,19 @@
 
                             <div class="col-12">
                                 <label for="title" class="form-label fw-bold">Route Title</label>
-                                <input type="text" class="form-control px-3" id="title" name="title" value="{{ old('title') }}" placeholder="e.g. New York to Los Angeles" required>
+                                <input type="text" class="form-control px-3" id="title" name="title" value="{{ old('title') }}" placeholder="e.g. Cheap Flights from Atlanta (ATL) to Los Angeles (LAX)" required>
+                                <div class="mt-2">
+                                    <button type="button" id="btn-generate-ai" class="btn btn-sm btn-warning fw-semibold px-4">
+                                        <i class="fa-solid fa-wand-magic-sparkles me-2"></i>Generate AI Content
+                                    </button>
+                                    <span id="ai-status-msg" class="ms-3 text-muted small">
+                                        <span class="spinner-border spinner-border-sm me-1"></span>Generating AI content...
+                                    </span>
+                                    <span id="ai-success-msg" class="ms-3 text-success small d-none">
+                                        <i class="fa-solid fa-circle-check me-1"></i>AI content generated successfully.
+                                    </span>
+                                    <span id="ai-error-msg" class="ms-3 text-danger small d-none"></span>
+                                </div>
                             </div>
                             <div class="col-12">
                                 <label for="slug" class="form-label fw-bold">URL Slug</label>
@@ -65,31 +88,42 @@
                             <div class="col-12 border rounded p-3 bg-light bg-opacity-50 my-2">
                                 <h6 class="fw-bold text-navy mb-3"><i class="fa-solid fa-route me-2 text-warning"></i>Route Corridor</h6>
                                 <div class="row g-3">
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label fw-semibold">Origin City</label>
-                                        <input type="text" class="form-control px-3 bg-white" name="origin_city" value="{{ old('origin_city') }}" placeholder="e.g. New York" required>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label fw-semibold">Origin Airport <span class="text-danger">*</span></label>
+                                        <select id="origin_airport_select" class="form-select" required>
+                                            <option value="">— Select Origin Airport —</option>
+                                            @foreach($airports as $airport)
+                                                <option value="{{ $airport->iata_code }}"
+                                                    data-city="{{ $airport->city }}"
+                                                    data-country="USA"
+                                                    {{ old('origin_airport_code') === $airport->iata_code ? 'selected' : '' }}>
+                                                    {{ $airport->iata_code }} – {{ $airport->city }} – {{ $airport->airport_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <div class="col-12 col-md-2">
-                                        <label class="form-label fw-semibold">IATA</label>
-                                        <input type="text" class="form-control px-3 bg-white font-monospace text-uppercase" name="origin_airport_code" value="{{ old('origin_airport_code') }}" placeholder="JFK" maxlength="10">
-                                    </div>
-                                    <div class="col-12 col-md-2">
-                                        <label class="form-label fw-semibold">Country</label>
-                                        <input type="text" class="form-control px-3 bg-white" name="origin_country" value="{{ old('origin_country', 'USA') }}" placeholder="USA">
-                                    </div>
-                                    <div class="col-12 col-md-4">
-                                        <label class="form-label fw-semibold">Destination City</label>
-                                        <input type="text" class="form-control px-3 bg-white" name="destination_city" value="{{ old('destination_city') }}" placeholder="e.g. Los Angeles" required>
-                                    </div>
-                                    <div class="col-12 col-md-2">
-                                        <label class="form-label fw-semibold">IATA</label>
-                                        <input type="text" class="form-control px-3 bg-white font-monospace text-uppercase" name="destination_airport_code" value="{{ old('destination_airport_code') }}" placeholder="LAX" maxlength="10">
-                                    </div>
-                                    <div class="col-12 col-md-2">
-                                        <label class="form-label fw-semibold">Country</label>
-                                        <input type="text" class="form-control px-3 bg-white" name="destination_country" value="{{ old('destination_country', 'USA') }}" placeholder="USA">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label fw-semibold">Destination Airport <span class="text-danger">*</span></label>
+                                        <select id="destination_airport_select" class="form-select" required>
+                                            <option value="">— Select Destination Airport —</option>
+                                            @foreach($airports as $airport)
+                                                <option value="{{ $airport->iata_code }}"
+                                                    data-city="{{ $airport->city }}"
+                                                    data-country="USA"
+                                                    {{ old('destination_airport_code') === $airport->iata_code ? 'selected' : '' }}>
+                                                    {{ $airport->iata_code }} – {{ $airport->city }} – {{ $airport->airport_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
+                                {{-- Hidden fields submitted with form --}}
+                                <input type="hidden" name="origin_city"              id="h_origin_city"        value="{{ old('origin_city') }}">
+                                <input type="hidden" name="origin_airport_code"      id="h_origin_iata"        value="{{ old('origin_airport_code') }}">
+                                <input type="hidden" name="origin_country"           id="h_origin_country"     value="{{ old('origin_country', 'USA') }}">
+                                <input type="hidden" name="destination_city"         id="h_dest_city"          value="{{ old('destination_city') }}">
+                                <input type="hidden" name="destination_airport_code" id="h_dest_iata"          value="{{ old('destination_airport_code') }}">
+                                <input type="hidden" name="destination_country"      id="h_dest_country"       value="{{ old('destination_country', 'USA') }}">
                             </div>
 
                             <!-- Flight meta -->
@@ -287,8 +321,62 @@
 @endsection
 
 @section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function () {
+
+    // ── Select2 Airport Dropdowns ──────────────────────────────────
+    $('#origin_airport_select, #destination_airport_select').select2({
+        theme: 'bootstrap-5',
+        placeholder: '— Search airport by code or city —',
+        allowClear: true,
+        width: '100%',
+    });
+
+    function fillOrigin(iata, city, country) {
+        $('#h_origin_iata').val(iata);
+        $('#h_origin_city').val(city);
+        $('#h_origin_country').val(country || 'USA');
+    }
+
+    function fillDestination(iata, city, country) {
+        $('#h_dest_iata').val(iata);
+        $('#h_dest_city').val(city);
+        $('#h_dest_country').val(country || 'USA');
+    }
+
+    $('#origin_airport_select').on('change', function () {
+        var opt = $(this).find(':selected');
+        fillOrigin(opt.val(), opt.data('city'), opt.data('country'));
+    });
+
+    $('#destination_airport_select').on('change', function () {
+        var opt = $(this).find(':selected');
+        fillDestination(opt.val(), opt.data('city'), opt.data('country'));
+    });
+
+    // Pre-fill on load if old() values exist
+    (function () {
+        var oOpt = $('#origin_airport_select').find(':selected');
+        if (oOpt.val()) fillOrigin(oOpt.val(), oOpt.data('city'), oOpt.data('country'));
+        var dOpt = $('#destination_airport_select').find(':selected');
+        if (dOpt.val()) fillDestination(dOpt.val(), dOpt.data('city'), dOpt.data('country'));
+    })();
+
+    // ── Form validation - require airport selection ────────────────
+    $('#route-form').on('submit', function (e) {
+        if (!$('#origin_airport_select').val()) {
+            e.preventDefault();
+            alert('Please select an Origin Airport.');
+            return false;
+        }
+        if (!$('#destination_airport_select').val()) {
+            e.preventDefault();
+            alert('Please select a Destination Airport.');
+            return false;
+        }
+        syncFaqJson();
+    });
 
     // ── Auto Slug ──────────────────────────────────────────────────
     $('#title').on('input', function () {
@@ -343,13 +431,11 @@ $(document).ready(function () {
     function renderFaqs() {
         var $rows = $('#faq-rows');
         $rows.empty();
-
         if (faqs.length === 0) {
             $('#faq-empty-msg').show();
         } else {
             $('#faq-empty-msg').hide();
         }
-
         faqs.forEach(function (faq, index) {
             var row = `
             <div class="faq-row card border-0 shadow-sm p-3 rounded-3" data-index="${index}">
@@ -370,7 +456,6 @@ $(document).ready(function () {
             </div>`;
             $rows.append(row);
         });
-
         syncFaqJson();
     }
 
@@ -385,7 +470,6 @@ $(document).ready(function () {
     $('#add-faq-row').on('click', function () {
         faqs.push({ question: '', answer: '' });
         renderFaqs();
-        // scroll to new row
         $('#faq-rows .faq-row:last')[0].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     });
 
@@ -404,12 +488,102 @@ $(document).ready(function () {
         renderFaqs();
     });
 
-    // Ensure FAQ JSON is up to date before form submit
-    $('#route-form').on('submit', function () {
-        syncFaqJson();
-    });
-
     renderFaqs();
+
+    // ── Generate AI Content ────────────────────────────────────────
+    $('#btn-generate-ai').on('click', function () {
+        var title    = $('#title').val().trim();
+        var origIata = $('#h_origin_iata').val().trim();
+        var origCity = $('#h_origin_city').val().trim();
+        var destIata = $('#h_dest_iata').val().trim();
+        var destCity = $('#h_dest_city').val().trim();
+
+        if (!title) {
+            alert('Please enter a Route Title first.');
+            $('#title').focus();
+            return;
+        }
+        if (!origIata || !destIata) {
+            alert('Please select both Origin and Destination airports first.');
+            return;
+        }
+
+        var $btn = $(this);
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Generating...');
+        $('#ai-status-msg').show();
+        $('#ai-success-msg').addClass('d-none');
+        $('#ai-error-msg').addClass('d-none').text('');
+
+        $.ajax({
+            url:     '{{ route("admin.flight-routes.generate-ai") }}',
+            method:  'POST',
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: {
+                title:            title,
+                origin_iata:      origIata,
+                origin_city:      origCity,
+                destination_iata: destIata,
+                destination_city: destCity,
+                starting_price:   $('input[name="starting_price"]').val(),
+                flight_duration:  $('input[name="flight_duration"]').val(),
+                airlines:         $('input[name="airlines"]').val(),
+                frequency:        $('input[name="frequency"]').val(),
+            },
+            success: function (res) {
+                if (!res.success) {
+                    showAiError(res.error || 'Unknown error.');
+                    return;
+                }
+
+                // Populate fields
+                if (res.slug)            { $('#slug').val(res.slug); $('#prev-slug').text(res.slug); }
+                if (res.seo_title)       { $('#seo_title').val(res.seo_title).trigger('input'); }
+                if (res.seo_description) { $('#seo_desc').val(res.seo_description).trigger('input'); }
+                if (res.seo_keywords)    { $('input[name="seo_keywords"]').val(res.seo_keywords); }
+                if (res.short_desc)      { $('textarea[name="short_desc"]').val(res.short_desc); }
+
+                // TinyMCE description
+                if (res.description) {
+                    if (typeof tinymce !== 'undefined' && tinymce.get('description')) {
+                        tinymce.get('description').setContent(res.description);
+                    } else {
+                        $('textarea[name="description"]').val(res.description);
+                    }
+                }
+
+                // FAQs
+                if (res.faqs && res.faqs.length) {
+                    faqs = res.faqs.map(function (f) {
+                        return { question: f.question || '', answer: f.answer || '' };
+                    });
+                    renderFaqs();
+                    // Switch to FAQ tab to show populated FAQs
+                    $('[data-bs-target="#faq"]').tab('show');
+                    setTimeout(function () { $('[data-bs-target="#general"]').tab('show'); }, 800);
+                }
+
+                // Schema
+                if (res.schema_markup) {
+                    $('textarea[name="schema_markup"]').val(res.schema_markup);
+                }
+
+                $('#ai-status-msg').hide();
+                $('#ai-success-msg').removeClass('d-none');
+                $btn.prop('disabled', false).html('<i class="fa-solid fa-wand-magic-sparkles me-2"></i>Generate AI Content');
+            },
+            error: function (xhr) {
+                var msg = 'Request failed.';
+                try { msg = JSON.parse(xhr.responseText).error || msg; } catch (e) {}
+                showAiError(msg);
+            }
+        });
+
+        function showAiError(msg) {
+            $('#ai-status-msg').hide();
+            $('#ai-error-msg').removeClass('d-none').text('Error: ' + msg);
+            $btn.prop('disabled', false).html('<i class="fa-solid fa-wand-magic-sparkles me-2"></i>Generate AI Content');
+        }
+    });
 });
 </script>
 @endsection

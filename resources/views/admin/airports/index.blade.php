@@ -73,12 +73,12 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($airports as $airport)
+                @foreach($airports as $airport)
                 <tr>
                     <td class="text-muted small">{{ $airport->id }}</td>
                     <td>
                         @if($airport->state_code)
-                            <span class="badge bg-light text-navy border font-monospace fw-bold">{{ $airport->state_code }}</span>
+                            <span class="font-monospace fw-bold" style="background:#e9ecef; color:#1a1a2e; padding:3px 8px; border-radius:4px; font-size:0.8rem; display:inline-block;">{{ $airport->state_code }}</span>
                         @else
                             <span class="text-muted">—</span>
                         @endif
@@ -110,14 +110,7 @@
                         </div>
                     </td>
                 </tr>
-                @empty
-                <tr>
-                    <td colspan="7" class="text-center text-muted py-5">
-                        <i class="fa-solid fa-plane-slash fa-2x mb-3 opacity-25"></i>
-                        <p class="mb-0">No airports found.</p>
-                    </td>
-                </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -141,6 +134,9 @@ $(document).ready(function () {
         ordering:   true,
         order:      [[4, 'asc']],
         responsive: true,
+        language: {
+            emptyTable: '<div class="text-center text-muted py-4"><i class="fa-solid fa-plane-slash fa-2x mb-2 opacity-25 d-block"></i>No airports found.</div>'
+        }
     });
 
     $('.delete-confirm-form').on('submit', function (e) {
