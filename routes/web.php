@@ -121,6 +121,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
         Route::resource('airports', AirportController::class);
 
         // CMS Content
+        Route::post('offers/autosave', [OfferController::class, 'autosave'])->name('offers.autosave');
         Route::resource('offers', OfferController::class);
         Route::resource('blogs', BlogController::class);
         Route::resource('destinations', DestinationController::class);

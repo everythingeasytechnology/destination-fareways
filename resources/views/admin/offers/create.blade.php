@@ -250,75 +250,356 @@
         </div>
     </div>
 
-    <div class="border-top pt-3 mt-4 text-end">
-        <a href="{{ route('admin.offers.index') }}" class="btn btn-outline-secondary px-4 rounded-pill me-2">Cancel</a>
-        <button type="submit" class="btn btn-action px-5"><i class="fa-solid fa-floppy-disk me-2"></i>Publish Offer</button>
+    <input type="hidden" id="draft_id" name="draft_id" value="{{ old('draft_id') }}">
+
+    <div class="border-top pt-3 mt-4 d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div id="autosave-status" class="text-muted small d-flex align-items-center gap-2" style="min-width:180px;">
+            <span id="autosave-dot" class="d-inline-block rounded-circle" style="width:8px;height:8px;background:#ccc;"></span>
+            <span id="autosave-msg">Not saved yet</span>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ route('admin.offers.index') }}" class="btn btn-outline-secondary px-4 rounded-pill">Cancel</a>
+            <button type="submit" id="publish-btn" class="btn btn-action px-5"><i class="fa-solid fa-floppy-disk me-2"></i>Publish Offer</button>
+        </div>
     </div>
 </form>
 @endsection
 
 @section('scripts')
 <script>
-    $(document).ready(function() {
-        // Auto Slug Generation
-        $('#title').on('input', function() {
-            var slug = $(this).val().toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
-            $('#slug').val(slug);
-            $('#prev-seo-slug').text(slug ? slug : 'flight-deal-london');
-            
-            // Set dynamic SEO Title initial fallback
-            if ($('#seo_title').val() === '') {
-                $('#prev-seo-title').text($(this).val());
+$(document).ready(function () {
+
+    /* ── Constants ─────────────────────────────────────── */
+    const LS_KEY   = 'offer_create_draft';
+    const SAVE_URL = '{{ route('admin.offers.autosave') }}';
+    const CSRF     = '{{ csrf_token() }}';
+
+    /* Text fields we persist (excludes file inputs) */
+    const TEXT_FIELDS = [
+        'title','slug','subtitle','from_city','to_city','airline',
+        'original_price','offer_price','discount_label','promo_code',
+        'valid_from','valid_until','short_desc','description',
+        'status','is_featured','sort_order',
+        'seo_title','seo_description','seo_keywords'
+    ];
+
+    /* ── Status indicator helpers ───────────────────────── */
+    function setStatus(msg, color) {
+        $('#autosave-msg').text(msg);
+        $('#autosave-dot').css('background', color);
+    }
+
+    /* Flag set the moment form submit starts – blocks all further saves */
+    var formSubmitting = false;
+
+    /* ── localStorage helpers ───────────────────────────── */
+    function saveLocal() {
+        if (formSubmitting) return; // never re-save after form started submitting
+        var d = {};
+        TEXT_FIELDS.forEach(function (f) {
+            var el = document.getElementById(f);
+            if (!el) return;
+            d[f] = el.value;
+        });
+        if (typeof tinymce !== 'undefined' && tinymce.get('description')) {
+            d['description'] = tinymce.get('description').getContent();
+        }
+        var did = $('#draft_id').val();
+        if (did) d['_draft_id'] = did;
+        localStorage.setItem(LS_KEY, JSON.stringify(d));
+    }
+
+    function restoreLocal() {
+        var raw = localStorage.getItem(LS_KEY);
+        if (!raw) return;
+        try {
+            var d = JSON.parse(raw);
+            TEXT_FIELDS.forEach(function (f) {
+                if (f === 'description') return; // TinyMCE – done after init
+                var el = document.getElementById(f);
+                if (!el || !d[f]) return;
+                el.value = d[f];
+                // re-trigger flatpickr if it's a date field
+                if ($(el).hasClass('flatpickr-date') && el._flatpickr) {
+                    el._flatpickr.setDate(d[f]);
+                }
+            });
+            if (d['_draft_id']) {
+                $('#draft_id').val(d['_draft_id']);
             }
+            // Restore TinyMCE after it finishes initialising
+            var attempts = 0;
+            var ti = setInterval(function () {
+                if (typeof tinymce !== 'undefined' && tinymce.get('description')) {
+                    if (d['description']) tinymce.get('description').setContent(d['description']);
+                    clearInterval(ti);
+                }
+                if (++attempts > 40) clearInterval(ti);
+            }, 250);
+
+            setStatus('Draft restored', '#f0a500');
+        } catch (e) {}
+    }
+
+    function clearLocal() {
+        localStorage.removeItem(LS_KEY);
+    }
+
+    /* ── AJAX save to DB ─────────────────────────────────── */
+    var ajaxSaving = false;
+    var activeXhr  = null;
+
+    function ajaxSave() {
+        if (ajaxSaving || formSubmitting) return;
+        ajaxSaving = true;
+        setStatus('Saving…', '#6c757d');
+
+        if (typeof tinymce !== 'undefined' && tinymce.get('description')) {
+            tinymce.get('description').save();
+        }
+
+        var payload = { _token: CSRF };
+        TEXT_FIELDS.forEach(function (f) {
+            var el = document.getElementById(f);
+            if (el) payload[f] = el.value;
         });
 
-        $('#slug').on('input', function() {
-            var val = $(this).val();
-            $('#prev-seo-slug').text(val ? val : 'flight-deal-london');
-        });
+        var did = $('#draft_id').val();
+        if (did) payload['draft_id'] = did;
 
-        // SEO Character counters & Live Previews
-        $('.seo-input').on('input', function() {
-            var input = $(this);
-            var val = input.val();
-            var counterId = input.data('char-counter');
-            var maxLen = input.data('max');
-            var previewId = counterId.includes('title') ? 'prev-seo-title' : 'prev-seo-desc';
-            
-            $('#' + counterId).text(val.length);
-            
-            if (val.length > maxLen) {
-                $('#' + counterId).removeClass('text-success').addClass('text-danger');
-            } else {
-                $('#' + counterId).removeClass('text-danger').addClass('text-success');
+        activeXhr = $.post(SAVE_URL, payload)
+            .done(function (res) {
+                if (res.success) {
+                    $('#draft_id').val(res.id);
+                    saveLocal();
+                    setStatus('Draft saved ✓', '#198754');
+                } else {
+                    setStatus(res.message || 'Not saved yet', '#f0a500');
+                }
+            })
+            .fail(function (xhr) {
+                if (xhr.statusText !== 'abort') {
+                    setStatus('Auto-save failed', '#dc3545');
+                }
+            })
+            .always(function () {
+                ajaxSaving = false;
+                activeXhr  = null;
+            });
+    }
+
+    /* ── Debounced auto-save on any field change ─────────── */
+    var debounceTimer;
+    function scheduleAutosave() {
+        saveLocal();
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(function () {
+            if ($('#title').val().trim() !== '') ajaxSave();
+        }, 3000);
+    }
+
+    $('form').on('input change', 'input, textarea, select', function () {
+        scheduleAutosave();
+    });
+
+    // Hook TinyMCE changes
+    var tinyHooked = false;
+    var hookTimer = setInterval(function () {
+        if (typeof tinymce !== 'undefined' && tinymce.get('description')) {
+            if (!tinyHooked) {
+                tinymce.get('description').on('input keyup change', function () {
+                    scheduleAutosave();
+                });
+                tinyHooked = true;
             }
+            clearInterval(hookTimer);
+        }
+    }, 500);
 
-            // Update simulator text
-            if (counterId.includes('title')) {
-                $('#' + previewId).text(val ? val : ($('#title').val() ? $('#title').val() : 'Flight Deal to London | Cheap Flights'));
-            } else {
-                $('#' + previewId).text(val ? val : 'Enter description above to simulate this exact search snippet card rendering in live Google search index pages.');
-            }
-        });
+    /* ── Form submit: lock saves, abort autosave, sync TinyMCE ─────────── */
+    $('form').first().on('submit', function () {
+        formSubmitting = true;          // must be FIRST – blocks saveLocal/ajaxSave
+        clearTimeout(debounceTimer);
+        if (activeXhr) { activeXhr.abort(); activeXhr = null; }
+        clearLocal();                   // wipe draft from localStorage
+        if (typeof tinymce !== 'undefined' && tinymce.get('description')) {
+            tinymce.get('description').save(); // sync editor → textarea for POST
+        }
+        // don't preventDefault → form POSTs naturally
+    });
 
-        // Image file preview triggers
-        $('.image-preview-trigger').on('change', function() {
-            var file = this.files[0];
-            var previewId = $(this).data('preview-id');
-            var placeholderId = previewId.replace('-box', '-placeholder');
-            
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#' + previewId).attr('src', e.target.result).removeClass('d-none');
-                    $('#' + placeholderId).addClass('d-none');
+    /* ── Slug generation & SEO previews ─────────────────── */
+    $('#title').on('input', function () {
+        var slug = $(this).val().toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-');
+        $('#slug').val(slug);
+        $('#prev-seo-slug').text(slug || 'flight-deal-london');
+        if ($('#seo_title').val() === '') $('#prev-seo-title').text($(this).val());
+    });
+
+    $('#slug').on('input', function () {
+        $('#prev-seo-slug').text($(this).val() || 'flight-deal-london');
+    });
+
+    $('.seo-input').on('input', function () {
+        var val    = $(this).val();
+        var cid    = $(this).data('char-counter');
+        var maxLen = $(this).data('max');
+        var prevId = cid.includes('title') ? 'prev-seo-title' : 'prev-seo-desc';
+        $('#' + cid).text(val.length)
+            .toggleClass('text-danger', val.length > maxLen)
+            .toggleClass('text-success', val.length <= maxLen);
+        if (cid.includes('title')) {
+            $('#' + prevId).text(val || ($('#title').val() || 'Flight Deal to London | Cheap Flights'));
+        } else {
+            $('#' + prevId).text(val || 'Enter description above to simulate this exact search snippet.');
+        }
+    });
+
+    /* ── Image compress → WebP then preview ─────────────── */
+
+    var IMG_CONFIG = {
+        'image'        : { w: 800,  h: 600,  q: 0.82 },
+        'banner_image' : { w: 1920, h: 600,  q: 0.80 },
+        'og_image'     : { w: 1200, h: 630,  q: 0.82 },
+    };
+
+    /* Detect WebP encode support once at page load */
+    var CAN_WEBP = (function () {
+        try {
+            var c = document.createElement('canvas');
+            c.width = c.height = 1;
+            return c.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+        } catch (e) { return false; }
+    })();
+
+    function fmtBytes(b) {
+        return b < 1048576 ? (b / 1024).toFixed(0) + ' KB' : (b / 1048576).toFixed(2) + ' MB';
+    }
+
+    /* Render preview image + info badge below the upload box */
+    function renderPreview(previewId, src, infoHtml) {
+        var ph    = previewId.replace('-box', '-placeholder');
+        var infoId = previewId + '-info';
+        $('#' + previewId).attr('src', src).removeClass('d-none');
+        $('#' + ph).addClass('d-none').text('No image selected');
+        if (!$('#' + infoId).length) {
+            $('#' + previewId).closest('.mt-2').after('<div id="' + infoId + '" class="small mt-1 ps-1"></div>');
+        }
+        $('#' + infoId).html(infoHtml);
+    }
+
+    /* Core conversion: draws image on canvas → toBlob(webp) → callback(blob | null) */
+    function toWebPBlob(file, cfg, cb) {
+        var objUrl = URL.createObjectURL(file);
+        var img    = new Image();
+        img.onload = function () {
+            URL.revokeObjectURL(objUrl);
+            var w = img.naturalWidth, h = img.naturalHeight;
+            if (w > cfg.w) { h = Math.round(h * cfg.w / w); w = cfg.w; }
+            if (h > cfg.h) { w = Math.round(w * cfg.h / h); h = cfg.h; }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            canvas.toBlob(function (blob) {
+                /* Verify browser actually produced a WebP blob */
+                if (blob && blob.type === 'image/webp' && blob.size > 0) {
+                    cb(blob);
+                } else {
+                    cb(null); /* browser produced PNG or failed */
+                }
+            }, 'image/webp', cfg.q);
+        };
+        img.onerror = function () { URL.revokeObjectURL(objUrl); cb(null); };
+        img.src = objUrl;
+    }
+
+    /* Try to inject a File into the native file input via DataTransfer */
+    function replaceInputFile(input, file) {
+        try {
+            var dt = new DataTransfer();
+            dt.items.add(file);
+            input.files = dt.files;
+            /* Verify the replacement actually worked */
+            return input.files[0] && input.files[0].type === 'image/webp';
+        } catch (e) { return false; }
+    }
+
+    $('.image-preview-trigger').on('change', function () {
+        var input     = this;
+        var file      = input.files[0];
+        var previewId = $(this).data('preview-id');
+        var ph        = previewId.replace('-box', '-placeholder');
+        var cfg       = IMG_CONFIG[$(this).attr('id')] || { w: 1200, h: 900, q: 0.82 };
+
+        /* Reset state */
+        $('#' + previewId).addClass('d-none').attr('src', '');
+        $('#' + previewId + '-info').remove();
+        $('#' + ph).text('No image selected').removeClass('d-none');
+
+        if (!file) return;
+
+        /* Client-side size guard: reject over 10 MB */
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File is too large (max 10 MB). Please choose a smaller image.');
+            input.value = '';
+            return;
+        }
+
+        /* GIF: skip conversion, just show preview */
+        if (file.type === 'image/gif' || !CAN_WEBP) {
+            var gifReader = new FileReader();
+            gifReader.onload = function (e) {
+                var label = !CAN_WEBP
+                    ? '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>WebP not supported in this browser — original kept (' + fmtBytes(file.size) + ')</span>'
+                    : '<span class="text-muted">GIF – kept as original (' + fmtBytes(file.size) + ')</span>';
+                renderPreview(previewId, e.target.result, label);
+            };
+            gifReader.readAsDataURL(file);
+            return;
+        }
+
+        /* Show spinner while converting */
+        $('#' + ph).html('<span class="spinner-border spinner-border-sm text-primary me-1"></span><span class="text-muted">Converting to WebP…</span>');
+
+        toWebPBlob(file, cfg, function (blob) {
+            if (!blob) {
+                /* Conversion failed – show original */
+                var fr = new FileReader();
+                fr.onload = function (e) {
+                    renderPreview(previewId, e.target.result,
+                        '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>WebP conversion failed – original kept (' + fmtBytes(file.size) + ')</span>');
                 };
-                reader.readAsDataURL(file);
-            } else {
-                $('#' + previewId).addClass('d-none').attr('src', '');
-                $('#' + placeholderId).removeClass('d-none');
+                fr.readAsDataURL(file);
+                return;
             }
+
+            /* Build WebP File object */
+            var webpFile = new File(
+                [blob],
+                file.name.replace(/\.[^.]+$/, '') + '.webp',
+                { type: 'image/webp', lastModified: Date.now() }
+            );
+
+            /* Replace the input's file with the WebP version */
+            var replaced = replaceInputFile(input, webpFile);
+
+            /* Build preview URL directly from the blob (no extra FileReader needed) */
+            var previewUrl = URL.createObjectURL(blob);
+
+            var saved = Math.max(0, file.size - blob.size);
+            var pct   = Math.round(saved / file.size * 100);
+
+            var badge = replaced
+                ? '<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i>WebP · ' + fmtBytes(blob.size)
+                    + (pct > 0 ? ' <span class="badge bg-success ms-1">−' + pct + '%</span>' : '') + '</span>'
+                : '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>Converted but input replace unsupported – original will upload (' + fmtBytes(file.size) + ')</span>';
+
+            renderPreview(previewId, previewUrl, badge);
         });
     });
+
+    /* ── On page load: restore draft ─────────────────────── */
+    restoreLocal();
+});
 </script>
 @endsection
