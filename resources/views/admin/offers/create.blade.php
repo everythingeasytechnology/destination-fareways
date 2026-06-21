@@ -17,6 +17,20 @@
 <form action="{{ route('admin.offers.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
+    @if($errors->any())
+    <div class="alert alert-danger mb-4 border-0 shadow-sm" id="form-errors" role="alert">
+        <div class="d-flex align-items-center mb-2">
+            <i class="fa-solid fa-circle-xmark fs-5 me-2"></i>
+            <strong>Fix these errors before publishing:</strong>
+        </div>
+        <ul class="mb-0 ps-3">
+            @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
+
     <div class="row g-4">
         <!-- Main Form Column -->
         <div class="col-12 col-xl-8">
