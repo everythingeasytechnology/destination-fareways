@@ -66,7 +66,7 @@
                         </div>
                     </td>
                     <td>
-                        <div><span class="badge bg-royal bg-opacity-10 text-royal px-2 py-1" style="font-size: 0.7rem;">{{ $blog->category ?? 'General' }}</span></div>
+                        <div><span class="badge bg-light text-muted border px-2 py-1" style="font-size: 0.7rem;">{{ $blog->category ?? 'General' }}</span></div>
                         @if($blog->tags)
                             <div class="mt-1 flex-wrap gap-1 d-flex">
                                 @foreach(explode(',', $blog->tags) as $tag)
