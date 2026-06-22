@@ -519,23 +519,133 @@ $(document).ready(function () {
         }
     });
 
-    /* ── Image file preview ──────────────────────────────── */
+    /* ── Image compress → WebP then preview ─────────────── */
+
+    var IMG_CONFIG = {
+        'featured_image' : { w: 800,  h: 600,  q: 0.82 },
+        'banner_image'   : { w: 1920, h: 600,  q: 0.80 },
+        'og_image'       : { w: 1200, h: 630,  q: 0.82 },
+        'author_image'   : { w: 400,  h: 400,  q: 0.85 },
+    };
+
+    /* Detect WebP encode support once */
+    var CAN_WEBP = (function () {
+        try {
+            var c = document.createElement('canvas');
+            c.width = c.height = 1;
+            return c.toDataURL('image/webp').indexOf('data:image/webp') === 0;
+        } catch (e) { return false; }
+    })();
+
+    function fmtBytes(b) {
+        return b < 1048576 ? (b / 1024).toFixed(0) + ' KB' : (b / 1048576).toFixed(2) + ' MB';
+    }
+
+    function renderPreview(previewId, src, infoHtml) {
+        var ph     = previewId.replace('-box', '-placeholder');
+        var infoId = previewId + '-info';
+        $('#' + previewId).attr('src', src).removeClass('d-none');
+        $('#' + ph).addClass('d-none').text('No image selected');
+        if (!$('#' + infoId).length) {
+            $('#' + previewId).closest('.mt-2').after('<div id="' + infoId + '" class="small mt-1 ps-1"></div>');
+        }
+        $('#' + infoId).html(infoHtml);
+    }
+
+    function toWebPBlob(file, cfg, cb) {
+        var objUrl = URL.createObjectURL(file);
+        var img    = new Image();
+        img.onload = function () {
+            URL.revokeObjectURL(objUrl);
+            var w = img.naturalWidth, h = img.naturalHeight;
+            if (w > cfg.w) { h = Math.round(h * cfg.w / w); w = cfg.w; }
+            if (h > cfg.h) { w = Math.round(w * cfg.h / h); h = cfg.h; }
+            var canvas = document.createElement('canvas');
+            canvas.width = w; canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            canvas.toBlob(function (blob) {
+                if (blob && blob.type === 'image/webp' && blob.size > 0) {
+                    cb(blob);
+                } else {
+                    cb(null);
+                }
+            }, 'image/webp', cfg.q);
+        };
+        img.onerror = function () { URL.revokeObjectURL(objUrl); cb(null); };
+        img.src = objUrl;
+    }
+
+    function replaceInputFile(input, file) {
+        try {
+            var dt = new DataTransfer();
+            dt.items.add(file);
+            input.files = dt.files;
+            return input.files[0] && input.files[0].type === 'image/webp';
+        } catch (e) { return false; }
+    }
+
     $('.image-preview-trigger').on('change', function () {
-        var file      = this.files[0];
+        var input     = this;
+        var file      = input.files[0];
         var previewId = $(this).data('preview-id');
         var ph        = previewId.replace('-box', '-placeholder');
+        var cfg       = IMG_CONFIG[$(this).attr('id')] || { w: 1200, h: 900, q: 0.82 };
 
-        if (file) {
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                $('#' + previewId).attr('src', e.target.result).removeClass('d-none');
-                $('#' + ph).addClass('d-none');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            $('#' + previewId).addClass('d-none').attr('src', '');
-            $('#' + ph).removeClass('d-none');
+        $('#' + previewId).addClass('d-none').attr('src', '');
+        $('#' + previewId + '-info').remove();
+        $('#' + ph).text('No image selected').removeClass('d-none');
+
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File is too large (max 10 MB). Please choose a smaller image.');
+            input.value = '';
+            return;
         }
+
+        if (file.type === 'image/gif' || !CAN_WEBP) {
+            var gifReader = new FileReader();
+            gifReader.onload = function (e) {
+                var label = !CAN_WEBP
+                    ? '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>WebP not supported in this browser — original kept (' + fmtBytes(file.size) + ')</span>'
+                    : '<span class="text-muted">GIF – kept as original (' + fmtBytes(file.size) + ')</span>';
+                renderPreview(previewId, e.target.result, label);
+            };
+            gifReader.readAsDataURL(file);
+            return;
+        }
+
+        $('#' + ph).html('<span class="spinner-border spinner-border-sm text-primary me-1"></span><span class="text-muted">Converting to WebP…</span>');
+
+        toWebPBlob(file, cfg, function (blob) {
+            if (!blob) {
+                var fr = new FileReader();
+                fr.onload = function (e) {
+                    renderPreview(previewId, e.target.result,
+                        '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>WebP conversion failed – original kept (' + fmtBytes(file.size) + ')</span>');
+                };
+                fr.readAsDataURL(file);
+                return;
+            }
+
+            var webpFile = new File(
+                [blob],
+                file.name.replace(/\.[^.]+$/, '') + '.webp',
+                { type: 'image/webp', lastModified: Date.now() }
+            );
+
+            var replaced   = replaceInputFile(input, webpFile);
+            var previewUrl = URL.createObjectURL(blob);
+            var saved      = Math.max(0, file.size - blob.size);
+            var pct        = Math.round(saved / file.size * 100);
+
+            var badge = replaced
+                ? '<span class="text-success fw-semibold"><i class="fa-solid fa-circle-check me-1"></i>WebP · ' + fmtBytes(blob.size)
+                    + (pct > 0 ? ' <span class="badge bg-success ms-1">−' + pct + '%</span>' : '') + '</span>'
+                : '<span class="text-warning"><i class="fa-solid fa-triangle-exclamation me-1"></i>Converted but input replace unsupported – original will upload (' + fmtBytes(file.size) + ')</span>';
+
+            renderPreview(previewId, previewUrl, badge);
+        });
     });
 
     /* ── Generate default JSON-LD schema ────────────────── */
