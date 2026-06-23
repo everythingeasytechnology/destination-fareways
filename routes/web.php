@@ -125,6 +125,7 @@ Route::group(['prefix' => 'admin', 'middleware' => ['admin'], 'as' => 'admin.'],
         Route::resource('offers', OfferController::class);
         Route::post('blogs/autosave', [BlogController::class, 'autosave'])->name('blogs.autosave');
         Route::resource('blogs', BlogController::class);
+        Route::post('destinations/autosave', [DestinationController::class, 'autosave'])->name('destinations.autosave');
         Route::resource('destinations', DestinationController::class);
         Route::post('flight-routes/generate-ai', [FlightRouteController::class, 'generateAiContent'])->name('flight-routes.generate-ai');
         Route::resource('flight-routes', FlightRouteController::class);
