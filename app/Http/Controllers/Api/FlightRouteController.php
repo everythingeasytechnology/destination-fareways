@@ -7,6 +7,7 @@ use App\Models\Airport;
 use App\Models\FlightRoute;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Intervention\Image\Facades\Image;
 
 class FlightRouteController extends Controller
 {
@@ -72,9 +73,27 @@ class FlightRouteController extends Controller
             $validated['slug'] .= '-' . time();
         }
 
-        foreach (['featured_image', 'banner_image', 'og_image'] as $field) {
+        $imageSizes = [
+            'featured_image' => [800,  600,  82],
+            'banner_image'   => [1920, 600,  80],
+            'og_image'       => [1200, 630,  82],
+        ];
+
+        foreach ($imageSizes as $field => [$maxW, $maxH, $quality]) {
             if ($request->hasFile($field)) {
-                $validated[$field] = $request->file($field)->store('uploads/flight-routes', 'public');
+                $file     = $request->file($field);
+                $filename = 'uploads/flight-routes/' . Str::uuid() . '.webp';
+                $fullPath = storage_path('app/public/' . $filename);
+
+                Image::make($file)
+                    ->resize($maxW, $maxH, function ($c) {
+                        $c->aspectRatio();
+                        $c->upsize();
+                    })
+                    ->encode('webp', $quality)
+                    ->save($fullPath);
+
+                $validated[$field] = $filename;
             }
         }
 
